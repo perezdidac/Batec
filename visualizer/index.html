@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batec VJ Engine v5.5</title>
+    <meta name="description"
+        content="Professional stage projection engine with multi-preset sessions and lyric sequencer.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- The Stage -->
+    <canvas id="visualizerCanvas"></canvas>
+
+    <!-- Initial Calibration -->
+    <div id="startOverlay" class="overlay">
+        <div class="glass-panel">
+            <h1>Batec Engine</h1>
+            <p>Ready for stage projection. Calibrate microphone to begin.</p>
+            <button id="btnStart" class="primary-btn">Initialize Engine</button>
+        </div>
+    </div>
+
+    <!-- Interaction Hub -->
+    <div id="controlsContainer" class="controls-container">
+
+        <!-- Main Quick-Hub -->
+        <div id="controlsPanel" class="glass-panel floating-panel hidden">
+            <div class="panel-header">
+                <h2>Control Hub</h2>
+                <div class="header-actions">
+                    <button id="btnHelp" class="help-btn" title="Engine Documentation">?</button>
+                </div>
+            </div>
+
+            <!-- Session / Preset Bar (NEW) -->
+            <div class="session-bar-container">
+                <div class="session-header">
+                    <span class="param-label">Active Session Slots</span>
+                    <button id="btnNewPreset" class="icon-btn-minimal" title="New Slot">+</button>
+                </div>
+                <div id="presetSlots" class="preset-slots-grid">
+                    <!-- Generated via JS: [1] [2] [3] ... [0] -->
+                </div>
+                <div class="active-preset-meta">
+                    <input type="text" id="activePresetName" value="Default Preset" class="text-input-minimal">
+                    <button id="btnDeletePreset" class="icon-btn-minimal danger" title="Delete Slot">&times;</button>
+                </div>
+            </div>
+
+            <div class="control-actions">
+                <button id="btnAdvanced" class="primary-btn">V-Engine Parameters</button>
+            </div>
+            <div class="control-actions">
+                <button id="btnPause" class="secondary-btn">Pause Audio</button>
+                <button id="btnHideUI" class="secondary-btn">Performance Mode</button>
+            </div>
+        </div>
+
+        <!-- Advanced Engine Configuration (Generated dynamically) -->
+        <div id="advancedPanel" class="glass-panel advanced-panel hidden">
+            <div class="panel-header" style="justify-content: space-between; display: flex; align-items: center;">
+                <h3>V-Engine Configuration</h3>
+                <div>
+                    <button id="btnRandom" class="icon-btn-inline" style="font-size:0.8rem; margin-right:12px; color:var(--accent-glow); border:1px solid var(--accent-glow); border-radius:4px; padding:2px 6px;" title="Randomize Chaos">CHAOS</button>
+                    <button id="btnExpandAll" class="icon-btn-inline" style="font-size:1rem; margin-right:8px;" title="Expand All">▼</button>
+                    <button id="btnCollapseAll" class="icon-btn-inline" style="font-size:1rem; margin-right:12px;" title="Collapse All">▶</button>
+                    <button id="btnCloseAdvanced" class="icon-btn-inline">&times;</button>
+                </div>
+            </div>
+
+            <div class="panel-content">
+
+                <div class="config-section" data-cat="session">
+                    <h4>Session Engine (Global)</h4>
+                    <div class="control-grid">
+                        <div class="param-row">
+                            <div class="param-header"><span class="param-label">Crossfade Speed [sec]</span></div>
+                            <div class="param-ui"><input type="range" id="sessionTransitionSpeed" min="0.1" max="10"
+                                    step="0.1" value="1.0"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="config-section" data-cat="physics">
+                    <h4>Core Physics & Reality</h4>
+                    <div id="panel-physics" class="control-grid"></div>
+                </div>
+
+                <div class="config-section" data-cat="waves">
+                    <h4>Psychedelic Waves (Center)</h4>
+                    <div id="panel-waves" class="control-grid"></div>
+                </div>
+
+                <div class="config-section" data-cat="rays">
+                    <h4>Hyperspace Rays (Lasers)</h4>
+                    <div id="panel-rays" class="control-grid"></div>
+                </div>
+
+                <div class="config-section" data-cat="photos">
+                    <h4>Mediterranean Soul (Photos)</h4>
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Compositing Mode</label>
+                        <select id="imgBlendMode">
+                            <option value="screen">Screen (Lighten)</option>
+                            <option value="exclusion">Exclusion (Artistic)</option>
+                            <option value="lighter">Lighter</option>
+                            <option value="overlay">Overlay</option>
+                            <option value="hard-light">Hard Light</option>
+                            <option value="color-dodge">Color Dodge</option>
+                        </select>
+                    </div>
+                    <div class="control-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                        <label>Media Source</label>
+                        <div style="display:flex; gap:16px; margin-top:4px;">
+                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                <input type="radio" name="photoSourceMode" value="photos" id="radioSourcePhotos" checked style="width:auto;"> Photos
+                            </label>
+                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                <input type="radio" name="photoSourceMode" value="webcams" id="radioSourceWebcams" style="width:auto;"> Webcams
+                            </label>
+                        </div>
+                    </div>
+                    <div id="panel-image-select"
+                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;"></div>
+                    <div id="panel-webcam-select"
+                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;"></div>
+                    <div id="panel-photos" class="control-grid" style="margin-top:12px;"></div>
+                </div>
+
+                <div class="config-section" data-cat="particles">
+                    <h4>Particle Synthesis</h4>
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Shape Architecture</label>
+                        <select id="particleShape">
+                            <option value="circle">Organic Circle</option>
+                            <option value="square">Abstract Square</option>
+                            <option value="triangle">Geometric Delta</option>
+                            <option value="star">Celestial Star</option>
+                        </select>
+                    </div>
+                    <div id="panel-particles" class="control-grid"></div>
+                </div>
+
+                <!-- NEW: LYRIC ENGINE SECTION -->
+                <div class="config-section" data-cat="text">
+                    <h4>Lyric Engine (Text Sequencer)</h4>
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Enable Branding
+                            <input type="checkbox" id="textEnabled" checked style="width:auto; margin:0;">
+                        </label>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Text Sequences (Up to 5)</label>
+                        <div class="lyric-inputs-grid">
+                            <input type="text" id="text0" placeholder="Phrase 1" class="text-input-minimal">
+                            <input type="text" id="text1" placeholder="Empty (Optional)" class="text-input-minimal">
+                            <input type="text" id="text2" placeholder="Empty (Optional)" class="text-input-minimal">
+                            <input type="text" id="text3" placeholder="Empty (Optional)" class="text-input-minimal">
+                            <input type="text" id="text4" placeholder="Empty (Optional)" class="text-input-minimal">
+                        </div>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Sequencing Logic</label>
+                        <select id="textSequenceMode">
+                            <option value="order">Sequential Loop</option>
+                            <option value="random">Randomized Shuffle</option>
+                        </select>
+                    </div>
+
+                    <div id="panel-text" class="control-grid"></div>
+                </div>
+
+                <!-- Analog Degradation (Post Processing) -->
+                <div class="config-section" data-cat="analog">
+                    <h4>Analog Signals (Post-Fx)</h4>
+                    <div id="panel-analog" class="control-grid"></div>
+                </div>
+
+                <!-- Preset Palette -->
+                <div class="config-section">
+                    <h4>Color Palette (Mediterranean)</h4>
+                    <div class="color-palette-grid">
+                        <input type="color" id="palette1">
+                        <input type="color" id="palette2">
+                        <input type="color" id="palette3">
+                        <input type="color" id="palette4">
+                        <input type="color" id="palette5">
+                        <input type="color" id="palette6">
+                    </div>
+                </div>
+
+                <!-- Session Styling (Project Export) -->
+                <div class="config-section style-management">
+                    <h4>Session Manager (Full Project)</h4>
+                    <div class="control-actions">
+                        <button id="btnCopySession" class="secondary-btn">Export Session</button>
+                        <button id="btnImportSession" class="secondary-btn">Import Session</button>
+                    </div>
+                    <button id="btnResetAll" class="secondary-btn"
+                        title="Reset all params to the loaded JSON configuration"
+                        style="width: 100%; margin-top: 8px;">Revert to Loaded JSON Project</button>
+                    <textarea id="styleIO" placeholder="Paste Full Session JSON..."></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Documentation Modal -->
+    <div id="helpModal" class="glass-panel help-modal hidden">
+        <div class="panel-header">
+            <h3>Engine Documentation</h3>
+            <button id="btnCloseHelp" class="icon-btn-inline">&times;</button>
+        </div>
+        <div class="panel-content">
+            <div class="help-section">
+                <h4>Switching Presets (Hotkeys)</h4>
+                <p>Press <code>1, 2, 3... 0</code> to instantly toggle between Session Slots. The engine will
+                    interpolate the transition smoothly.</p>
+            </div>
+            <div class="help-section">
+                <h4>Dual-State Parameters (Fx)</h4>
+                <p>Click <code>[Fx]</code> on any slider to use JS. The transition between two different formulas will
+                    also LERP the results.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interface Recall -->
+    <button id="btnShowUI" class="icon-btn hidden" title="Recall Interface">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+            </path>
+        </svg>
+    </button>
+
+    <!-- Real-Time Telemetry & Variables -->
+    <div id="telemetryPanel" class="glass-panel hidden"
+        style="position: absolute; bottom: 24px; left: 24px; padding: 16px; width: 220px; z-index: 1000; pointer-events: none;">
+        <h3 style="font-size: 0.7rem; color: var(--accent-glow); margin-bottom: 8px; text-transform: uppercase;">
+            Incoming Data Stream</h3>
+        <div class="meter-row"><span class="meter-label">bass</span>
+            <div class="meter-bar">
+                <div id="meter-bass" class="meter-fill"></div>
+            </div><span id="val-bass" class="param-val-readout">0</span>
+        </div>
+        <div class="meter-row"><span class="meter-label">mid</span>
+            <div class="meter-bar">
+                <div id="meter-mid" class="meter-fill"></div>
+            </div><span id="val-mid" class="param-val-readout">0</span>
+        </div>
+        <div class="meter-row"><span class="meter-label">treble</span>
+            <div class="meter-bar">
+                <div id="meter-treble" class="meter-fill"></div>
+            </div><span id="val-treble" class="param-val-readout">0</span>
+        </div>
+        <div class="meter-row" style="margin-top:4px;"><span class="meter-label"
+                style="color:var(--accent-glow);">avg</span>
+            <div class="meter-bar">
+                <div id="meter-avg" class="meter-fill" style="background:var(--accent-glow)"></div>
+            </div><span id="val-avg" class="param-val-readout" style="color:var(--accent-glow)">0</span>
+        </div>
+
+        <div class="meter-row" style="margin-top: 12px; justify-content: space-between;"><span class="meter-label">trend
+                [0-1]</span><span id="txt-trend" style="font-size:0.75rem; font-weight:bold; color:white;">0.00</span>
+        </div>
+        <div class="meter-row" style="justify-content: space-between;"><span class="meter-label">time [ms]</span><span
+                id="txt-time" style="font-size:0.75rem; font-weight:bold; color:white;">0</span></div>
+        <div class="meter-row" style="justify-content: space-between;"><span class="meter-label" style="color:var(--accent-glow);">fps</span><span
+                id="txt-fps" style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
+        <div id="midiIndicatorContainer" style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:4px;">
+            <div id="midiIndicator" style="font-size:0.6rem; color:var(--accent-glow); text-align:right;">MIDI: DISCONNECTED</div>
+            <button id="btnMidiHelp" class="icon-btn-inline" style="margin:0; cursor:pointer; font-size: 0.6rem; color: var(--accent-glow); border: 1px solid var(--accent-glow); border-radius: 50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0;" title="Hardware Help">?</button>
+        </div>
+
+        <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+            <span style="font-size: 0.6rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">AVAILABLE
+                [Fx] VARIABLES:</span>
+            <span style="font-size: 0.55rem; color: #fff; font-family: monospace; display: block;">bass, mid, treble,
+                avg, trend, time</span>
+        </div>
+    </div>
+
+    <!-- MIDI HELP MODAL -->
+    <div id="midiHelpModal" class="glass-panel modal hidden">
+        <div class="modal-content docs-modal">
+            <div class="panel-header" style="justify-content: space-between; display: flex;">
+                <h3>Hardware Documentation</h3>
+                <button id="btnCloseMidiHelp" class="icon-btn-inline">&times;</button>
+            </div>
+            <div class="panel-content">
+                <div class="docs-section">
+                    <h4>Alesis V49 Mapping</h4>
+                    <table class="docs-table">
+                        <tr><td>Knobs 1 & 2</td><td>Mic Sensitivity & Wave Density</td></tr>
+                        <tr><td>Knobs 3 & 4</td><td>Ray Count & Particle Amount</td></tr>
+                        <tr><td>Mod Wheel</td><td>Glitch/Distortion Intensity</td></tr>
+                        <tr><td>Pads 1-8</td><td>Toggle Visual Layers (Waves, Rays, etc.)</td></tr>
+                    </table>
+                </div>
+                <div class="docs-section">
+                    <h4>Batec Signal Monitor</h4>
+                    <p style="font-size:0.75rem; line-height:1.4;">The readout at the bottom of the telemetry panel shows live incoming data. If you move a knob and see <code>[CC] 20 VAL 127</code>, it means Knob 1 is transmitting successfully.</p>
+                </div>
+                <div class="docs-section">
+                    <h4>Stage Tips</h4>
+                    <p style="font-size:0.75rem; line-height:1.4;">Use the <b>CHAOS</b> button right before a drop to instantly swap the color palette and movement style. Use the <b>Pads</b> to physically drum the visuals in/out with the rhythm.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+
+</html>
