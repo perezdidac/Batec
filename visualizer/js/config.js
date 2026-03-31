@@ -55,7 +55,12 @@ function createDefaultParams() {
         analogNoise: { cat: 'analog', name: 'Film Grain', min: 0, max: 1, step: 0.01, value: 0.08, formula: '0.08 + (bass/255)*0.2', useFormula: true, desc: 'Adds digital noise for a cinematic, film-like texture.' },
         analogWarmth: { cat: 'analog', name: 'Mediterranean Glow', min: 0, max: 1, step: 0.05, value: 0.3, formula: '0.3', useFormula: false, desc: 'Applies a sunset-inspired warm color wash specifically tailored for Agost projections.' },
         analogLightLeak: { cat: 'analog', name: 'Sun Flare Leaks', min: 0, max: 1, step: 0.05, value: 0.4, formula: '0.4 + (trend * 0.3)', useFormula: true, desc: 'Simulates light leaking into a film camera lens.' },
-        analogVignette: { cat: 'analog', name: 'Vignette Darkening', min: 0, max: 1, step: 0.05, value: 0.5, formula: '0.5 + (avg/255)*0.2', useFormula: true, desc: 'Darkens the corners of the screen to draw focus to the center.' }
+        analogVignette: { cat: 'analog', name: 'Vignette Darkening', min: 0, max: 1, step: 0.05, value: 0.5, formula: '0.5 + (avg/255)*0.2', useFormula: true, desc: 'Darkens the corners of the screen to draw focus to the center.' },
+        // WEBGL BACKGROUND
+        webglSpeed: { cat: 'webgl', name: 'Grid Speed', min: 0, max: 20, step: 0.1, value: 5.0, formula: '5 + (trend * 10)', useFormula: true, desc: 'Forward scrolling speed of the 3D Cyber Grid.' },
+        webglElevation: { cat: 'webgl', name: 'Floor Elevation', min: -5, max: 5, step: 0.1, value: 1.0, formula: '1.0 + Math.sin(time/1000)', useFormula: false, desc: 'Camera height above the infinite 3D plane.' },
+        webglGlow: { cat: 'webgl', name: 'Grid Glow', min: 0, max: 2, step: 0.01, value: 0.8, formula: '0.5 + (bass/255)*0.5', useFormula: true, desc: 'Intensity and thickness of the neon grid lines.' },
+        webglDistortion: { cat: 'webgl', name: 'Bass Distortion', min: 0, max: 5, step: 0.1, value: 1.5, formula: '1.5 + (trend * 2)', useFormula: true, desc: 'How violently the grid bumps and warps to the audio.' }
     };
 }
 
@@ -89,7 +94,8 @@ function createDefaultPreset(name = "New Preset") {
             raysEnabled: true,
             photosEnabled: true,
             particlesEnabled: true,
-            analogEnabled: true
+            analogEnabled: true,
+            webglEnabled: true
         },
         params: establishDefaults(createDefaultParams())
     };

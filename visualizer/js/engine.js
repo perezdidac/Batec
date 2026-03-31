@@ -43,6 +43,7 @@ class BatecEngine {
         this.initResize();
         this.loadImages();
         this.midi = new BatecMIDI(this);
+        this.shader = new BatecShader();
     }
 
     healPresets() {
@@ -248,6 +249,13 @@ class BatecEngine {
         ctx.globalCompositeOperation = 'source-over';
         ctx.fillStyle = `rgba(1, 1, 1, ${Math.max(0, Math.min(1, this.p('clearOpacity')))})`;
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
+        if (stA.webglEnabled && this.shader && this.shader.supported) {
+            this.shader.render(this, time);
+            ctx.globalCompositeOperation = 'screen';
+            ctx.globalAlpha = 1.0;
+            ctx.drawImage(this.shader.canvas, 0, 0, window.innerWidth, window.innerHeight);
+        }
 
         if (stA.photosEnabled) {
             const mode = stA.photoSourceMode || 'photos';

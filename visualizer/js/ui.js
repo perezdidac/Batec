@@ -212,7 +212,7 @@ const UI = {
     },
 
     rebuildConfigUI() {
-        ['panel-physics', 'panel-waves', 'panel-rays', 'panel-photos', 'panel-particles', 'panel-text', 'panel-analog'].forEach(id => {
+        ['panel-physics', 'panel-waves', 'panel-rays', 'panel-photos', 'panel-particles', 'panel-text', 'panel-analog', 'panel-webgl'].forEach(id => {
             const el = this.safeGet(id); if (el) el.innerHTML = '';
             const cat = id.replace('panel-', '');
             const chk = this.safeGet(`toggle_${cat}`);
