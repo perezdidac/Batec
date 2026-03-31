@@ -65,9 +65,13 @@
             <div class="panel-header" style="justify-content: space-between; display: flex; align-items: center;">
                 <h3>V-Engine Configuration</h3>
                 <div>
-                    <button id="btnRandom" class="icon-btn-inline" style="font-size:0.8rem; margin-right:12px; color:var(--accent-glow); border:1px solid var(--accent-glow); border-radius:4px; padding:2px 6px;" title="Randomize Chaos">CHAOS</button>
-                    <button id="btnExpandAll" class="icon-btn-inline" style="font-size:1rem; margin-right:8px;" title="Expand All">▼</button>
-                    <button id="btnCollapseAll" class="icon-btn-inline" style="font-size:1rem; margin-right:12px;" title="Collapse All">▶</button>
+                    <button id="btnRandom" class="icon-btn-inline"
+                        style="font-size:0.8rem; margin-right:12px; color:var(--accent-glow); border:1px solid var(--accent-glow); border-radius:4px; padding:2px 6px;"
+                        title="Randomize Chaos">CHAOS</button>
+                    <button id="btnExpandAll" class="icon-btn-inline" style="font-size:1rem; margin-right:8px;"
+                        title="Expand All">▼</button>
+                    <button id="btnCollapseAll" class="icon-btn-inline" style="font-size:1rem; margin-right:12px;"
+                        title="Collapse All">▶</button>
                     <button id="btnCloseAdvanced" class="icon-btn-inline">&times;</button>
                 </div>
             </div>
@@ -113,21 +117,25 @@
                             <option value="color-dodge">Color Dodge</option>
                         </select>
                     </div>
-                    <div class="control-group" style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
+                    <div class="control-group"
+                        style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
                         <label>Media Source</label>
                         <div style="display:flex; gap:16px; margin-top:4px;">
                             <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                <input type="radio" name="photoSourceMode" value="photos" id="radioSourcePhotos" checked style="width:auto;"> Photos
+                                <input type="radio" name="photoSourceMode" value="photos" id="radioSourcePhotos" checked
+                                    style="width:auto;"> Photos
                             </label>
                             <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                <input type="radio" name="photoSourceMode" value="webcams" id="radioSourceWebcams" style="width:auto;"> Webcams
+                                <input type="radio" name="photoSourceMode" value="webcams" id="radioSourceWebcams"
+                                    style="width:auto;"> Webcams
                             </label>
                         </div>
                     </div>
                     <div id="panel-image-select"
                         style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;"></div>
                     <div id="panel-webcam-select"
-                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;"></div>
+                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;">
+                    </div>
                     <div id="panel-photos" class="control-grid" style="margin-top:12px;"></div>
                 </div>
 
@@ -275,11 +283,16 @@
         </div>
         <div class="meter-row" style="justify-content: space-between;"><span class="meter-label">time [ms]</span><span
                 id="txt-time" style="font-size:0.75rem; font-weight:bold; color:white;">0</span></div>
-        <div class="meter-row" style="justify-content: space-between;"><span class="meter-label" style="color:var(--accent-glow);">fps</span><span
-                id="txt-fps" style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
-        <div id="midiIndicatorContainer" style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:4px;">
-            <div id="midiIndicator" style="font-size:0.6rem; color:var(--accent-glow); text-align:right;">MIDI: DISCONNECTED</div>
-            <button id="btnMidiHelp" class="icon-btn-inline" style="margin:0; cursor:pointer; font-size: 0.6rem; color: var(--accent-glow); border: 1px solid var(--accent-glow); border-radius: 50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0;" title="Hardware Help">?</button>
+        <div class="meter-row" style="justify-content: space-between;"><span class="meter-label"
+                style="color:var(--accent-glow);">fps</span><span id="txt-fps"
+                style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
+        <div id="midiIndicatorContainer"
+            style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:4px;">
+            <div id="midiIndicator" style="font-size:0.6rem; color:var(--accent-glow); text-align:right;">MIDI:
+                DISCONNECTED</div>
+            <button id="btnMidiHelp" class="icon-btn-inline"
+                style="margin:0; cursor:pointer; font-size: 0.6rem; color: var(--accent-glow); border: 1px solid var(--accent-glow); border-radius: 50%; width:16px; height:16px; display:flex; align-items:center; justify-content:center; padding:0;"
+                title="Hardware Help">?</button>
         </div>
 
         <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
@@ -301,24 +314,50 @@
                 <div class="docs-section">
                     <h4>Alesis V49 Mapping</h4>
                     <table class="docs-table">
-                        <tr><td>Knobs 1 & 2</td><td>Mic Sensitivity & Wave Density</td></tr>
-                        <tr><td>Knobs 3 & 4</td><td>Ray Count & Particle Amount</td></tr>
-                        <tr><td>Mod Wheel</td><td>Glitch/Distortion Intensity</td></tr>
-                        <tr><td>Pads 1-8</td><td>Toggle Visual Layers (Waves, Rays, etc.)</td></tr>
+                        <tr>
+                            <td>Knobs 1 & 2</td>
+                            <td>Mic Sensitivity & Wave Density</td>
+                        </tr>
+                        <tr>
+                            <td>Knobs 3 & 4</td>
+                            <td>Ray Count & Particle Amount</td>
+                        </tr>
+                        <tr>
+                            <td>Mod Wheel</td>
+                            <td>Glitch/Distortion Intensity</td>
+                        </tr>
+                        <tr>
+                            <td>Pads 1-8</td>
+                            <td>Toggle Visual Layers (Waves, Rays, etc.)</td>
+                        </tr>
                     </table>
                 </div>
                 <div class="docs-section">
                     <h4>Batec Signal Monitor</h4>
-                    <p style="font-size:0.75rem; line-height:1.4;">The readout at the bottom of the telemetry panel shows live incoming data. If you move a knob and see <code>[CC] 20 VAL 127</code>, it means Knob 1 is transmitting successfully.</p>
+                    <p style="font-size:0.75rem; line-height:1.4;">The readout at the bottom of the telemetry panel
+                        shows live incoming data. If you move a knob and see <code>[CC] 20 VAL 127</code>, it means Knob
+                        1 is transmitting successfully.</p>
                 </div>
                 <div class="docs-section">
                     <h4>Stage Tips</h4>
-                    <p style="font-size:0.75rem; line-height:1.4;">Use the <b>CHAOS</b> button right before a drop to instantly swap the color palette and movement style. Use the <b>Pads</b> to physically drum the visuals in/out with the rhythm.</p>
+                    <p style="font-size:0.75rem; line-height:1.4;">Use the <b>CHAOS</b> button right before a drop to
+                        instantly swap the color palette and movement style. Use the <b>Pads</b> to physically drum the
+                        visuals in/out with the rhythm.</p>
                 </div>
             </div>
         </div>
     </div>
-
+    <!-- Modular Script Injection -->
+    <script src="js/math.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/waves.js"></script>
+    <script src="js/rays.js"></script>
+    <script src="js/lyrics.js"></script>
+    <script src="js/postfx.js"></script>
+    <script src="js/midi.js"></script>
+    <script src="js/engine.js"></script>
+    <script src="js/ui.js"></script>
     <script src="main.js"></script>
 </body>
 

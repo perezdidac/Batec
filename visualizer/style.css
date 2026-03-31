@@ -648,3 +648,35 @@ button {
   opacity: 0;
   pointer-events: none;
 }
+
+/* --- MIDI Learn Styles --- */
+.learn-btn {
+  font-size: 0.55rem;
+  font-weight: bold;
+  color: var(--text-secondary);
+  border: 1px solid transparent;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.learn-btn:hover {
+  color: var(--accent-glow);
+}
+
+.learn-btn.learning {
+  border: 1px solid #ff4444;
+  color: #ff4444;
+  animation: midiPulse 1s infinite alternate;
+}
+
+@keyframes midiPulse {
+  from { box-shadow: 0 0 2px #ff4444; text-shadow: 0 0 2px #ff4444; }
+  to   { box-shadow: 0 0 8px #ff4444; text-shadow: 0 0 8px #ff4444; }
+}
+
+.param-row.midi-selected {
+  border: 1px solid var(--accent-glow);
+  background: rgba(0, 255, 255, 0.05);
+  border-radius: 4px;
+  padding-left: 4px;
+}
