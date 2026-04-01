@@ -44,6 +44,16 @@ class BatecEngine {
         this.loadImages();
         this.midi = new BatecMIDI(this);
         this.shader = new BatecShader();
+        this.glPost = new BatecGLPostFX();
+        this.dmx = new BatecDMX(this);
+        
+        // Setup DMX Connection Button
+        const dmxBtn = document.getElementById('btnDmxConnect');
+        if (dmxBtn) {
+            dmxBtn.addEventListener('click', () => {
+                this.dmx.toggle();
+            });
+        }
     }
 
     healPresets() {
@@ -227,6 +237,10 @@ class BatecEngine {
     loop(time) {
         this.updateAudio();
         this.render(time);
+        
+        // Sync hardware to visualizer engine
+        if (this.dmx) this.dmx.updateFromEngine(this);
+        
         UI.updateTelemetry(this, time);
         requestAnimationFrame((t) => this.loop(t));
     }
@@ -295,7 +309,23 @@ class BatecEngine {
         if (stA.particlesEnabled !== false) this.renderParticles(ctx, time);
         if (stA.textEnabled !== false) renderLyrics(this, ctx, time, progress);
 
-        applyAnalogPostFX(this); // ALWAYS CALL to ensure buffer transfer
+        let finalSource = this.bufferCanvas;
+        
+        // 1. GPU Post-FX (Smear / Aberration / Kaleido)
+        if (stA.gpu_fxEnabled && this.glPost && this.glPost.supported) {
+            const aberration = this.p('gpuAberration');
+            const smear = this.p('gpuSmearRatio');
+            const kaleido = this.p('gpuKaleidoSegments');
+            
+            // Optimization: Skip expensive FBO pass if all GPU values are disabled
+            if (aberration > 0 || smear > 0 || kaleido > 0) {
+                this.glPost.render(this, this.bufferCanvas, time);
+                finalSource = this.glPost.canvas; // Chain the GPU output
+            }
+        }
+        
+        // 2. CPU Analog Post-FX & Screen Transfer
+        applyAnalogPostFX(this, finalSource);
 
         const pnl = document.getElementById('controlsPanel');
         const showBtn = document.getElementById('btnShowUI');

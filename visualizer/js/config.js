@@ -60,7 +60,14 @@ function createDefaultParams() {
         webglSpeed: { cat: 'webgl', name: 'Grid Speed', min: 0, max: 20, step: 0.1, value: 5.0, formula: '5 + (trend * 10)', useFormula: true, desc: 'Forward scrolling speed of the 3D Cyber Grid.' },
         webglElevation: { cat: 'webgl', name: 'Floor Elevation', min: -5, max: 5, step: 0.1, value: 1.0, formula: '1.0 + Math.sin(time/1000)', useFormula: false, desc: 'Camera height above the infinite 3D plane.' },
         webglGlow: { cat: 'webgl', name: 'Grid Glow', min: 0, max: 2, step: 0.01, value: 0.8, formula: '0.5 + (bass/255)*0.5', useFormula: true, desc: 'Intensity and thickness of the neon grid lines.' },
-        webglDistortion: { cat: 'webgl', name: 'Bass Distortion', min: 0, max: 5, step: 0.1, value: 1.5, formula: '1.5 + (trend * 2)', useFormula: true, desc: 'How violently the grid bumps and warps to the audio.' }
+        webglDistortion: { cat: 'webgl', name: 'Bass Distortion', min: 0, max: 5, step: 0.1, value: 1.5, formula: '1.5 + (trend * 2)', useFormula: true, desc: 'How violently the grid bumps and warps to the audio.' },
+
+        // GPU POST PROCESSING (Melting & Smear)
+        gpuAberration: { cat: 'gpu_fx', name: 'Chromatic Warp', min: 0, max: 0.5, step: 0.01, value: 0.05, formula: '0.05 + (bass/255)*0.1', useFormula: true, desc: 'Splits R, G, B channels radially outwards.' },
+        gpuSmearRatio: { cat: 'gpu_fx', name: 'Fluid Density', min: 0, max: 0.99, step: 0.01, value: 0.0, formula: '0.5', useFormula: false, desc: 'Amount of previous frames left on screen. 0 is none, 0.99 is infinite smearing trails.' },
+        gpuMeltSpeed: { cat: 'gpu_fx', name: 'Gravity Drip', min: -0.05, max: 0.05, step: 0.001, value: 0.005, formula: '0.005 + (trend * 0.01)', useFormula: false, desc: 'Pulls the smeared pixels downwards like dripping paint. Negative values drift up.' },
+        gpuKaleidoSegments: { cat: 'gpu_fx', name: 'Kaleidoscope Slices', min: 0, max: 16, step: 1, value: 0, formula: '6', useFormula: false, desc: 'Folds the screen geometry into Polar mirrored segments.' },
+        gpuKaleidoRot: { cat: 'gpu_fx', name: 'Mirror Spin [rad]', min: -Math.PI, max: Math.PI, step: 0.1, value: 0, formula: '(time/1000) * 0.2', useFormula: true, desc: 'Rotates the physical reflection array.' }
     };
 }
 
@@ -85,9 +92,9 @@ function createDefaultPreset(name = "New Preset") {
             photoSourceMode: 'photos', // 'photos' or 'webcams'
             webcamIndices: [],
             textEnabled: true, // RE-ENABLED by default so user can see it works
-            textList: ["AGOST", "BATEC", "ESTIU", "", ""],
+            textList: ["AGOST", "", "", "", ""],
             textSequenceMode: 'order',
-            
+
             // Category Toggles
             physicsEnabled: true,
             wavesEnabled: true,
@@ -95,7 +102,8 @@ function createDefaultPreset(name = "New Preset") {
             photosEnabled: true,
             particlesEnabled: true,
             analogEnabled: true,
-            webglEnabled: true
+            webglEnabled: true,
+            gpu_fxEnabled: true
         },
         params: establishDefaults(createDefaultParams())
     };

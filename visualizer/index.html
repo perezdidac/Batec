@@ -191,6 +191,12 @@
                     <div id="panel-webgl" class="control-grid"></div>
                 </div>
 
+                <!-- GPU Post Processing Layer -->
+                <div class="config-section" data-cat="gpu_fx">
+                    <h4>Screen Melt (GPU FX)</h4>
+                    <div id="panel-gpu_fx" class="control-grid"></div>
+                </div>
+
                 <!-- Analog Degradation (Post Processing) -->
                 <div class="config-section" data-cat="analog">
                     <h4>Analog Signals (Post-Fx)</h4>
@@ -309,6 +315,39 @@
         </div>
     </div>
 
+    <!-- DMX Hardware Control Panel -->
+    <div id="dmxPanel" class="glass-panel" style="position: absolute; bottom: 24px; right: 24px; padding: 16px; width: 280px; z-index: 1000; display:flex; flex-direction:column; gap:8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+            <h3 style="font-size: 0.75rem; color: var(--accent-glow); margin: 0; text-transform: uppercase;">DMX 512 Link</h3>
+            <button id="btnDmxConnect" class="primary-btn glass-btn" style="font-size: 0.55rem; padding: 4px 8px;">CONNECT USB</button>
+        </div>
+        
+        <div id="dmxStatus" style="font-size: 0.6rem; color: var(--text-secondary); font-family: monospace; text-align: right;">STATUS: DISCONNECTED</div>
+        
+        <div class="control-grid" style="gap: 4px; margin-top: 4px;">
+            <!-- RGB+Master Testing faders -->
+            <div class="meter-row" style="margin-bottom: 2px;">
+                <span class="meter-label" style="width: 35px; color:#ff4444;">CH 1</span>
+                <input type="range" id="dmxCh1" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+            </div>
+            <div class="meter-row" style="margin-bottom: 2px;">
+                <span class="meter-label" style="width: 35px; color:#44ff44;">CH 2</span>
+                <input type="range" id="dmxCh2" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+            </div>
+             <div class="meter-row" style="margin-bottom: 2px;">
+                <span class="meter-label" style="width: 35px; color:#4444ff;">CH 3</span>
+                <input type="range" id="dmxCh3" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+            </div>
+            <div class="meter-row" style="margin-bottom: 2px;">
+                <span class="meter-label" style="width: 35px; color:#fff;">MASTER</span>
+                <input type="range" id="dmxCh4" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+            </div>
+        </div>
+        <div style="margin-top: 6px; font-size: 0.55rem; color: var(--text-secondary); line-height:1.3;">
+            <b>Live Mode:</b> When the USB is connected, CH 1 automatically pulses to the live music bass. Slide Fader 1 to immediately override the music with a permanent glow.
+        </div>
+    </div>
+
     <!-- MIDI HELP MODAL -->
     <div id="midiHelpModal" class="glass-panel modal hidden">
         <div class="modal-content docs-modal">
@@ -362,7 +401,9 @@
     <script src="js/lyrics.js"></script>
     <script src="js/postfx.js"></script>
     <script src="js/shader.js"></script>
+    <script src="js/gl_postfx.js"></script>
     <script src="js/midi.js"></script>
+    <script src="js/dmx.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/ui.js"></script>
     <script src="main.js"></script>

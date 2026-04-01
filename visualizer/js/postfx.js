@@ -1,10 +1,11 @@
-function applyAnalogPostFX(engine) {
+function applyAnalogPostFX(engine, sourceCanvas) {
     const finalCtx = engine.ctx;
     const w = window.innerWidth, h = window.innerHeight;
     const stA = engine.active.settings;
+    const src = sourceCanvas || engine.bufferCanvas;
 
     finalCtx.globalCompositeOperation = 'source-over';
-    finalCtx.drawImage(engine.bufferCanvas, 0, 0, w, h);
+    finalCtx.drawImage(src, 0, 0, w, h);
 
     if (stA.analogEnabled === false) return; // SKIP POST-FX ONLY, KEEP RENDER
 
@@ -13,8 +14,8 @@ function applyAnalogPostFX(engine) {
     if (drift > 0) {
         finalCtx.globalCompositeOperation = 'screen';
         finalCtx.globalAlpha = 0.5;
-        finalCtx.drawImage(engine.bufferCanvas, drift, 0, w, h);
-        finalCtx.drawImage(engine.bufferCanvas, -drift, 0, w, h);
+        finalCtx.drawImage(src, drift, 0, w, h);
+        finalCtx.drawImage(src, -drift, 0, w, h);
         finalCtx.globalAlpha = 1;
     }
 
