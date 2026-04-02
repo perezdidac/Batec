@@ -197,6 +197,7 @@ class BatecEngine {
 
             // Show telemetry when audio starts
             document.getElementById('telemetryPanel').classList.remove('hidden');
+            if (document.getElementById('dmxPanel')) document.getElementById('dmxPanel').classList.remove('hidden');
 
             requestAnimationFrame((t) => this.loop(t));
         } catch (e) { alert("Mic required."); }

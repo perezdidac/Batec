@@ -312,7 +312,7 @@ const UI = {
 
     bindStaticUI() {
         const e = this.engine; const active = e.active;
-        this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); };
+        this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
         this.safeGet('btnAdvanced').onclick = () => this.safeGet('advancedPanel').classList.toggle('hidden');
         this.safeGet('btnCloseAdvanced').onclick = () => this.safeGet('advancedPanel').classList.add('hidden');
         this.safeGet('btnHelp').onclick = () => this.safeGet('helpModal').classList.toggle('hidden');
@@ -322,7 +322,8 @@ const UI = {
         this.safeGet('btnPause').onclick = (ev) => { active.settings.isPaused = !active.settings.isPaused; if (active.settings.isPaused) e.audio.ctx?.suspend(); else e.audio.ctx?.resume(); ev.target.textContent = active.settings.isPaused ? 'Resume Audio' : 'Pause Audio'; };
         this.safeGet('btnHideUI').onclick = () => {
             document.querySelectorAll('.glass-panel').forEach(p => p.classList.add('hidden'));
-            this.safeGet('telemetryPanel').classList.add('hidden'); // Ensure telemetry hides too
+            this.safeGet('telemetryPanel').classList.add('hidden');
+            if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.add('hidden');
             this.safeGet('btnShowUI').classList.remove('hidden');
             this.safeGet('btnShowUI').classList.remove('inactive');
             e.lastInteraction = Date.now();
@@ -330,6 +331,7 @@ const UI = {
         this.safeGet('btnShowUI').onclick = () => {
             this.safeGet('controlsPanel').classList.remove('hidden');
             this.safeGet('telemetryPanel').classList.remove('hidden'); // Bring telemetry back
+            if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden');
             this.safeGet('btnShowUI').classList.add('hidden');
         };
 
