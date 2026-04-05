@@ -1,9 +1,9 @@
 const FormulaEngine = {
     eval(formula, context, fallback = 0, min = null, max = null) {
         try {
-            const { time, avg, bass, mid, treble, trend, x, y } = context;
-            const fn = new Function('time', 'avg', 'bass', 'mid', 'treble', 'trend', 'x', 'y', 'Math', 'window', `try { return ${formula}; } catch(e) { return ${fallback}; }`);
-            let val = fn(time, avg, bass, mid, treble, trend, x, y, Math, window);
+            const { time, bpm, avg, bass, mid, treble, trend, x, y } = context;
+            const fn = new Function('time', 'bpm', 'avg', 'bass', 'mid', 'treble', 'trend', 'x', 'y', 'Math', 'window', `try { return ${formula}; } catch(e) { return ${fallback}; }`);
+            let val = fn(time, bpm, avg, bass, mid, treble, trend, x, y, Math, window);
             if (typeof val !== 'number' || isNaN(val)) return fallback;
             return val;
         } catch (e) { return fallback; }

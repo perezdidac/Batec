@@ -186,8 +186,26 @@ const UI = {
         if (vT) vT.textContent = Math.round(t);
         if (vA) vA.textContent = Math.round(a);
 
-        const trendEl = this.safeGet('txt-trend'); if (trendEl) trendEl.textContent = engine.trend.toFixed(2);
-        const timeEl = this.safeGet('txt-time'); if (timeEl) timeEl.textContent = Math.floor(time);
+        const trendEl = this.safeGet('txt-trend'); if (trendEl) trendEl.textContent = engine.trend.toFixed(3);
+        const bpmEl = document.getElementById('txt-bpm'); if (bpmEl) bpmEl.textContent = engine.bpmTracker.bpm;
+        const timeEl = this.safeGet('txt-time'); if (timeEl) timeEl.textContent = Math.floor(time - engine.timeOffset);
+
+        // Advanced Panel Metering: If Advanced UI is open, visually pulse the Fx Sliders
+        const advPanel = document.getElementById('advancedPanel');
+        if (advPanel && !advPanel.classList.contains('hidden') && engine.active && engine.active.params) {
+            const params = engine.active.params;
+            for (const key in params) {
+                if (params[key].useFormula) {
+                    const input = document.getElementById(`input-${key}`);
+                    const read = document.getElementById(`readout-${key}`);
+                    if (input && read) {
+                        const v = engine.p(key);
+                        input.value = v;
+                        read.textContent = (v % 1 === 0 ? v : v.toFixed(2));
+                    }
+                }
+            }
+        }
     },
 
     buildSlots() {
@@ -195,10 +213,12 @@ const UI = {
         grid.innerHTML = '';
         this.engine.session.presets.forEach((p, i) => {
             const btn = document.createElement('div');
-            btn.className = `slot ${i === this.engine.session.activeIndex ? 'active' : ''} ${i === this.engine.session.targetIndex ? 'switching' : ''}`;
+            const isTarget = i === this.engine.session.targetIndex;
+            const isActiveState = (this.engine.session.targetIndex !== null) ? isTarget : (i === this.engine.session.activeIndex);
+            btn.className = `slot ${isActiveState ? 'active' : ''}`;
             btn.style.zIndex = "1200"; // Ensure slots are always on top
             btn.style.pointerEvents = "auto";
-            btn.textContent = (i + 1) % 10; btn.title = p.name;
+            btn.textContent = (i + 1) % 10; btn.title = `Stage: ${p.name}`;
             btn.onclick = (ev) => {
                 ev.stopPropagation();
                 this.engine.switchTo(i);
@@ -208,18 +228,23 @@ const UI = {
             };
             grid.appendChild(btn);
         });
-        const nameInput = this.safeGet('activePresetName'); if (nameInput) nameInput.value = this.engine.active.name;
+        
+        const activePreset = this.engine.target || this.engine.active;
+        const nameInput = this.safeGet('activePresetName'); 
+        if (nameInput) nameInput.value = activePreset.name;
     },
 
     rebuildConfigUI() {
+        const activePreset = this.engine.target || this.engine.active;
         ['panel-physics', 'panel-waves', 'panel-rays', 'panel-photos', 'panel-particles', 'panel-text', 'panel-webgl', 'panel-gpu_fx', 'panel-analog'].forEach(id => {
             const el = this.safeGet(id); if (el) el.innerHTML = '';
             const cat = id.replace('panel-', '');
-            const chk = this.safeGet(`toggle_${cat}`);
-            if (chk) chk.checked = this.engine.active.settings[cat + 'Enabled'] !== false;
+            // Check for various possible checkbox IDs
+            const chk = this.safeGet(`toggle_${cat}`) || this.safeGet(`${cat}Enabled`);
+            if (chk) chk.checked = activePreset.settings[cat + 'Enabled'] !== false;
         });
 
-        const params = this.engine.active.params;
+        const params = activePreset.params;
         const sortedKeys = Object.keys(params).sort((a, b) => {
             const pA = params[a], pB = params[b];
             const isOpaA = pA.name.toLowerCase().includes('weight') || a.toLowerCase().includes('opacity');
@@ -270,13 +295,23 @@ const UI = {
             header.appendChild(labelGroup); header.appendChild(btnTog); row.appendChild(header);
 
             // Slider UI with Readout
-            const sliderUI = document.createElement('div'); sliderUI.className = `param-ui param-slider ${param.useFormula ? 'hidden' : ''}`;
+            const sliderUI = document.createElement('div'); sliderUI.className = `param-ui param-slider`;
             const sliderFlex = document.createElement('div'); sliderFlex.style.display = 'flex'; sliderFlex.style.alignItems = 'center'; sliderFlex.style.gap = '8px';
             const inputRange = document.createElement('input'); inputRange.type = 'range'; inputRange.min = param.min; inputRange.max = param.max; inputRange.step = param.step; inputRange.value = param.value; inputRange.style.flex = "1";
             inputRange.id = `input-${key}`;
+            inputRange.disabled = param.useFormula; // Treat as a visual-only meter when formula is active
+            
+            const btnCalib = document.createElement('button');
+            btnCalib.className = `icon-btn-inline`;
+            btnCalib.style.display = param.useFormula ? 'inline-block' : 'none';
+            btnCalib.id = `btn-calib-${key}`;
+            btnCalib.textContent = param.calibrated ? 'Cb' : 'C';
+            btnCalib.title = 'Calibrate formula outputs to standard range over 5s';
+            btnCalib.onclick = () => this.triggerCalibration(param, btnCalib);
+
             const readout = document.createElement('span'); readout.className = 'param-val-readout'; readout.textContent = param.value;
             readout.id = `readout-${key}`;
-            sliderFlex.appendChild(inputRange); sliderFlex.appendChild(readout);
+            sliderFlex.appendChild(inputRange); sliderFlex.appendChild(btnCalib); sliderFlex.appendChild(readout);
             sliderUI.appendChild(sliderFlex);
 
             inputRange.oninput = (e) => {
@@ -301,8 +336,17 @@ const UI = {
 
             // Toggle Logic
             btnTog.onclick = () => {
-                param.useFormula = !param.useFormula; btnTog.classList.toggle('active');
-                sliderUI.classList.toggle('hidden'); formulaUI.classList.toggle('hidden');
+                param.useFormula = !param.useFormula;
+                btnTog.classList.toggle('active', param.useFormula);
+                formulaUI.classList.toggle('hidden', !param.useFormula);
+                inputRange.disabled = param.useFormula;
+                btnCalib.style.display = param.useFormula ? 'inline-block' : 'none';
+                
+                // When toggling off formula, restore the visual meter to the static state variable
+                if (!param.useFormula) {
+                    inputRange.value = param.value;
+                    readout.textContent = param.value;
+                }
             };
 
             row.appendChild(sliderUI); row.appendChild(formulaUI); container.appendChild(row);
@@ -311,7 +355,7 @@ const UI = {
     },
 
     bindStaticUI() {
-        const e = this.engine; const active = e.active;
+        const e = this.engine; const active = e.target || e.active;
         this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
         this.safeGet('btnAdvanced').onclick = () => this.safeGet('advancedPanel').classList.toggle('hidden');
         this.safeGet('btnCloseAdvanced').onclick = () => this.safeGet('advancedPanel').classList.add('hidden');
@@ -319,6 +363,30 @@ const UI = {
         this.safeGet('btnCloseHelp').onclick = () => this.safeGet('helpModal').classList.add('hidden');
         this.safeGet('btnMidiHelp').onclick = () => this.safeGet('midiHelpModal').classList.remove('hidden');
         this.safeGet('btnCloseMidiHelp').onclick = () => this.safeGet('midiHelpModal').classList.add('hidden');
+        
+        const btnResetTime = document.getElementById('btnResetTime');
+        if (btnResetTime) btnResetTime.onclick = () => e.timeOffset = performance.now();
+        
+        const btnCalibrateAll = document.getElementById('btnCalibrateAll');
+        if (btnCalibrateAll) {
+            btnCalibrateAll.onclick = () => {
+                if (!e.active || !e.active.params) return;
+                btnCalibrateAll.classList.add('learning');
+                btnCalibrateAll.textContent = 'CALIBRATING... (5s)';
+                Object.keys(e.active.params).forEach(k => {
+                    const p = e.active.params[k];
+                    if (p.useFormula) {
+                        const btn = document.getElementById(`btn-calib-${k}`);
+                        this.triggerCalibration(p, btn);
+                    }
+                });
+                setTimeout(() => {
+                    btnCalibrateAll.classList.remove('learning');
+                    btnCalibrateAll.innerHTML = '[ ! ] CALIBRATE ALL FORMULAS';
+                }, 5000);
+            };
+        }
+        
         this.safeGet('btnPause').onclick = (ev) => { active.settings.isPaused = !active.settings.isPaused; if (active.settings.isPaused) e.audio.ctx?.suspend(); else e.audio.ctx?.resume(); ev.target.textContent = active.settings.isPaused ? 'Resume Audio' : 'Pause Audio'; };
         this.safeGet('btnHideUI').onclick = () => {
             document.querySelectorAll('.glass-panel').forEach(p => p.classList.add('hidden'));
@@ -342,14 +410,18 @@ const UI = {
             if (ev.target === mMod) mMod.classList.add('hidden');
         };
 
-        // Slot Management
-        this.safeGet('btnNewPreset').onclick = () => { e.session.presets.push(createDefaultPreset(`Preset ${e.session.presets.length + 1}`)); this.buildSlots(); };
+        // Stage Management
+        this.safeGet('btnNewPreset').onclick = () => { e.session.presets.push(createDefaultPreset(`Stage ${e.session.presets.length + 1}`)); this.buildSlots(); };
         this.safeGet('btnDeletePreset').onclick = () => { if (e.session.presets.length <= 1) return; e.session.presets.splice(e.session.activeIndex, 1); e.session.activeIndex = 0; this.buildSlots(); this.rebuildConfigUI(); };
         this.safeGet('activePresetName').oninput = (ev) => { active.name = ev.target.value; this.buildSlots(); };
 
         // Static Settings
-        ['imgBlendMode', 'particleShape', 'textSequenceMode'].forEach(id => { const el = this.safeGet(id); if (el) { el.value = active.settings[id]; el.oninput = ev => active.settings[id] = ev.target.value; } });
+        ['imgBlendMode', 'particleShape', 'textSequenceMode', 'textFontFamily', 'textDissolveStyle', 'shaderStyle', 'webglProjection'].forEach(id => { const el = this.safeGet(id); if (el) { el.value = active.settings[id]; el.oninput = ev => active.settings[id] = ev.target.value; } });
+        const hChk = this.safeGet('horizonEnabled'); if (hChk) { hChk.checked = active.settings.horizonEnabled; hChk.onchange = ev => active.settings.horizonEnabled = ev.target.checked; }
         const txtChk = this.safeGet('textEnabled'); if (txtChk) { txtChk.checked = active.settings.textEnabled; txtChk.onchange = ev => active.settings.textEnabled = ev.target.checked; }
+        const frzChk = this.safeGet('textFreeze'); if (frzChk) { frzChk.checked = active.settings.textFreeze; frzChk.onchange = ev => active.settings.textFreeze = ev.target.checked; }
+        const gpuChk = this.safeGet('gpu_fxEnabled'); if (gpuChk) { gpuChk.checked = active.settings.gpu_fxEnabled; gpuChk.onchange = ev => active.settings.gpu_fxEnabled = ev.target.checked; }
+        const anaChk = this.safeGet('analogEnabled'); if (anaChk) { anaChk.checked = active.settings.analogEnabled; anaChk.onchange = ev => active.settings.analogEnabled = ev.target.checked; }
         [0, 1, 2, 3, 4].forEach(i => { const el = this.safeGet(`text${i}`); if (el) { el.value = active.settings.textList[i]; el.oninput = ev => active.settings.textList[i] = ev.target.value; } });
         [1, 2, 3, 4, 5, 6].forEach(i => { const el = this.safeGet(`palette${i}`); if (el) { el.value = active.settings.palette[i - 1]; el.oninput = (ev) => active.settings.palette[i - 1] = ev.target.value; } });
 
@@ -471,5 +543,21 @@ const UI = {
             const el = document.getElementById(`param-row-${this.engine.midi.selectedParam}`);
             if(el) el.classList.add('midi-selected');
         }
+    },
+
+    triggerCalibration(param, btn) {
+        if (!param.useFormula) return;
+        param.isCalibrating = true;
+        param.calibrated = false;
+        param.calibRawMin = Infinity;
+        param.calibRawMax = -Infinity;
+        if (btn) { btn.classList.add('learning'); btn.textContent = '...'; }
+
+        setTimeout(() => {
+            param.isCalibrating = false;
+            param.calibrated = true;
+            if (btn) { btn.classList.remove('learning'); btn.textContent = 'Cb'; }
+            console.log(`Calibrated ${param.name}: min=${param.calibRawMin.toFixed(2)}, max=${param.calibRawMax.toFixed(2)}`);
+        }, 5000);
     }
 };

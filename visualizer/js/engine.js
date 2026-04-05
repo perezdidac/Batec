@@ -33,6 +33,8 @@ class BatecEngine {
         this.webcamPool = [];
         this.availableWebcams = [];
         this.webcamsInitialized = false;
+        this.timeOffset = 0;
+        this.bpmTracker = new BatecBpmAnalyzer();
         this.wavePhases = [];
 
         this.lyricIdx = 0;
@@ -46,7 +48,7 @@ class BatecEngine {
         this.shader = new BatecShader();
         this.glPost = new BatecGLPostFX();
         this.dmx = new BatecDMX(this);
-        
+
         // Setup DMX Connection Button
         const dmxBtn = document.getElementById('btnDmxConnect');
         if (dmxBtn) {
@@ -81,11 +83,35 @@ class BatecEngine {
     evalP(preset, key, localContext = {}) {
         const param = preset.params[key];
         if (!param) return 0;
+
+        // Category Toggle Fix: If the master category is disabled, return 0 (killing the effect)
+        const catEnabledKey = param.cat + 'Enabled';
+        if (preset.settings[catEnabledKey] === false) return 0;
+
         const ctx = {
-            time: performance.now(), avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
+            time: performance.now() - this.timeOffset, bpm: this.bpmTracker.bpm, avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
             treble: this.smoothed.treble, trend: this.trend, x: 0, y: 0, ...localContext
         };
-        return param.useFormula ? FormulaEngine.eval(param.formula, ctx, param.value) : param.value;
+        let val = param.useFormula ? FormulaEngine.eval(param.formula, ctx, param.value) : param.value;
+
+        // Analytics & Output Normalization (Calibration Layer)
+        if (param.isCalibrating) {
+            param.calibRawMin = Math.min(param.calibRawMin === undefined ? Infinity : param.calibRawMin, val);
+            param.calibRawMax = Math.max(param.calibRawMax === undefined ? -Infinity : param.calibRawMax, val);
+        } else if (param.calibrated && param.useFormula) {
+            const cMin = param.calibRawMin;
+            const cMax = param.calibRawMax;
+            if (cMax > cMin) {
+                // Interpolate raw [cMin, cMax] into user-defined bounding boxes [param.min, param.max]
+                val = param.min + ((val - cMin) / (cMax - cMin)) * (param.max - param.min);
+            }
+        }
+
+        // Enforce solid safety guards after all filters
+        if (param.min !== undefined && val < param.min) val = param.min;
+        if (param.max !== undefined && val > param.max) val = param.max;
+
+        return val;
     }
 
     p(key, localContext = {}) {
@@ -110,6 +136,7 @@ class BatecEngine {
         this.session.transitionStart = performance.now();
         const speed = document.getElementById('sessionTransitionSpeed');
         this.session.transitionDuration = (speed ? parseFloat(speed.value) : 1) * 1000;
+        this.timeOffset = performance.now(); // Sync math arrays
     }
 
     initResize() {
@@ -133,9 +160,15 @@ class BatecEngine {
     }
 
     loadImages() {
-        const paths = ['images/olympics.jpg', 'images/seattle.jpg', 'images/snow.jpg', 'images/train.jpg'];
+        const paths = ['images/olympics.jpg', 'images/seattle.jpg', 'images/snow.jpg', 'images/train.jpg', 'images/casa.jpg'];
+        const isLocalFile = window.location.protocol === 'file:';
+
         paths.forEach((p, idx) => {
-            const img = new Image(); img.src = p;
+            const img = new Image();
+            // Critical Fix: Only set crossOrigin if on a server. Setting it on 'file://' causes a CORS block.
+            if (!isLocalFile) img.crossOrigin = "anonymous";
+
+            img.src = p;
             img.onload = () => {
                 this.imagePool.push({ img, path: p, name: p.split('/').pop().split('.')[0] });
                 UI.buildImageSelectors(); // Re-build UI when image finishes loading
@@ -147,21 +180,21 @@ class BatecEngine {
         if (this.webcamsInitialized) { if (callback) callback(); return; }
         try {
             // Request permission
-            await navigator.mediaDevices.getUserMedia({video: true});
+            await navigator.mediaDevices.getUserMedia({ video: true });
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(d => d.kind === 'videoinput');
-            
+
             for (let i = 0; i < videoDevices.length; i++) {
                 const dev = videoDevices[i];
-                this.availableWebcams.push({ id: dev.deviceId, label: dev.label || `Camera ${i+1}` });
+                this.availableWebcams.push({ id: dev.deviceId, label: dev.label || `Camera ${i + 1}` });
                 const vid = document.createElement('video');
                 vid.autoplay = true; vid.playsInline = true; vid.muted = true;
-                const stream = await navigator.mediaDevices.getUserMedia({video: {deviceId: {exact: dev.deviceId}}});
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId: { exact: dev.deviceId } } });
                 vid.srcObject = stream;
                 vid.play().catch(e => console.warn("Auto-play blocked:", e)); // Vital for non-DOM elements
                 this.webcamPool.push(vid);
             }
-            
+
             // Auto-select first camera if none assigned
             if (this.availableWebcams.length > 0) {
                 this.session.presets.forEach(p => {
@@ -177,7 +210,7 @@ class BatecEngine {
             console.error("Webcam Init Error:", err);
             // Non-blocking alert so UI flow continues
             alert("Could not access Webcams. Please run Batec via a local server (http://localhost) to enable camera permissions, and ensure a camera is connected.");
-            
+
             this.availableWebcams = [];
             this.webcamPool = [];
             this.webcamsInitialized = true; // prevent infinite loops
@@ -233,21 +266,25 @@ class BatecEngine {
         const histAvg = this.energyHistory.reduce((a, b) => a + b, 0) / this.energyHistory.length;
         this.trend += ((histAvg / 180) - this.trend) * this.p('trendRate');
         this.trend = Math.max(0, Math.min(1, this.trend));
+
+        // High-fidelity Spectral Flux Onset Detection for BPM
+        this.bpmTracker.analyze(this.audio.data, performance.now());
     }
 
     loop(time) {
         this.updateAudio();
         this.render(time);
-        
+
         // Sync hardware to visualizer engine
         if (this.dmx) this.dmx.updateFromEngine(this);
-        
+
         UI.updateTelemetry(this, time);
         requestAnimationFrame((t) => this.loop(t));
     }
 
     render(time) {
         // Track FPS
+        const localTime = time - this.timeOffset;
         this.frameCount++;
         if (time > this.fpsUpdateTime + 1000) {
             this.fps = Math.round((this.frameCount * 1000) / (time - this.fpsUpdateTime));
@@ -266,7 +303,7 @@ class BatecEngine {
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
         if (stA.webglEnabled && this.shader && this.shader.supported) {
-            this.shader.render(this, time);
+            this.shader.render(this, localTime);
             ctx.globalCompositeOperation = 'screen';
             ctx.globalAlpha = 1.0;
             ctx.drawImage(this.shader.canvas, 0, 0, window.innerWidth, window.innerHeight);
@@ -286,16 +323,17 @@ class BatecEngine {
                 indices.forEach((poolIdx, i) => {
                     const item = pool[poolIdx];
                     if (!item) return;
-                    
+
                     const mediaObj = isWebcam ? item : item.img;
                     if (!mediaObj) return;
-                    
+
                     // Webcams take a bit to spin up, prevent drawing empty states
                     if (isWebcam && mediaObj.readyState < 2) return;
 
-                    ctx.globalAlpha = (0.2 + (this.smoothed.avg / 255) * 0.6) * (1 - progress);
-                    const ox = Math.sin(time / 800 + i) * glitch * this.trend;
-                    const oy = Math.cos(time / 900 + i) * glitch * this.trend;
+                    ctx.globalAlpha = this.p('imgOpacity') * (1 - progress);
+                    
+                    const ox = glitch > 0 ? Math.sin(localTime / 1000 + i) * glitch * this.trend : 0;
+                    const oy = glitch > 0 ? Math.cos(localTime / 1200 + i) * glitch * this.trend : 0;
                     // ctx.filter = `hue-rotate(${i * 60 + this.trend * 360}deg) blur(${this.p('imgBlur')}px) saturate(${this.p('imgSaturate')}%) contrast(${this.p('photoContrast')}%)`;
                     ctx.globalCompositeOperation = stA.imgBlendMode;
                     const w = window.innerWidth * scale, h = window.innerHeight * scale;
@@ -305,26 +343,34 @@ class BatecEngine {
             }
         }
 
-        if (stA.wavesEnabled !== false) renderWaves(this, ctx, time);
-        if (stA.raysEnabled !== false) renderRays(this, ctx, time);
-        if (stA.particlesEnabled !== false) this.renderParticles(ctx, time);
-        if (stA.textEnabled !== false) renderLyrics(this, ctx, time, progress);
+        if (stA.wavesEnabled !== false) renderWaves(this, ctx, localTime);
+        if (stA.raysEnabled !== false) renderRays(this, ctx, localTime);
+        if (stA.particlesEnabled !== false) this.renderParticles(ctx, localTime);
+        if (stA.textEnabled !== false) renderLyrics(this, ctx, localTime, progress);
 
         let finalSource = this.bufferCanvas;
-        
-        // 1. GPU Post-FX (Smear / Aberration / Kaleido)
-        if (stA.gpu_fxEnabled && this.glPost && this.glPost.supported) {
+
+        // 1. GPU Post-FX (Smear / Aberration / Kaleido / Analog Optics)
+        if (this.glPost && this.glPost.supported) {
             const aberration = this.p('gpuAberration');
             const smear = this.p('gpuSmearRatio');
             const kaleido = this.p('gpuKaleidoSegments');
-            
+            const grain = this.p('analogNoise');
+            const vignette = this.p('analogVignette');
+            const dof = this.p('opticsFocusPull');
+            const bleed = this.p('analogInkBleed');
+            const scan = this.p('analogScanlines');
+
             // Optimization: Skip expensive FBO pass if all GPU values are disabled
-            if (aberration > 0 || smear > 0 || kaleido > 0) {
-                this.glPost.render(this, this.bufferCanvas, time);
+            const active = (stA.gpu_fxEnabled && (aberration > 0 || smear > 0 || kaleido > 0)) ||
+                (stA.analogEnabled && (grain > 0 || vignette > 0 || dof > 0 || bleed > 0 || scan > 0));
+
+            if (active) {
+                this.glPost.render(this, this.bufferCanvas, localTime);
                 finalSource = this.glPost.canvas; // Chain the GPU output
             }
         }
-        
+
         // 2. CPU Analog Post-FX & Screen Transfer
         applyAnalogPostFX(this, finalSource);
 

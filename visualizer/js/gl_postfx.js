@@ -94,6 +94,39 @@ class BatecGLPostFX {
             uniform float u_meltSpeed;    // Advection vector
             uniform float u_kaleidoSegments;
             uniform float u_kaleidoRot;
+            
+            // ANALOG OPTICS
+            uniform float u_grain;
+            uniform float u_vignette;
+            uniform float u_blurRadius;
+            uniform float u_inkBleed;
+            uniform float u_scanlines;
+            uniform float u_paperGrain;
+            uniform float u_stainIntensity;
+
+            // --- PROCEDURAL TEXTURE GENERATORS ---
+            float hash(vec2 p) {
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+            }
+
+            float noise(vec2 p) {
+                vec2 i = floor(p);
+                vec2 f = fract(p);
+                vec2 u = f * f * (3.0 - 2.0 * f);
+                return mix(mix(hash(i + vec2(0.0, 0.0)), hash(i + vec2(1.0, 0.0)), u.x),
+                           mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+            }
+
+            float fbm(vec2 p) {
+                float v = 0.0;
+                float a = 0.5;
+                for (int i = 0; i < 3; i++) {
+                    v += a * noise(p);
+                    p *= 2.0;
+                    a *= 0.5;
+                }
+                return v;
+            }
 
             void main() {
                 vec2 activeUV = v_uv;
@@ -117,30 +150,90 @@ class BatecGLPostFX {
                 float noise = sin(activeUV.y * 10.0 + u_time * 2.0) * cos(activeUV.x * 12.0 - u_time);
                 vec2 advectionOffset = vec2(noise * u_meltSpeed * 0.5, u_meltSpeed);
                 
-                // Read smeared prev frame
-                vec4 prevColor = texture2D(u_prevTex, activeUV - advectionOffset);
+                // --- WATERCOLOR INK BLEED FEEDBACK ---
+                vec4 prevColor = vec4(0.0);
+                if (u_inkBleed > 0.0) {
+                    vec4 centerPrev = texture2D(u_prevTex, activeUV - advectionOffset);
+                    // Improved Bleed: Use a base spread + luminance to ensure it works on mid-tones
+                    float lum = length(centerPrev.rgb) + 0.1; 
+                    
+                    // Radial bloom direction
+                    vec2 dirOut = normalize(activeUV - 0.5 + 0.0001); 
+                    vec2 inkDist = dirOut * (u_inkBleed * lum * 0.006);
+                    
+                    // 4-Tap Gaussian Capillary Bleed
+                    prevColor += texture2D(u_prevTex, activeUV - advectionOffset - inkDist * 2.0) * 0.2;
+                    prevColor += texture2D(u_prevTex, activeUV - advectionOffset - inkDist) * 0.3;
+                    prevColor += centerPrev * 0.3;
+                    prevColor += texture2D(u_prevTex, activeUV - advectionOffset + inkDist * 1.5) * 0.2;
+                } else {
+                    prevColor = texture2D(u_prevTex, activeUV - advectionOffset);
+                }
+                
                 // Slowly fade out over time if smearRatio < 1
                 prevColor *= u_smearRatio;
                 
-                // 2. CHROMATIC ABERRATION (Current Frame)
-                // Lens distorts outward from the center (0.5, 0.5)
+                // 2. DEPTH OF FIELD & CHROMATIC ABERRATION (Current Frame)
                 vec2 centerDist = activeUV - 0.5;
-                float distMag = length(centerDist);
+                vec3 finalColor = vec3(0.0);
+                float blurSamples = 0.0;
+                float rad = u_blurRadius / 1500.0; // Scaled resolution factor
                 
-                // Scale factor for separating RGB
-                float rScale = 1.0 + (u_aberration * distMag);
-                float bScale = 1.0 - (u_aberration * distMag);
+                // Fast 9-Tap Multi-Channel Bokeh
+                for(float x = -1.0; x <= 1.0; x += 1.0) {
+                    for(float y = -1.0; y <= 1.0; y += 1.0) {
+                        vec2 offsetUV = centerDist + vec2(x, y) * rad;
+                        float distMag = length(offsetUV);
+                        
+                        // Lens splits outwards radially
+                        float rS = 1.0 + (u_aberration * distMag);
+                        float bS = 1.0 - (u_aberration * distMag);
+                        
+                        float r = texture2D(u_mainTex, 0.5 + offsetUV * rS).r;
+                        float g = texture2D(u_mainTex, 0.5 + offsetUV).g;
+                        float b = texture2D(u_mainTex, 0.5 + offsetUV * bS).b;
+                        
+                        finalColor += vec3(r, g, b);
+                        blurSamples += 1.0;
+                    }
+                }
+                finalColor /= blurSamples;
                 
-                vec2 rUV = 0.5 + centerDist * rScale;
-                vec2 gUV = activeUV; // Green stays put
-                vec2 bUV = 0.5 + centerDist * bScale;
+                // 3. ANALOG FILM GRAIN
+                // Generate a pseudo-random hash using UV coordinates and the chronological chronological offset
+                float filmNoise = fract(sin(dot(activeUV, vec2(12.9898, 78.233)) + u_time*10.0) * 43758.5453);
+                finalColor += (filmNoise - 0.5) * u_grain;
+                
+                // 4. VINTAGE LENS VIGNETTE
+                float vignetteLens = length(centerDist); 
+                float vigSoftness = smoothstep(0.4, 1.2, vignetteLens); // Roll-off darkness towards the absolute edges
+                finalColor = mix(finalColor, vec3(0.0), vigSoftness * u_vignette);
 
-                float r = texture2D(u_mainTex, rUV).r;
-                float g = texture2D(u_mainTex, gUV).g;
-                float b = texture2D(u_mainTex, bUV).b;
-                vec4 newColor = vec4(r, g, b, texture2D(u_mainTex, gUV).a); // Use G's alpha
+                // 5. CRT SCANLINES (Hardware Emulation)
+                if (u_scanlines > 0.0) {
+                    float sCount = 800.0; // Simulated vertical resolution
+                    float line = sin(v_uv.y * sCount);
+                    if (line < 0.0) finalColor *= (1.0 - u_scanlines);
+                }
+
+                // 6. PROCEDURAL PAPER FIBERS
+                if (u_paperGrain > 0.0) {
+                    float n = fbm(activeUV * 400.0);
+                    float fiber = smoothstep(0.4, 0.6, n);
+                    finalColor *= (1.0 - (1.0 - fiber) * u_paperGrain * 0.5);
+                    finalColor += (n - 0.5) * u_paperGrain * 0.1;
+                }
+
+                // 7. ORGANIC INK STAINS
+                if (u_stainIntensity > 0.0) {
+                    float stain = fbm(activeUV * 3.0 + u_time * 0.05);
+                    stain = smoothstep(0.6, 1.0, stain);
+                    finalColor = mix(finalColor, finalColor * 0.8, stain * u_stainIntensity);
+                }
+
+                vec4 newColor = vec4(finalColor, texture2D(u_mainTex, activeUV).a);
                 
-                // 3. COMPOSITE
+                // 8. POST-COMPOSITE SMEAR
                 // We use Additive composite max(a,b) to keep bright trails bright like light painting
                 gl_FragColor = max(newColor, prevColor);
             }
@@ -157,7 +250,14 @@ class BatecGLPostFX {
             smearRatio: this.gl.getUniformLocation(this.program, 'u_smearRatio'),
             meltSpeed: this.gl.getUniformLocation(this.program, 'u_meltSpeed'),
             kaleidoSegments: this.gl.getUniformLocation(this.program, 'u_kaleidoSegments'),
-            kaleidoRot: this.gl.getUniformLocation(this.program, 'u_kaleidoRot')
+            kaleidoRot: this.gl.getUniformLocation(this.program, 'u_kaleidoRot'),
+            grain: this.gl.getUniformLocation(this.program, 'u_grain'),
+            vignette: this.gl.getUniformLocation(this.program, 'u_vignette'),
+            blurRadius: this.gl.getUniformLocation(this.program, 'u_blurRadius'),
+            inkBleed: this.gl.getUniformLocation(this.program, 'u_inkBleed'),
+            scanlines: this.gl.getUniformLocation(this.program, 'u_scanlines'),
+            paperGrain: this.gl.getUniformLocation(this.program, 'u_paperGrain'),
+            stainIntensity: this.gl.getUniformLocation(this.program, 'u_stainIntensity')
         };
     }
 
@@ -199,7 +299,15 @@ class BatecGLPostFX {
         // Upload Source Canvas to Texture 0
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, this.mainTex);
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+        try {
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
+        } catch(e) {
+            if (e.name === 'SecurityError') {
+                console.warn("WebGL PostFX disabled due to SecurityError (Tainted Canvas from local file execution).");
+                this.supported = false; // Disable postFX for the session
+                return;
+            } else throw e;
+        }
         gl.uniform1i(this.uniforms.mainTex, 0);
 
         // Determine Ping/Pong reads & writes
@@ -219,6 +327,13 @@ class BatecGLPostFX {
         gl.uniform1f(this.uniforms.meltSpeed, engine.p('gpuMeltSpeed'));
         gl.uniform1f(this.uniforms.kaleidoSegments, engine.p('gpuKaleidoSegments'));
         gl.uniform1f(this.uniforms.kaleidoRot, engine.p('gpuKaleidoRot'));
+        gl.uniform1f(this.uniforms.grain, engine.p('analogNoise'));
+        gl.uniform1f(this.uniforms.vignette, engine.p('analogVignette'));
+        gl.uniform1f(this.uniforms.blurRadius, engine.p('opticsFocusPull'));
+        gl.uniform1f(this.uniforms.inkBleed, engine.p('analogInkBleed'));
+        gl.uniform1f(this.uniforms.scanlines, engine.p('analogScanlines'));
+        gl.uniform1f(this.uniforms.paperGrain, engine.p('analogPaperGrain'));
+        gl.uniform1f(this.uniforms.stainIntensity, engine.p('analogStainIntensity'));
 
         // STEP 1: Draw FBO Ping/Pong Logic (Write smeared output to memory)
         gl.bindFramebuffer(gl.FRAMEBUFFER, writeFBO);

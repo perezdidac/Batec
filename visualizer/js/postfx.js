@@ -19,37 +19,8 @@ function applyAnalogPostFX(engine, sourceCanvas) {
         finalCtx.globalAlpha = 1;
     }
 
-    // Film Grain: Using optimized pattern-fill
-    const noiseAmt = engine.p('analogNoise');
-    if (noiseAmt > 0) {
-        if (!engine._noisePattern) {
-            const imgData = engine.noiseCtx.createImageData(256, 256);
-            for(let i=0; i<imgData.data.length; i+=4) {
-                const val = Math.random() * 255;
-                imgData.data[i] = val; imgData.data[i+1] = val; imgData.data[i+2] = val;
-                imgData.data[i+3] = 255; // Fully opaque alpha for the pattern
-            }
-            engine.noiseCtx.putImageData(imgData, 0, 0);
-            engine._noisePattern = finalCtx.createPattern(engine.noiseCanvas, 'repeat');
-        }
-        finalCtx.save();
-        finalCtx.globalCompositeOperation = 'overlay';
-        finalCtx.globalAlpha = noiseAmt;
-        finalCtx.fillStyle = engine._noisePattern;
-        finalCtx.translate(Math.random() * 10, Math.random() * 10); // Jitter grain pos
-        finalCtx.fillRect(0, 0, w, h);
-        finalCtx.restore();
-    }
-
-    // CRT Scanlines
-    const scanlines = engine.p('analogScanlines');
-    if (scanlines > 0) {
-        finalCtx.globalCompositeOperation = 'source-over';
-        finalCtx.fillStyle = `rgba(0,0,0, ${scanlines})`;
-        for (let y = 0; y < h; y += 4) {
-            finalCtx.fillRect(0, y, w, 1.5);
-        }
-    }
+    // Film Grain & Vignette are now processed universally in gl_postfx.js (Hardware GPU level)
+    // CPU fallback deleted for performance.
 
     // Mediterranean Glow (Warmth)
     const warmth = engine.p('analogWarmth');
@@ -89,15 +60,4 @@ function applyAnalogPostFX(engine, sourceCanvas) {
         finalCtx.fillRect(0, 0, w, h);
     }
 
-    // Vignette
-    const vignette = engine.p('analogVignette');
-    if (vignette > 0) {
-        finalCtx.globalCompositeOperation = 'source-over';
-        const radius = Math.max(w, h) * 0.75;
-        const gradV = finalCtx.createRadialGradient(w / 2, h / 2, radius * 0.4, w / 2, h / 2, radius);
-        gradV.addColorStop(0, 'rgba(0,0,0,0)');
-        gradV.addColorStop(1, `rgba(0,0,0,${vignette})`);
-        finalCtx.fillStyle = gradV;
-        finalCtx.fillRect(0, 0, w, h);
-    }
 }

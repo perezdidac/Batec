@@ -76,13 +76,13 @@ class BatecDMX {
     async transmitLoop() {
         while (this.connected && this.port && this.writer) {
             try {
-                // 1. BREAK: Pull DMX line low
+                // 1. BREAK: Pull DMX line low (Min 92us, 1ms is safe for browsers)
                 await this.port.setSignals({ break: true });
-                await this.sleep(1); // Hold break (min 88us, JS timeouts are ~1-4ms)
+                await this.sleep(1); 
                 
-                // 2. MAB: Mark After Break (DMX line high)
+                // 2. MAB: Mark After Break (DMX line high, Min 12us)
+                // We remove the sleep(1) here as the 'await' call itself provides enough micro-delay
                 await this.port.setSignals({ break: false });
-                await this.sleep(1); // Min 8us
                 
                 // 3. FLUSH: Send the 513 bytes of payload data immediately
                 await this.writer.write(this.universe);
@@ -105,26 +105,21 @@ class BatecDMX {
     updateFromEngine(engine) {
         if (!this.connected) return;
 
-        const m1 = document.getElementById('dmxCh1');
-        const m2 = document.getElementById('dmxCh2');
-        const m3 = document.getElementById('dmxCh3');
-        const m4 = document.getElementById('dmxCh4');
-        
-        // HARDCODED VJ LOGIC: 
-        // We tie the physical drum bass to Channel 1 (often Red or Dimmer).
-        // Multiplying by 2.0 ensures we hit Max brightness on heavy hits before fading.
+        // Auto-reactive Sync: Channel 1 pulses to live music bass
         const autoBass = Math.min(255, engine.smoothed.bass * 2.5); 
         
-        // Read manual sliders
-        const manual1 = m1 ? parseInt(m1.value) : 0;
-        const manual2 = m2 ? parseInt(m2.value) : 0;
-        const manual3 = m3 ? parseInt(m3.value) : 0;
-        const manual4 = m4 ? parseInt(m4.value) : 0;
-
-        // Channel 1 receives whichever is stronger: The slider floor, or the music kick!
-        this.setChannel(1, Math.max(manual1, autoBass)); 
-        this.setChannel(2, manual2);
-        this.setChannel(3, manual3);
-        this.setChannel(4, manual4); 
+        for (let i = 1; i <= 14; i++) {
+            const el = document.getElementById(`dmxCh${i}`);
+            if (!el) continue;
+            
+            let val = parseInt(el.value) || 0;
+            
+            // Special Logic: CH 1 uses whichever is higher (Slider vs Bass Kick)
+            if (i === 1) {
+                val = Math.max(val, autoBass);
+            }
+            
+            this.setChannel(i, val);
+        }
     }
 }

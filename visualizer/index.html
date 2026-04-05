@@ -8,7 +8,7 @@
     <meta name="description"
         content="Professional stage projection engine with multi-preset sessions and lyric sequencer.">
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;700&family=Homemade+Apple&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -39,15 +39,15 @@
             <!-- Session / Preset Bar (NEW) -->
             <div class="session-bar-container">
                 <div class="session-header">
-                    <span class="param-label">Active Session Slots</span>
-                    <button id="btnNewPreset" class="icon-btn-minimal" title="New Slot">+</button>
+                    <span class="param-label">Project Stages</span>
+                    <button id="btnNewPreset" class="icon-btn-minimal" title="New Stage">+</button>
                 </div>
                 <div id="presetSlots" class="preset-slots-grid">
                     <!-- Generated via JS: [1] [2] [3] ... [0] -->
                 </div>
                 <div class="active-preset-meta">
-                    <input type="text" id="activePresetName" value="Default Preset" class="text-input-minimal">
-                    <button id="btnDeletePreset" class="icon-btn-minimal danger" title="Delete Slot">&times;</button>
+                    <input type="text" id="activePresetName" value="Default Stage" class="text-input-minimal">
+                    <button id="btnDeletePreset" class="icon-btn-minimal danger" title="Delete Stage">&times;</button>
                 </div>
             </div>
 
@@ -148,6 +148,9 @@
                             <option value="square">Abstract Square</option>
                             <option value="triangle">Geometric Delta</option>
                             <option value="star">Celestial Star</option>
+                            <option value="petal">Organic Petal</option>
+                            <option value="leaf">Sharp Leaf</option>
+                            <option value="pollen">Dust Pollen</option>
                         </select>
                     </div>
                     <div id="panel-particles" class="control-grid"></div>
@@ -156,10 +159,14 @@
                 <!-- NEW: LYRIC ENGINE SECTION -->
                 <div class="config-section" data-cat="text">
                     <h4>Lyric Engine (Text Sequencer)</h4>
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="control-group" style="margin-bottom: 12px; display: flex; gap: 10px;">
+                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
                             Enable Branding
                             <input type="checkbox" id="textEnabled" checked style="width:auto; margin:0;">
+                        </label>
+                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                            Freeze Sequence
+                            <input type="checkbox" id="textFreeze" style="width:auto; margin:0;">
                         </label>
                     </div>
 
@@ -182,24 +189,70 @@
                         </select>
                     </div>
 
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Typography Style</label>
+                        <select id="textFontFamily">
+                            <option value="'Lora', serif">Lora (Serif)</option>
+                            <option value="'Inter', sans-serif">Inter (Modern)</option>
+                            <option value="'Courier New', monospace">Typewriter</option>
+                            <option value="'Homemade Apple', cursive">Handwritten</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Dissolve Animation</label>
+                        <select id="textDissolveStyle">
+                            <option value="fade">Classic Fade</option>
+                            <option value="ink">Ink Resolve</option>
+                        </select>
+                    </div>
+
                     <div id="panel-text" class="control-grid"></div>
                 </div>
 
                 <!-- WebGL Cyberpunk Layer -->
                 <div class="config-section" data-cat="webgl">
                     <h4>Cybergrid (GPU)</h4>
+                    <div class="control-group" style="margin-bottom: 12px; display: flex; gap: 15px; flex-wrap: wrap;">
+                        <div>
+                            <label>Shader Style</label>
+                            <select id="shaderStyle" style="width: auto;">
+                                <option value="grid">Retro Grid</option>
+                                <option value="panot">Panot Tile</option>
+                                <option value="mosaic">Gaudí Mosaic</option>
+                                <option value="cells">Organic Cells</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Projection</label>
+                            <select id="webglProjection" style="width: auto;">
+                                <option value="3d">3D Tilted</option>
+                                <option value="2d">2D Top-Down</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Montserrat Horizon</label>
+                            <input type="checkbox" id="horizonEnabled" style="width: auto;">
+                        </div>
+                    </div>
                     <div id="panel-webgl" class="control-grid"></div>
                 </div>
 
                 <!-- GPU Post Processing Layer -->
                 <div class="config-section" data-cat="gpu_fx">
-                    <h4>Screen Melt (GPU FX)</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4>Screen Melt (GPU FX)</h4>
+                        <input type="checkbox" id="gpu_fxEnabled" style="width:auto; margin:0;">
+                    </div>
                     <div id="panel-gpu_fx" class="control-grid"></div>
                 </div>
 
                 <!-- Analog Degradation (Post Processing) -->
                 <div class="config-section" data-cat="analog">
-                    <h4>Analog Signals (Post-Fx)</h4>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4>Analog Signals (Post-Fx)</h4>
+                        <input type="checkbox" id="analogEnabled" style="width:auto; margin:0;">
+                    </div>
                     <div id="panel-analog" class="control-grid"></div>
                 </div>
 
@@ -216,17 +269,17 @@
                     </div>
                 </div>
 
-                <!-- Session Styling (Project Export) -->
+                <!-- Project Manager -->
                 <div class="config-section style-management">
-                    <h4>Session Manager (Full Project)</h4>
+                    <h4>Project Manager</h4>
                     <div class="control-actions">
-                        <button id="btnCopySession" class="secondary-btn">Export Session</button>
-                        <button id="btnImportSession" class="secondary-btn">Import Session</button>
+                        <button id="btnCopySession" class="secondary-btn">Save Project</button>
+                        <button id="btnImportSession" class="secondary-btn">Load Project</button>
                     </div>
                     <button id="btnResetAll" class="secondary-btn"
                         title="Reset all params to the loaded JSON configuration"
-                        style="width: 100%; margin-top: 8px;">Revert to Loaded JSON Project</button>
-                    <textarea id="styleIO" placeholder="Paste Full Session JSON..."></textarea>
+                        style="width: 100%; margin-top: 8px;">Revert to Loaded JSON</button>
+                    <textarea id="styleIO" placeholder="Paste Full Project JSON..."></textarea>
                 </div>
             </div>
         </div>
@@ -240,9 +293,9 @@
         </div>
         <div class="panel-content">
             <div class="help-section">
-                <h4>Switching Presets (Hotkeys)</h4>
-                <p>Press <code>1, 2, 3... 0</code> to instantly toggle between Session Slots. The engine will
-                    interpolate the transition smoothly.</p>
+                <h4>Switching Stages (Hotkeys)</h4>
+                <p>Press <code>1, 2, 3... 0</code> to instantly toggle between Project Stages. The engine will
+                    interpolate the transition smoothly and reset the physics timeline to synchronise the geometry.</p>
             </div>
             <div class="help-section">
                 <h4>Dual-State Parameters (Fx)</h4>
@@ -300,6 +353,13 @@
             <div class="meter-row" style="justify-content: space-between;"><span class="meter-label"
                     style="color:var(--accent-glow);">fps</span><span id="txt-fps"
                     style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
+            <div class="meter-row" style="justify-content: space-between; margin-top: 4px;"><span class="meter-label"
+                    style="color:var(--accent-glow);">bpm</span><span id="txt-bpm"
+                    style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">120</span></div>
+            
+            <button id="btnResetTime" class="secondary-btn" style="width:100%; font-size:0.6rem; padding: 4px; margin-top: 8px;">SYNC / RESET PHYSICS TIME</button>
+            <button id="btnCalibrateAll" class="secondary-btn" style="width:100%; font-size:0.6rem; padding: 4px; margin-top: 4px; color: #fff;">[ ! ] CALIBRATE ALL FORMULAS</button>
+
             <div id="midiIndicatorContainer"
                 style="display:flex; align-items:center; justify-content:flex-end; gap:8px; margin-top:4px;">
                 <div id="midiIndicator" style="font-size:0.6rem; color:var(--accent-glow); text-align:right;">MIDI:
@@ -313,7 +373,7 @@
                 <span style="font-size: 0.6rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">AVAILABLE
                     [Fx] VARIABLES:</span>
                 <span style="font-size: 0.55rem; color: #fff; font-family: monospace; display: block;">bass, mid, treble,
-                    avg, trend, time</span>
+                    avg, trend, time, bpm</span>
             </div>
         </div>
 
@@ -326,8 +386,8 @@
             
             <div id="dmxStatus" style="font-size: 0.6rem; color: var(--text-secondary); font-family: monospace; text-align: right;">STATUS: DISCONNECTED</div>
             
-            <div class="control-grid" style="gap: 4px; margin-top: 4px;">
-                <!-- RGB+Master Testing faders -->
+            <div class="control-grid" style="gap: 4px; margin-top: 4px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
+                <!-- 14-Channel Hardware Control faders -->
                 <div class="meter-row" style="margin-bottom: 2px;">
                     <span class="meter-label" style="width: 35px; color:#ff4444;">CH 1</span>
                     <input type="range" id="dmxCh1" min="0" max="255" value="0" style="flex: 1; height: 10px;">
@@ -341,12 +401,52 @@
                     <input type="range" id="dmxCh3" min="0" max="255" value="0" style="flex: 1; height: 10px;">
                 </div>
                 <div class="meter-row" style="margin-bottom: 2px;">
-                    <span class="meter-label" style="width: 35px; color:#fff;">MASTER</span>
-                    <input type="range" id="dmxCh4" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                    <span class="meter-label" style="width: 35px; color:#fff;">DIMMER</span>
+                    <input type="range" id="dmxCh4" min="0" max="255" value="255" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 5</span>
+                    <input type="range" id="dmxCh5" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 6</span>
+                    <input type="range" id="dmxCh6" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 7</span>
+                    <input type="range" id="dmxCh7" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 8</span>
+                    <input type="range" id="dmxCh8" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 9</span>
+                    <input type="range" id="dmxCh9" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 10</span>
+                    <input type="range" id="dmxCh10" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 11</span>
+                    <input type="range" id="dmxCh11" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 12</span>
+                    <input type="range" id="dmxCh12" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 13</span>
+                    <input type="range" id="dmxCh13" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                </div>
+                <div class="meter-row" style="margin-bottom: 2px;">
+                    <span class="meter-label" style="width: 35px; color:#888;">CH 14</span>
+                    <input type="range" id="dmxCh14" min="0" max="255" value="0" style="flex: 1; height: 10px;">
                 </div>
             </div>
             <div style="margin-top: 6px; font-size: 0.55rem; color: var(--text-secondary); line-height:1.3;">
-                <b>Live Mode:</b> When the USB is connected, CH 1 automatically pulses to the live music bass. Slide Fader 1 to immediately override the music.
+                <b>Live Mode:</b> CH 1 pulses to music. <b style="color:#fff;">IMPORTANT:</b> Most fixtures won't light up unless the <b>DIMMER</b> (CH 4) is all the way up!
             </div>
         </div>
     </div>
@@ -407,6 +507,7 @@
     <script src="js/gl_postfx.js"></script>
     <script src="js/midi.js"></script>
     <script src="js/dmx.js"></script>
+    <script src="js/bpm.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/ui.js"></script>
     <script src="main.js"></script>
