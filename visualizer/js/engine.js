@@ -332,8 +332,8 @@ class BatecEngine {
 
                     ctx.globalAlpha = this.p('imgOpacity') * (1 - progress);
                     
-                    const ox = glitch > 0 ? Math.sin(localTime / 1000 + i) * glitch * this.trend : 0;
-                    const oy = glitch > 0 ? Math.cos(localTime / 1200 + i) * glitch * this.trend : 0;
+                    const ox = glitch > 0 ? Math.sin(localTime / 1000 + i) * glitch : 0;
+                    const oy = glitch > 0 ? Math.cos(localTime / 1200 + i) * glitch : 0;
                     // ctx.filter = `hue-rotate(${i * 60 + this.trend * 360}deg) blur(${this.p('imgBlur')}px) saturate(${this.p('imgSaturate')}%) contrast(${this.p('photoContrast')}%)`;
                     ctx.globalCompositeOperation = stA.imgBlendMode;
                     const w = window.innerWidth * scale, h = window.innerHeight * scale;

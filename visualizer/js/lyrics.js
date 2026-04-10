@@ -17,6 +17,12 @@ function renderLyrics(engine, ctx, time, sessionProgress) {
 
     const elapsed = time - engine.lyricLastSwap;
     const typeSpeed = engine.p('textTypeSpeed');
+    
+    // Safety check if validTexts shrank during a preset switch
+    if (engine.lyricIdx >= validTexts.length) {
+        engine.lyricIdx = 0;
+    }
+    
     const fullText = validTexts[engine.lyricIdx].toUpperCase();
     const isInk = preset.settings.textDissolveStyle === 'ink';
     const isFrozen = preset.settings.textFreeze && validTexts.length === 1;
@@ -49,7 +55,7 @@ function renderLyrics(engine, ctx, time, sessionProgress) {
     const breezeY = Math.cos(time / 3000) * 20 * breezeAmt;
     
     const driftX = (elapsed / 1000) * engine.p('textJitterX') + breezeX;
-    const driftY = (elapsed / 1000) * -20 + breezeY; // Subtle constant rise + breeze
+    const driftY = (elapsed / 1000) * engine.p('textJitterY') + breezeY;
     
     ctx.translate(window.innerWidth / 2 + driftX, window.innerHeight / 2 + driftY);
     ctx.rotate(engine.p('textRotation'));
