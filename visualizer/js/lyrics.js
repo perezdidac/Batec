@@ -67,8 +67,20 @@ function renderLyrics(engine, ctx, time, sessionProgress) {
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.filter = `blur(${engine.p('textBlur')}px)`;
     const cA = preset.settings.palette[0], cB = engine.target ? engine.target.settings.palette[0] : cA;
-    ctx.fillStyle = ColorUtils.lerpColor(cA, cB, sessionProgress);
+    const finalColor = ColorUtils.lerpColor(cA, cB, sessionProgress);
+    ctx.fillStyle = finalColor;
+    
+    // TEXT GLOW (Emotional Aura)
+    const glow = engine.p('textGlow');
+    if (glow > 0) {
+        ctx.shadowColor = finalColor;
+        ctx.shadowBlur = glow;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+    }
     
     ctx.fillText(displayText + cursor, 0, 0);
+    
+    if (glow > 0) ctx.shadowBlur = 0; // Reset for performance
     ctx.restore();
 }

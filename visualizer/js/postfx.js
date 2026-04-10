@@ -4,7 +4,11 @@ function applyAnalogPostFX(engine, sourceCanvas) {
     const stA = engine.active.settings;
     const src = sourceCanvas || engine.bufferCanvas;
 
+    // Clear the destination canvas to black, preventing alpha ghosting artifacts with Overlay blend modes
     finalCtx.globalCompositeOperation = 'source-over';
+    finalCtx.fillStyle = 'black';
+    finalCtx.fillRect(0, 0, w, h);
+    
     finalCtx.drawImage(src, 0, 0, w, h);
 
     if (stA.analogEnabled === false) return; // SKIP POST-FX ONLY, KEEP RENDER
@@ -60,4 +64,13 @@ function applyAnalogPostFX(engine, sourceCanvas) {
         finalCtx.fillRect(0, 0, w, h);
     }
 
+    // AUDIO REACTIVE LIGHTNING FLASH (STORM EFFECT)
+    const flash = engine.p('analogFlash');
+    if (flash > 0.05) { // Needs to bypass small noise
+        finalCtx.globalCompositeOperation = 'screen';
+        finalCtx.globalAlpha = Math.min(1, flash);
+        finalCtx.fillStyle = '#e0f7fa'; // Blinding blue-white flash
+        finalCtx.fillRect(0, 0, w, h);
+        finalCtx.globalAlpha = 1;
+    }
 }

@@ -54,8 +54,11 @@ function createDefaultParams() {
         textTypeSpeed: { cat: 'text', name: 'Typewriter Speed', min: 10, max: 200, step: 5, value: 60, formula: '60', useFormula: false, desc: 'Milliseconds delay between characters for the nostalgic typewriter effect.' },
         textEnvironmentDrift: { cat: 'text', name: 'Atmospheric Breeze', min: 0, max: 1, step: 0.01, value: 0.2, formula: '0.2 + trend', useFormula: true, desc: 'How much the text sways in the collective rhythmic drift.' },
         textInkResolve: { cat: 'text', name: 'Ink Resolve Speed', min: 0, max: 1, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'How quickly the text "soaks" into existence during its resolve animation.' },
+        textGlow: { cat: 'text', name: 'Text Aura [px]', min: 0, max: 200, step: 1, value: 0, formula: '(bass/255)*20', useFormula: true, desc: 'Adds an atmospheric glowing drop-shadow behind text.' },
         
         // ANALOG POST-PROCESSING
+        analogFlash: { cat: 'analog', name: 'Lightning Flash', min: 0, max: 1, step: 0.05, value: 0, formula: '(bass/255 > 0.8) ? (bass/255) : 0', useFormula: true, desc: 'Sudden blinding screen flashes triggered by intense audio peaks.' },
+        analogScratches: { cat: 'analog', name: 'Film Scratches', min: 0, max: 1, step: 0.01, value: 0, formula: '0.2', useFormula: false, desc: 'Vertical erratic lines mimicking old damaged film stock.' },
         analogDrift: { cat: 'analog', name: 'RGB Ghosting [px]', min: 0, max: 200, step: 1, value: 5, formula: 'trend > 0.8 ? 50 : 5', useFormula: true, desc: 'Offsets Color Channels for a nostalgic double-vision effect.' },
         analogScanlines: { cat: 'analog', name: 'CRT Scanlines', min: 0, max: 0.3, step: 0.01, value: 0.15, formula: '0.15', useFormula: false, desc: 'Simulates old TV hardware by drawing horizontal bars across the entire image.' },
         analogNoise: { cat: 'analog', name: 'Film Grain', min: 0, max: 1, step: 0.01, value: 0.08, formula: '0.08 + (bass/255)*0.2', useFormula: true, desc: 'Adds digital noise for a cinematic, film-like texture.' },

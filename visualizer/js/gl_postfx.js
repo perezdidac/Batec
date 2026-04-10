@@ -103,6 +103,7 @@ class BatecGLPostFX {
             uniform float u_scanlines;
             uniform float u_paperGrain;
             uniform float u_stainIntensity;
+            uniform float u_scratches;
 
             // --- PROCEDURAL TEXTURE GENERATORS ---
             float hash(vec2 p) {
@@ -147,8 +148,8 @@ class BatecGLPostFX {
                 }
 
                 // 1. FLUID NOISE (Create a swirling melt direction)
-                float noise = sin(activeUV.y * 10.0 + u_time * 2.0) * cos(activeUV.x * 12.0 - u_time);
-                vec2 advectionOffset = vec2(noise * u_meltSpeed * 0.5, u_meltSpeed);
+                float meltNoise = sin(activeUV.y * 10.0 + u_time * 2.0) * cos(activeUV.x * 12.0 - u_time);
+                vec2 advectionOffset = vec2(meltNoise * u_meltSpeed * 0.5, u_meltSpeed);
                 
                 // --- WATERCOLOR INK BLEED FEEDBACK ---
                 vec4 prevColor = vec4(0.0);
@@ -209,6 +210,16 @@ class BatecGLPostFX {
                 float vigSoftness = smoothstep(0.4, 1.2, vignetteLens); // Roll-off darkness towards the absolute edges
                 finalColor = mix(finalColor, vec3(0.0), vigSoftness * u_vignette);
 
+                // 4.5 VINTAGE FILM SCRATCHES
+                if (u_scratches > 0.0) {
+                    float scratchPos = fract(activeUV.x * 12.0 + noise(vec2(u_time * 5.0, 0.0)) * 5.0);
+                    float scratchNoise = hash(vec2(activeUV.x, floor(u_time * 15.0)));
+                    if (scratchPos > 0.99 && scratchNoise > 0.8) {
+                        float scratchBrightness = 0.5 + hash(activeUV) * 0.5;
+                        finalColor += vec3(u_scratches * scratchBrightness);
+                    }
+                }
+
                 // 5. CRT SCANLINES (Hardware Emulation)
                 if (u_scanlines > 0.0) {
                     float sCount = 800.0; // Simulated vertical resolution
@@ -257,7 +268,8 @@ class BatecGLPostFX {
             inkBleed: this.gl.getUniformLocation(this.program, 'u_inkBleed'),
             scanlines: this.gl.getUniformLocation(this.program, 'u_scanlines'),
             paperGrain: this.gl.getUniformLocation(this.program, 'u_paperGrain'),
-            stainIntensity: this.gl.getUniformLocation(this.program, 'u_stainIntensity')
+            stainIntensity: this.gl.getUniformLocation(this.program, 'u_stainIntensity'),
+            scratches: this.gl.getUniformLocation(this.program, 'u_scratches')
         };
     }
 
@@ -334,6 +346,7 @@ class BatecGLPostFX {
         gl.uniform1f(this.uniforms.scanlines, engine.p('analogScanlines'));
         gl.uniform1f(this.uniforms.paperGrain, engine.p('analogPaperGrain'));
         gl.uniform1f(this.uniforms.stainIntensity, engine.p('analogStainIntensity'));
+        gl.uniform1f(this.uniforms.scratches, engine.p('analogScratches'));
 
         // STEP 1: Draw FBO Ping/Pong Logic (Write smeared output to memory)
         gl.bindFramebuffer(gl.FRAMEBUFFER, writeFBO);
