@@ -426,7 +426,23 @@ const UI = {
         [1, 2, 3, 4, 5, 6].forEach(i => { const el = this.safeGet(`palette${i}`); if (el) { el.value = active.settings.palette[i - 1]; el.oninput = (ev) => active.settings.palette[i - 1] = ev.target.value; } });
 
         // Project Import/Export
-        this.safeGet('btnCopySession').onclick = () => { this.safeGet('styleIO').value = JSON.stringify(e.session, null, 2); };
+        this.safeGet('btnCopySession').onclick = () => {
+            const clone = JSON.parse(JSON.stringify(e.session));
+            clone.presets.forEach(p => {
+                for (const key in p.params) {
+                    const obj = p.params[key];
+                    delete obj.cat; delete obj.name; delete obj.desc;
+                    delete obj.step; delete obj.defaultVal; delete obj.defaultForm;
+                    if (!obj.calibrated) {
+                        delete obj.min; delete obj.max;
+                    }
+                    delete obj.isCalibrating;
+                    // Delete dynamically injected dom nodes
+                    delete obj.elSlider; delete obj.elReadout;
+                }
+            });
+            this.safeGet('styleIO').value = JSON.stringify(clone, null, 2); 
+        };
         this.safeGet('btnImportSession').onclick = () => {
             try {
                 const raw = JSON.parse(this.safeGet('styleIO').value);

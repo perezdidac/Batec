@@ -62,9 +62,13 @@ class BatecEngine {
         const defaults = createDefaultParams();
         const defSet = createDefaultPreset().settings;
         this.session.presets.forEach(p => {
-            // Restore missing parameters
+            // Restore missing parameters and heal static schema Definitions
             Object.keys(defaults).forEach(k => {
-                if (!p.params[k]) p.params[k] = JSON.parse(JSON.stringify(defaults[k]));
+                if (!p.params[k]) {
+                    p.params[k] = JSON.parse(JSON.stringify(defaults[k]));
+                } else {
+                    p.params[k] = { ...defaults[k], ...p.params[k] };
+                }
             });
             // Auto-heal missing settings
             Object.keys(defSet).forEach(k => {
