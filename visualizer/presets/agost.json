@@ -536,7 +536,7 @@
           "useFormula": false
         },
         "imgGlitch": {
-          "value": 0,
+          "value": 275.5905511811024,
           "formula": "bass/8",
           "useFormula": true
         },
@@ -843,28 +843,28 @@
           "#ffffff",
           "#00bcd4"
         ],
-        "particleShape": "mote",
+        "particleShape": "circle",
         "imgBlendMode": "screen",
         "imgIndices": [],
         "photoSourceMode": "photos",
         "webcamIndices": [],
         "textEnabled": true,
         "textList": [
-          "TARDOR",
           "PLUJA AL CARRER",
           "NÚVOLS GRISOS",
           "EL FRED",
+          "EL VENT",
           ""
         ],
         "textSequenceMode": "order",
-        "textFontFamily": "Lora",
+        "textFontFamily": "'Courier New', monospace",
         "textDissolveStyle": "ink",
         "physicsEnabled": true,
         "wavesEnabled": false,
         "raysEnabled": false,
         "photosEnabled": false,
         "particlesEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
@@ -1035,7 +1035,7 @@
           "useFormula": false
         },
         "textBlur": {
-          "value": 30,
+          "value": 5,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
@@ -3327,7 +3327,7 @@
           "#ffab91",
           "#795548"
         ],
-        "particleShape": "mote",
+        "particleShape": "petal",
         "imgBlendMode": "screen",
         "imgIndices": [],
         "photoSourceMode": "photos",
@@ -3744,7 +3744,7 @@
         "particleShape": "mote",
         "imgBlendMode": "screen",
         "imgIndices": [
-          4
+          3
         ],
         "photoSourceMode": "photos",
         "webcamIndices": [],
@@ -3764,14 +3764,14 @@
         "raysEnabled": false,
         "photosEnabled": true,
         "particlesEnabled": false,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "2d",
         "shaderStyle": "grid",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": false,
-        "textFreeze": false
+        "textFreeze": true
       },
       "params": {
         "sensitivity": {
@@ -4133,13 +4133,28 @@
           "value": 0.7,
           "formula": "0.2 + (avg/255)*0.8",
           "useFormula": false
+        },
+        "textGlow": {
+          "value": 0,
+          "formula": "(bass/255)*20",
+          "useFormula": true
+        },
+        "analogFlash": {
+          "value": 0,
+          "formula": "(bass/255 > 0.8) ? (bass/255) : 0",
+          "useFormula": true
+        },
+        "analogScratches": {
+          "value": 0,
+          "formula": "0.2",
+          "useFormula": false
         }
       }
     }
   ],
   "activeIndex": 9,
   "targetIndex": null,
-  "transitionStart": 58224.59999990463,
+  "transitionStart": 213274.30000019073,
   "transitionDuration": 1000,
   "midiMappings": {
     "pads": {}
