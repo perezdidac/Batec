@@ -261,7 +261,7 @@
           "useFormula": true
         },
         "analogScanlines": {
-          "value": 0.3,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
@@ -278,32 +278,32 @@
         "analogLightLeak": {
           "value": 0.4,
           "formula": "0.4 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "analogVignette": {
-          "value": 0.5,
+          "value": 0.25,
           "formula": "0.5 + (avg/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 30,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
-          "useFormula": true
+          "useFormula": false
         },
         "analogInkBleed": {
-          "value": 1,
+          "value": 0.3,
           "formula": "0.5 + (bass/255)*4.0",
-          "useFormula": true
+          "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.2,
+          "value": 0,
           "formula": "0.2 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "webglSpeed": {
           "value": 5,
@@ -406,12 +406,12 @@
           "useFormula": false
         },
         "analogFlash": {
-          "value": 0,
+          "value": 0.1,
           "formula": "0",
           "useFormula": false
         },
         "analogScratches": {
-          "value": 0.05,
+          "value": 0.1,
           "formula": "0",
           "useFormula": false
         }
@@ -672,9 +672,9 @@
           "useFormula": false
         },
         "analogDrift": {
-          "value": 5,
+          "value": 0,
           "formula": "trend > 0.8 ? 50 : 5",
-          "useFormula": true
+          "useFormula": false
         },
         "analogScanlines": {
           "value": 0.15,
@@ -682,44 +682,44 @@
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.4,
+          "value": 0,
           "formula": "0.4",
           "useFormula": false
         },
         "analogWarmth": {
-          "value": 0.4,
+          "value": 0.45,
           "formula": "0.3",
           "useFormula": false
         },
         "analogLightLeak": {
-          "value": 0.4,
+          "value": 0.85,
           "formula": "0.4 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "analogVignette": {
-          "value": 0.5,
+          "value": 0.45,
           "formula": "0.5 + (avg/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 30,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
-          "useFormula": true
+          "useFormula": false
         },
         "analogInkBleed": {
-          "value": 1,
+          "value": 1.3,
           "formula": "0.5 + (bass/255)*4.0",
-          "useFormula": true
+          "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0.13,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.4,
+          "value": 0.2,
           "formula": "0.2 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "webglSpeed": {
           "value": 5,
@@ -817,9 +817,9 @@
           "useFormula": false
         },
         "analogScratches": {
-          "value": 0.4,
+          "value": 0,
           "formula": "0.2 + (bass/255)*0.3",
-          "useFormula": true
+          "useFormula": false
         },
         "textGlow": {
           "value": 0,
@@ -1500,39 +1500,39 @@
           "useFormula": false
         },
         "analogDrift": {
-          "value": 5,
+          "value": 0,
           "formula": "trend > 0.8 ? 50 : 5",
-          "useFormula": true
+          "useFormula": false
         },
         "analogScanlines": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.08,
+          "value": 0,
           "formula": "0.08 + (bass/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "analogWarmth": {
-          "value": 0.9,
+          "value": 0,
           "formula": "0.3",
           "useFormula": false
         },
         "analogLightLeak": {
-          "value": 0.4,
+          "value": 1,
           "formula": "0.4 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "analogVignette": {
-          "value": 0.5,
+          "value": 0.15,
           "formula": "0.5 + (avg/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 30,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
-          "useFormula": true
+          "useFormula": false
         },
         "analogInkBleed": {
           "value": 1,
@@ -1540,7 +1540,7 @@
           "useFormula": true
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
@@ -1650,12 +1650,12 @@
           "useFormula": true
         },
         "analogFlash": {
-          "value": 0,
+          "value": 0.1,
           "formula": "0",
           "useFormula": false
         },
         "analogScratches": {
-          "value": 0,
+          "value": 0.29,
           "formula": "0",
           "useFormula": false
         }
@@ -1699,7 +1699,7 @@
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": true,
+        "gpu_fxEnabled": false,
         "textFreeze": false
       },
       "params": {
@@ -1924,54 +1924,54 @@
           "useFormula": false
         },
         "analogDrift": {
-          "value": 5,
+          "value": 0,
           "formula": "trend > 0.8 ? 50 : 5",
-          "useFormula": true
+          "useFormula": false
         },
         "analogScanlines": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.08,
+          "value": 0,
           "formula": "0.08 + (bass/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "analogWarmth": {
-          "value": 0.3,
+          "value": 0,
           "formula": "0.3",
           "useFormula": false
         },
         "analogLightLeak": {
-          "value": 0.4,
+          "value": 0.7,
           "formula": "0.4 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "analogVignette": {
           "value": 0.5,
           "formula": "0.5 + (avg/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 30,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
-          "useFormula": true
+          "useFormula": false
         },
         "analogInkBleed": {
-          "value": 1,
+          "value": 0,
           "formula": "0.5 + (bass/255)*4.0",
-          "useFormula": true
+          "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.2,
+          "value": 0,
           "formula": "0.2 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "webglSpeed": {
           "value": 5,
@@ -2076,7 +2076,7 @@
         "analogFlash": {
           "value": 0,
           "formula": "(bass/255 > 0.90) ? 1.0 : 0",
-          "useFormula": true
+          "useFormula": false
         },
         "analogScratches": {
           "value": 0,
@@ -2117,7 +2117,7 @@
         "raysEnabled": false,
         "photosEnabled": false,
         "particlesEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
@@ -2757,19 +2757,19 @@
           "useFormula": false
         },
         "analogScanlines": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.08,
+          "value": 0,
           "formula": "0.08 + (bass/255)*0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "analogWarmth": {
           "value": 0.2,
           "formula": "0.3",
-          "useFormula": false
+          "useFormula": true
         },
         "analogLightLeak": {
           "value": 0.4,
@@ -2782,24 +2782,24 @@
           "useFormula": true
         },
         "opticsFocusPull": {
-          "value": 46,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
           "useFormula": false
         },
         "analogInkBleed": {
-          "value": 1,
+          "value": 0,
           "formula": "0.5 + (bass/255)*4.0",
-          "useFormula": true
+          "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.2,
+          "value": 0.25,
           "formula": "0.2 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "webglSpeed": {
           "value": 5,
@@ -2907,7 +2907,7 @@
           "useFormula": false
         },
         "analogScratches": {
-          "value": 0,
+          "value": 0.14,
           "formula": "0",
           "useFormula": false
         }
@@ -3171,42 +3171,42 @@
           "useFormula": false
         },
         "analogScanlines": {
-          "value": 0.05,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.08,
+          "value": 0,
           "formula": "0.08 + (bass/255)*0.2",
           "useFormula": false
         },
         "analogWarmth": {
-          "value": 0.3,
+          "value": 0,
           "formula": "0.3",
           "useFormula": false
         },
         "analogLightLeak": {
           "value": 0,
           "formula": "time/180000",
-          "useFormula": true
+          "useFormula": false
         },
         "analogVignette": {
-          "value": 0.35,
+          "value": 0,
           "formula": "0.5 + (avg/255)*0.2",
           "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 115,
+          "value": 0,
           "formula": "80 + trend * 20",
           "useFormula": false
         },
         "analogInkBleed": {
-          "value": 3.7,
+          "value": 0,
           "formula": "0.5 + (bass/255)*4.0",
           "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.57,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
@@ -4016,7 +4016,7 @@
           "useFormula": false
         },
         "analogWarmth": {
-          "value": 0.4,
+          "value": 0.65,
           "formula": "0.3",
           "useFormula": false
         },
@@ -4026,27 +4026,27 @@
           "useFormula": false
         },
         "analogVignette": {
-          "value": 0.7,
+          "value": 0,
           "formula": "0.5 + (avg/255)*0.2",
           "useFormula": false
         },
         "opticsFocusPull": {
-          "value": 48,
+          "value": 0,
           "formula": "(1.0 - trend) * 50",
           "useFormula": false
         },
         "analogInkBleed": {
-          "value": 4.6,
+          "value": 0,
           "formula": "0.5 + (bass/255)*4.0",
           "useFormula": false
         },
         "analogPaperGrain": {
-          "value": 0.55,
+          "value": 0,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.4,
+          "value": 0,
           "formula": "0.2 + (trend * 0.3)",
           "useFormula": false
         },
@@ -4163,9 +4163,9 @@
       }
     }
   ],
-  "activeIndex": 0,
+  "activeIndex": 9,
   "targetIndex": null,
-  "transitionStart": 339012.6000000001,
+  "transitionStart": 453360.5,
   "transitionDuration": 1000,
   "midiMappings": {
     "pads": {}
