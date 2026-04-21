@@ -338,7 +338,7 @@ class BatecEngine {
                     
                     const ox = glitch > 0 ? Math.sin(localTime / 1000 + i) * glitch : 0;
                     const oy = glitch > 0 ? Math.cos(localTime / 1200 + i) * glitch : 0;
-                    // ctx.filter = `hue-rotate(${i * 60 + this.trend * 360}deg) blur(${this.p('imgBlur')}px) saturate(${this.p('imgSaturate')}%) contrast(${this.p('photoContrast')}%)`;
+                    ctx.filter = `hue-rotate(${i * 60 + this.trend * 360}deg) blur(${this.p('imgBlur')}px) saturate(${this.p('imgSaturate')}%) contrast(${this.p('photoContrast')}%)`;
                     ctx.globalCompositeOperation = stA.imgBlendMode;
                     const w = window.innerWidth * scale, h = window.innerHeight * scale;
                     ctx.drawImage(mediaObj, -w / 2 + ox, -h / 2 + oy, w, h);
@@ -358,6 +358,7 @@ class BatecEngine {
         if (this.glPost && this.glPost.supported) {
             const aberration = this.p('gpuAberration');
             const smear = this.p('gpuSmearRatio');
+            const meltSpeed = this.p('gpuMeltSpeed');
             const kaleido = this.p('gpuKaleidoSegments');
             const grain = this.p('analogNoise');
             const vignette = this.p('analogVignette');
@@ -366,12 +367,12 @@ class BatecEngine {
             const scan = this.p('analogScanlines');
 
             // Optimization: Skip expensive FBO pass if all GPU values are disabled
-            const active = (stA.gpu_fxEnabled && (aberration > 0 || smear > 0 || kaleido > 0)) ||
+            const active = (stA.gpu_fxEnabled && (aberration > 0 || smear > 0 || kaleido > 0 || Math.abs(meltSpeed) > 0)) ||
                 (stA.analogEnabled && (grain > 0 || vignette > 0 || dof > 0 || bleed > 0 || scan > 0));
 
             if (active) {
-                this.glPost.render(this, this.bufferCanvas, localTime);
-                finalSource = this.glPost.canvas; // Chain the GPU output
+                const rx = this.glPost.render(this, this.bufferCanvas, localTime);
+                if (rx !== false) finalSource = this.glPost.canvas; // Chain the GPU output
             }
         }
 

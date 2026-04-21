@@ -315,9 +315,7 @@ class BatecGLPostFX {
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, sourceCanvas);
         } catch(e) {
             if (e.name === 'SecurityError') {
-                console.warn("WebGL PostFX disabled due to SecurityError (Tainted Canvas from local file execution).");
-                this.supported = false; // Disable postFX for the session
-                return;
+                return false; // Skip this frame due to taint, but do not destroy the session capability
             } else throw e;
         }
         gl.uniform1i(this.uniforms.mainTex, 0);
