@@ -344,19 +344,38 @@ const UI = {
                 enableChk.checked = layer.enabled;
                 enableChk.onchange = (e) => { layer.enabled = e.target.checked; };
 
-                const title = document.createElement('h5');
-                title.textContent = layer.type.toUpperCase() + ' LAYER';
+                const title = document.createElement('input');
+                title.type = 'text';
+                title.className = 'text-input-minimal';
+                title.value = layer.name || (layer.type.toUpperCase() + ' LAYER');
                 title.style.margin = '0';
-                title.style.color = 'var(--text-secondary)';
+                title.style.width = '120px';
+                title.style.fontWeight = 'bold';
+                title.style.color = 'var(--accent-glow)';
+                title.style.border = 'none';
+                title.style.background = 'transparent';
+                title.oninput = (e) => { layer.name = e.target.value; };
+                title.onclick = (e) => { e.stopPropagation(); }; // Prevent collapse when clicking input
 
                 titleWrap.appendChild(enableChk);
                 titleWrap.appendChild(title);
+
+                const rightGroup = document.createElement('div');
+                rightGroup.style.display = 'flex';
+                rightGroup.style.alignItems = 'center';
+                rightGroup.style.gap = '8px';
+
+                const collapseIcon = document.createElement('span');
+                collapseIcon.className = 'collapse-icon';
+                collapseIcon.textContent = '▼';
+                collapseIcon.style.cursor = 'pointer';
 
                 const btnDel = document.createElement('button');
                 btnDel.className = 'icon-btn-minimal danger';
                 btnDel.innerHTML = '&times;';
                 btnDel.title = 'Remove Layer';
-                btnDel.onclick = () => {
+                btnDel.onclick = (e) => {
+                    e.stopPropagation();
                     activePreset.layers = activePreset.layers.filter(l => l.id !== layer.id);
                     // Cleanup params
                     Object.keys(activePreset.params).forEach(k => {
@@ -365,9 +384,25 @@ const UI = {
                     this.rebuildConfigUI();
                 };
 
+                rightGroup.appendChild(btnDel);
+                rightGroup.appendChild(collapseIcon);
+
                 header.appendChild(titleWrap);
-                header.appendChild(btnDel);
+                header.appendChild(rightGroup);
+                header.style.cursor = 'pointer';
                 layerDiv.appendChild(header);
+
+
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'section-content'; // Reuse existing class for animation
+                contentWrapper.id = 'layer-wrapper-' + layer.id;
+
+                header.onclick = (e) => {
+                    if(e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                    const isCollapsed = contentWrapper.classList.toggle('collapsed');
+                    collapseIcon.classList.toggle('collapsed', isCollapsed);
+                    layer.isCollapsed = isCollapsed; // Save state so it persists on rebuild
+                };
 
                 // Add special UI controls for specific layer types
                 if (layer.type === 'photos') {
@@ -403,7 +438,7 @@ const UI = {
                     <div id="panel-webcam-select_${layer.id}"
                         style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;">
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    contentWrapper.appendChild(controlsDiv);
 
                 } else if (layer.type === 'particles') {
                     const controlsDiv = document.createElement('div');
@@ -421,7 +456,7 @@ const UI = {
                             <option value="mote">Dust Mote</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    contentWrapper.appendChild(controlsDiv);
                 } else if (layer.type === 'text') {
                     const controlsDiv = document.createElement('div');
                     controlsDiv.innerHTML = `
@@ -468,13 +503,21 @@ const UI = {
                             <option value="ink">Ink Resolve</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    contentWrapper.appendChild(controlsDiv);
                 }
 
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'layer-content-' + layer.id;
                 contentDiv.className = 'control-grid';
-                layerDiv.appendChild(contentDiv);
+                contentWrapper.appendChild(contentDiv);
+                layerDiv.appendChild(contentWrapper);
+
+                // Restore collapse state
+                if (layer.isCollapsed) {
+                    contentWrapper.classList.add('collapsed');
+                    collapseIcon.classList.add('collapsed');
+                }
+
 
                 layersContainer.appendChild(layerDiv);
 
@@ -653,6 +696,20 @@ const UI = {
         this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
         this.safeGet('btnAdvanced').onclick = () => this.safeGet('advancedPanel').classList.toggle('hidden');
         this.safeGet('btnCloseAdvanced').onclick = () => this.safeGet('advancedPanel').classList.add('hidden');
+
+        const dmxHeader = this.safeGet('dmxHeader');
+        if (dmxHeader) {
+            dmxHeader.onclick = (e) => {
+                if(e.target.tagName === 'BUTTON') return;
+                const dmxContent = this.safeGet('dmxContent');
+                const dmxIcon = this.safeGet('dmxCollapseIcon');
+                if (dmxContent) {
+                    const isCollapsed = dmxContent.classList.toggle('collapsed');
+                    if (dmxIcon) dmxIcon.classList.toggle('collapsed', isCollapsed);
+                }
+            };
+        }
+
         this.safeGet('btnHelp').onclick = () => this.safeGet('helpModal').classList.toggle('hidden');
         this.safeGet('btnCloseHelp').onclick = () => this.safeGet('helpModal').classList.add('hidden');
         this.safeGet('btnMidiHelp').onclick = () => this.safeGet('midiHelpModal').classList.remove('hidden');
@@ -760,7 +817,7 @@ const UI = {
             clone.presets.forEach(p => {
                 for (const key in p.params) {
                     const obj = p.params[key];
-                    delete obj.cat; delete obj.name; delete obj.desc;
+                    delete obj.cat; /* name is kept for layers but global can be deleted. We keep it just in case */ delete obj.desc;
                     delete obj.step; delete obj.defaultVal; delete obj.defaultForm;
                     if (!obj.calibrated) {
                         delete obj.min; delete obj.max;
