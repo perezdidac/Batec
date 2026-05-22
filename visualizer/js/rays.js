@@ -1,7 +1,7 @@
-function renderRays(engine, ctx, time) {
-    const count = Math.floor(engine.p('rayCount')); if (count <= 0) return;
-    const thick = engine.p('rayThickness'), speed = engine.p('raySpeed'), chaos = engine.p('rayChaos');
-    const hole = engine.p('rayCenterHole'), gAlpha = Math.max(0, Math.min(1, engine.p('rayOpacity')));
+function renderRays(engine, ctx, time, layerId) {
+    const count = Math.floor(engine.pLayer(layerId, 'rayCount')); if (count <= 0) return;
+    const thick = engine.pLayer(layerId, 'rayThickness'), speed = engine.pLayer(layerId, 'raySpeed'), chaos = engine.pLayer(layerId, 'rayChaos');
+    const hole = engine.pLayer(layerId, 'rayCenterHole'), gAlpha = Math.max(0, Math.min(1, engine.pLayer(layerId, 'rayOpacity')));
     const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
     const maxR = Math.max(window.innerWidth, window.innerHeight) * 1.5;
     

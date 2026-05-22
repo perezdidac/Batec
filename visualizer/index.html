@@ -94,120 +94,24 @@
                     <div id="panel-physics" class="control-grid"></div>
                 </div>
 
-                <div class="config-section" data-cat="waves">
-                    <h4>Psychedelic Waves (Center)</h4>
-                    <div id="panel-waves" class="control-grid"></div>
-                </div>
-
-                <div class="config-section" data-cat="rays">
-                    <h4>Hyperspace Rays (Lasers)</h4>
-                    <div id="panel-rays" class="control-grid"></div>
-                </div>
-
-                <div class="config-section" data-cat="photos">
-                    <h4>Mediterranean Soul (Photos)</h4>
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Compositing Mode</label>
-                        <select id="imgBlendMode">
-                            <option value="screen">Screen (Lighten)</option>
-                            <option value="exclusion">Exclusion (Artistic)</option>
-                            <option value="lighter">Lighter</option>
-                            <option value="overlay">Overlay</option>
-                            <option value="hard-light">Hard Light</option>
-                            <option value="color-dodge">Color Dodge</option>
-                        </select>
-                    </div>
-                    <div class="control-group"
-                        style="margin-bottom: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;">
-                        <label>Media Source</label>
-                        <div style="display:flex; gap:16px; margin-top:4px;">
-                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                <input type="radio" name="photoSourceMode" value="photos" id="radioSourcePhotos" checked
-                                    style="width:auto;"> Photos
-                            </label>
-                            <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
-                                <input type="radio" name="photoSourceMode" value="webcams" id="radioSourceWebcams"
-                                    style="width:auto;"> Webcams
-                            </label>
-                        </div>
-                    </div>
-                    <div id="panel-image-select"
-                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px;"></div>
-                    <div id="panel-webcam-select"
-                        style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;">
-                    </div>
-                    <div id="panel-photos" class="control-grid" style="margin-top:12px;"></div>
-                </div>
-
-                <div class="config-section" data-cat="particles">
-                    <h4>Particle Synthesis</h4>
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Shape Architecture</label>
-                        <select id="particleShape">
-                            <option value="circle">Organic Circle</option>
-                            <option value="square">Abstract Square</option>
-                            <option value="triangle">Geometric Delta</option>
-                            <option value="star">Celestial Star</option>
-                            <option value="petal">Organic Petal</option>
-                            <option value="leaf">Sharp Leaf</option>
-                            <option value="pollen">Dust Pollen</option>
-                        </select>
-                    </div>
-                    <div id="panel-particles" class="control-grid"></div>
-                </div>
-
-                <!-- NEW: LYRIC ENGINE SECTION -->
-                <div class="config-section" data-cat="text">
-                    <h4>Lyric Engine (Text Sequencer)</h4>
-                    <div class="control-group" style="margin-bottom: 12px; display: flex; gap: 10px;">
-                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
-                            Enable Branding
-                            <input type="checkbox" id="textEnabled" checked style="width:auto; margin:0;">
-                        </label>
-                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
-                            Freeze Sequence
-                            <input type="checkbox" id="textFreeze" style="width:auto; margin:0;">
-                        </label>
-                    </div>
-
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Text Sequences (Up to 5)</label>
-                        <div class="lyric-inputs-grid">
-                            <input type="text" id="text0" placeholder="Phrase 1" class="text-input-minimal">
-                            <input type="text" id="text1" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text2" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text3" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text4" placeholder="Empty (Optional)" class="text-input-minimal">
+                <div class="config-section" style="border:1px solid rgba(255,191,0,0.3); padding:12px; border-radius:8px; margin-top:16px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                        <h4 style="margin:0; border:none; padding:0; color:var(--accent-glow);">Active Effect Layers</h4>
+                        <div style="display:flex; gap:8px;">
+                            <select id="selAddLayer" style="padding:4px; font-size:0.7rem;">
+                                <option value="photos">Photos / Media</option>
+                                <option value="waves">Rings / Waves</option>
+                                <option value="rays">Laser Rays</option>
+                                <option value="particles">Particles</option>
+                                <option value="text">Text / Lyrics</option>
+                            </select>
+                            <button id="btnAddLayer" class="primary-btn" style="padding:4px 12px; width:auto; font-size:0.7rem;">ADD +</button>
                         </div>
                     </div>
 
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Sequencing Logic</label>
-                        <select id="textSequenceMode">
-                            <option value="order">Sequential Loop</option>
-                            <option value="random">Randomized Shuffle</option>
-                        </select>
+                    <div id="layersContainer" style="display:flex; flex-wrap:wrap; gap:16px;">
+                        <!-- Dynamic Layers Injected Here -->
                     </div>
-
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Typography Style</label>
-                        <select id="textFontFamily">
-                            <option value="'Lora', serif">Lora (Serif)</option>
-                            <option value="'Inter', sans-serif">Inter (Modern)</option>
-                            <option value="'Courier New', monospace">Typewriter</option>
-                            <option value="'Homemade Apple', cursive">Handwritten</option>
-                        </select>
-                    </div>
-
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Dissolve Animation</label>
-                        <select id="textDissolveStyle">
-                            <option value="fade">Classic Fade</option>
-                            <option value="ink">Ink Resolve</option>
-                        </select>
-                    </div>
-
-                    <div id="panel-text" class="control-grid"></div>
                 </div>
 
                 <!-- WebGL Cyberpunk Layer -->
