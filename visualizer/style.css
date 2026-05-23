@@ -78,11 +78,27 @@ canvas {
 }
 
 .floating-panel,
-.advanced-panel,
 .help-modal {
   padding: 14px;
   width: 100%;
   pointer-events: auto;
+}
+
+.advanced-panel {
+  padding: 14px;
+  position: absolute;
+  left: 388px;
+  right: 388px;
+  top: 24px;
+  bottom: 24px;
+  overflow-y: auto;
+  pointer-events: auto;
+  z-index: 1000;
+  scrollbar-width: none;
+}
+
+.advanced-panel::-webkit-scrollbar {
+  display: none;
 }
 
 .panel-header {
@@ -146,6 +162,7 @@ canvas {
   opacity: 0;
   margin-top: 0;
   pointer-events: none;
+  display: none;
 }
 
 

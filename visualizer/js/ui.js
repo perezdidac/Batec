@@ -287,7 +287,9 @@ const UI = {
         
         const activePreset = this.engine.target || this.engine.active;
         const nameInput = this.safeGet('activePresetName'); 
-        if (nameInput) nameInput.value = activePreset.name;
+        if (nameInput && document.activeElement !== nameInput) {
+            nameInput.value = activePreset.name;
+        }
     },
 
 
@@ -652,6 +654,19 @@ const UI = {
 
         this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
         this.safeGet('btnAdvanced').onclick = () => this.safeGet('advancedPanel').classList.toggle('hidden');
+
+        const dmxHeader = this.safeGet('dmxHeader');
+        if (dmxHeader) {
+            dmxHeader.onclick = (ev) => {
+                if(ev.target.tagName === 'BUTTON') return;
+                const dmxSectionContent = this.safeGet('dmxSectionContent');
+                const dmxCollapseIcon = this.safeGet('dmxCollapseIcon');
+                if (dmxSectionContent && dmxCollapseIcon) {
+                    const isCollapsed = dmxSectionContent.classList.toggle('collapsed');
+                    dmxCollapseIcon.classList.toggle('collapsed', isCollapsed);
+                }
+            };
+        }
         this.safeGet('btnCloseAdvanced').onclick = () => this.safeGet('advancedPanel').classList.add('hidden');
         this.safeGet('btnHelp').onclick = () => this.safeGet('helpModal').classList.toggle('hidden');
         this.safeGet('btnCloseHelp').onclick = () => this.safeGet('helpModal').classList.add('hidden');
@@ -707,7 +722,11 @@ const UI = {
         // Stage Management
         this.safeGet('btnNewPreset').onclick = () => { e.session.presets.push(createDefaultPreset(`Stage ${e.session.presets.length + 1}`)); this.buildSlots(); };
         this.safeGet('btnDeletePreset').onclick = () => { if (e.session.presets.length <= 1) return; e.session.presets.splice(e.session.activeIndex, 1); e.session.activeIndex = 0; this.buildSlots(); this.rebuildConfigUI(); };
-        this.safeGet('activePresetName').oninput = (ev) => { active.name = ev.target.value; this.buildSlots(); };
+        this.safeGet('activePresetName').oninput = (ev) => {
+            const currentActive = this.engine.target || this.engine.active;
+            currentActive.name = ev.target.value;
+            this.buildSlots();
+        };
 
 
         const btnAddLayer = this.safeGet('btnAddLayer');
