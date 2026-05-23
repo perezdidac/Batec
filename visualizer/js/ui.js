@@ -367,9 +367,31 @@ const UI = {
                     this.rebuildConfigUI();
                 };
 
+                const rightGroup = document.createElement('div');
+                rightGroup.style.display = 'flex';
+                rightGroup.style.alignItems = 'center';
+                rightGroup.style.gap = '12px';
+
+                const collapseIcon = document.createElement('span');
+                collapseIcon.className = 'collapse-icon';
+                collapseIcon.textContent = '▼';
+
+                rightGroup.appendChild(btnDel);
+                rightGroup.appendChild(collapseIcon);
+
+                header.className = 'collapsible-header';
                 header.appendChild(titleWrap);
-                header.appendChild(btnDel);
+                header.appendChild(rightGroup);
                 layerDiv.appendChild(header);
+
+                const layerContentWrapper = document.createElement('div');
+                layerContentWrapper.className = 'section-content';
+
+                header.onclick = (e) => {
+                    if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') return;
+                    const isCollapsed = layerContentWrapper.classList.toggle('collapsed');
+                    collapseIcon.classList.toggle('collapsed', isCollapsed);
+                };
 
                 // Add special UI controls for specific layer types
                 if (layer.type === 'photos') {
@@ -423,7 +445,7 @@ const UI = {
                             <option value="mote">Dust Mote</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    layerContentWrapper.appendChild(controlsDiv);
                 } else if (layer.type === 'text') {
                     const controlsDiv = document.createElement('div');
                     controlsDiv.innerHTML = `
@@ -470,13 +492,15 @@ const UI = {
                             <option value="ink">Ink Resolve</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    layerContentWrapper.appendChild(controlsDiv);
                 }
 
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'layer-content-' + layer.id;
                 contentDiv.className = 'control-grid';
-                layerDiv.appendChild(contentDiv);
+                layerContentWrapper.appendChild(contentDiv);
+
+                layerDiv.appendChild(layerContentWrapper);
 
                 layersContainer.appendChild(layerDiv);
 
