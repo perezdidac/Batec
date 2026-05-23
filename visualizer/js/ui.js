@@ -208,7 +208,7 @@ const UI = {
 
             // Click listener
             h4.onclick = (e) => {
-                if(['INPUT', 'BUTTON', 'SELECT', 'OPTION'].includes(e.target.tagName)) return;
+                if (e.target.closest('button, input, select, option')) return;
                 const isCollapsed = wrapper.classList.toggle('collapsed');
                 icon.classList.toggle('collapsed', isCollapsed);
             };
@@ -345,6 +345,9 @@ const UI = {
                 icon.className = 'collapse-icon';
                 icon.textContent = '▼';
                 // Load collapse state if we want to remember it, but for now just start expanded
+                if (layer.settings.collapsed) {
+                    icon.classList.add('collapsed');
+                }
 
                 const enableChk = document.createElement('input');
                 enableChk.type = 'checkbox';
@@ -382,11 +385,16 @@ const UI = {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'section-content';
 
+                if (layer.settings.collapsed) {
+                    wrapper.classList.add('collapsed');
+                }
+
                 header.style.cursor = 'pointer';
                 header.onclick = (e) => {
-                    if(['INPUT', 'BUTTON', 'SELECT', 'OPTION'].includes(e.target.tagName)) return;
+                    if (e.target.closest('button, input, select, option')) return;
                     const isCollapsed = wrapper.classList.toggle('collapsed');
                     icon.classList.toggle('collapsed', isCollapsed);
+                    layer.settings.collapsed = isCollapsed;
                 };
 
                 // Add special UI controls for specific layer types
