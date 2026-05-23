@@ -355,13 +355,27 @@ const UI = {
                 enableChk.onchange = (e) => { layer.enabled = e.target.checked; };
 
                 const title = document.createElement('h5');
-                title.textContent = layer.type.toUpperCase() + ' LAYER';
+                title.textContent = layer.name || (layer.type.toUpperCase() + ' LAYER');
                 title.style.margin = '0';
                 title.style.color = 'var(--text-secondary)';
 
                 titleWrap.appendChild(icon);
                 titleWrap.appendChild(enableChk);
                 titleWrap.appendChild(title);
+
+                const btnRename = document.createElement('button');
+                btnRename.className = 'icon-btn-minimal';
+                btnRename.innerHTML = '✎';
+                btnRename.title = 'Rename Layer';
+                btnRename.style.marginLeft = 'auto';
+                btnRename.onclick = (e) => {
+                    e.stopPropagation();
+                    const newName = prompt("Rename layer:", layer.name || layer.type.toUpperCase() + ' LAYER');
+                    if (newName !== null && newName.trim() !== "") {
+                        layer.name = newName.trim();
+                        title.textContent = layer.name;
+                    }
+                };
 
                 const btnDel = document.createElement('button');
                 btnDel.className = 'icon-btn-minimal danger';
@@ -377,6 +391,7 @@ const UI = {
                 };
 
                 header.appendChild(titleWrap);
+                header.appendChild(btnRename);
                 header.appendChild(btnDel);
                 header.classList.add('collapsible-header');
                 layerDiv.appendChild(header);
@@ -785,7 +800,7 @@ const UI = {
                     settings.textFreeze = false;
                 }
 
-                active.layers.push({ id: layerId, type: type, enabled: true, settings: settings });
+                active.layers.push({ id: layerId, type: type, name: type.toUpperCase() + ' LAYER', enabled: true, settings: settings });
                 this.rebuildConfigUI();
             };
         }
