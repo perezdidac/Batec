@@ -697,3 +697,46 @@ button {
   border-radius: 4px;
   padding-left: 4px;
 }
+.telemetry-container {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    bottom: 24px;
+    width: 340px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    pointer-events: none;
+}
+
+/* Mobile Optimization */
+@media screen and (max-width: 800px) {
+  #controlsContainer {
+    width: 100%;
+    right: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    max-height: 100vh;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .advanced-panel {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 12px;
+    bottom: 12px;
+    width: auto;
+    height: auto;
+    z-index: 1001;
+  }
+
+  .telemetry-container {
+    display: none !important;
+  }
+}
