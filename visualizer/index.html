@@ -52,7 +52,7 @@
             </div>
 
             <div class="control-actions">
-                <button id="btnAdvanced" class="primary-btn">V-Engine Parameters</button>
+                <button id="btnAdvanced" class="primary-btn">Parameters</button>
             </div>
             <div class="control-actions">
                 <button id="btnPause" class="secondary-btn">Pause Audio</button>
@@ -60,10 +60,12 @@
             </div>
         </div>
 
-        <!-- Advanced Engine Configuration (Generated dynamically) -->
-        <div id="advancedPanel" class="glass-panel advanced-panel hidden">
-            <div class="panel-header" style="justify-content: space-between; display: flex; align-items: center;">
-                <h3>V-Engine Configuration</h3>
+    </div>
+
+    <!-- Advanced Engine Configuration (Generated dynamically) -->
+    <div id="advancedPanel" class="glass-panel advanced-panel hidden">
+        <div class="panel-header" style="justify-content: space-between; display: flex; align-items: center;">
+            <h3>Parameters</h3>
                 <div>
                     <button id="btnRandom" class="icon-btn-inline"
                         style="font-size:0.8rem; margin-right:12px; color:var(--accent-glow); border:1px solid var(--accent-glow); border-radius:4px; padding:2px 6px;"
@@ -181,7 +183,6 @@
                 </div>
             </div>
         </div>
-    </div>
 
     <!-- Documentation Modal -->
     <div id="helpModal" class="glass-panel help-modal hidden">
@@ -277,15 +278,19 @@
 
         <!-- DMX HARDWARE CONTROL PANEL -->
         <div id="dmxPanel" class="glass-panel floating-panel hidden" style="padding: 16px; display:flex; flex-direction:column; gap:8px; pointer-events: auto;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
+            <div id="dmxHeader" class="collapsible-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;">
                 <h3 style="font-size: 0.75rem; color: var(--accent-glow); margin: 0; text-transform: uppercase;">DMX 512 Link</h3>
-                <button id="btnDmxConnect" class="primary-btn glass-btn" style="font-size: 0.55rem; padding: 4px 8px;">CONNECT USB</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="btnDmxConnect" class="primary-btn glass-btn" style="font-size: 0.55rem; padding: 4px 8px; margin: 0;">CONNECT USB</button>
+                    <span id="dmxCollapseIcon" class="collapse-icon collapsed">▼</span>
+                </div>
             </div>
             
-            <div id="dmxStatus" style="font-size: 0.6rem; color: var(--text-secondary); font-family: monospace; text-align: right;">STATUS: DISCONNECTED</div>
-            
-            <div class="control-grid" style="gap: 4px; margin-top: 4px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
-                <!-- 14-Channel Hardware Control faders -->
+            <div id="dmxSectionContent" class="section-content collapsed">
+                <div id="dmxStatus" style="font-size: 0.6rem; color: var(--text-secondary); font-family: monospace; text-align: right; margin-bottom: 8px;">STATUS: DISCONNECTED</div>
+
+                <div class="control-grid" style="gap: 4px; margin-top: 4px; max-height: 200px; overflow-y: auto; padding-right: 4px;">
+                    <!-- 14-Channel Hardware Control faders -->
                 <div class="meter-row" style="margin-bottom: 2px;">
                     <span class="meter-label" style="width: 35px; color:#ff4444;">CH 1</span>
                     <input type="range" id="dmxCh1" min="0" max="255" value="0" style="flex: 1; height: 10px;">
@@ -338,13 +343,14 @@
                     <span class="meter-label" style="width: 35px; color:#888;">CH 13</span>
                     <input type="range" id="dmxCh13" min="0" max="255" value="0" style="flex: 1; height: 10px;">
                 </div>
-                <div class="meter-row" style="margin-bottom: 2px;">
-                    <span class="meter-label" style="width: 35px; color:#888;">CH 14</span>
-                    <input type="range" id="dmxCh14" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                    <div class="meter-row" style="margin-bottom: 2px;">
+                        <span class="meter-label" style="width: 35px; color:#888;">CH 14</span>
+                        <input type="range" id="dmxCh14" min="0" max="255" value="0" style="flex: 1; height: 10px;">
+                    </div>
                 </div>
-            </div>
-            <div style="margin-top: 6px; font-size: 0.55rem; color: var(--text-secondary); line-height:1.3;">
-                <b>Live Mode:</b> CH 1 pulses to music. <b style="color:#fff;">IMPORTANT:</b> Most fixtures won't light up unless the <b>DIMMER</b> (CH 4) is all the way up!
+                <div style="margin-top: 6px; font-size: 0.55rem; color: var(--text-secondary); line-height:1.3;">
+                    <b>Live Mode:</b> CH 1 pulses to music. <b style="color:#fff;">IMPORTANT:</b> Most fixtures won't light up unless the <b>DIMMER</b> (CH 4) is all the way up!
+                </div>
             </div>
         </div>
     </div>
