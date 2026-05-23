@@ -667,6 +667,7 @@ const UI = {
                 }
             };
         }
+
         this.safeGet('btnCloseAdvanced').onclick = () => this.safeGet('advancedPanel').classList.add('hidden');
         this.safeGet('btnHelp').onclick = () => this.safeGet('helpModal').classList.toggle('hidden');
         this.safeGet('btnCloseHelp').onclick = () => this.safeGet('helpModal').classList.add('hidden');
