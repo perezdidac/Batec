@@ -208,7 +208,7 @@ const UI = {
 
             // Click listener
             h4.onclick = (e) => {
-                if(e.target.tagName === 'INPUT') return;
+                if(['INPUT', 'BUTTON', 'SELECT', 'OPTION'].includes(e.target.tagName)) return;
                 const isCollapsed = wrapper.classList.toggle('collapsed');
                 icon.classList.toggle('collapsed', isCollapsed);
             };
@@ -341,6 +341,11 @@ const UI = {
                 titleWrap.style.alignItems = 'center';
                 titleWrap.style.gap = '8px';
 
+                const icon = document.createElement('span');
+                icon.className = 'collapse-icon';
+                icon.textContent = '▼';
+                // Load collapse state if we want to remember it, but for now just start expanded
+
                 const enableChk = document.createElement('input');
                 enableChk.type = 'checkbox';
                 enableChk.checked = layer.enabled;
@@ -351,6 +356,7 @@ const UI = {
                 title.style.margin = '0';
                 title.style.color = 'var(--text-secondary)';
 
+                titleWrap.appendChild(icon);
                 titleWrap.appendChild(enableChk);
                 titleWrap.appendChild(title);
 
@@ -369,7 +375,19 @@ const UI = {
 
                 header.appendChild(titleWrap);
                 header.appendChild(btnDel);
+                header.classList.add('collapsible-header');
                 layerDiv.appendChild(header);
+
+                // wrapper for all layer content
+                const wrapper = document.createElement('div');
+                wrapper.className = 'section-content';
+
+                header.style.cursor = 'pointer';
+                header.onclick = (e) => {
+                    if(['INPUT', 'BUTTON', 'SELECT', 'OPTION'].includes(e.target.tagName)) return;
+                    const isCollapsed = wrapper.classList.toggle('collapsed');
+                    icon.classList.toggle('collapsed', isCollapsed);
+                };
 
                 // Add special UI controls for specific layer types
                 if (layer.type === 'photos') {
@@ -405,7 +423,7 @@ const UI = {
                     <div id="panel-webcam-select_${layer.id}"
                         style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display:none;">
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    wrapper.appendChild(controlsDiv);
 
                 } else if (layer.type === 'particles') {
                     const controlsDiv = document.createElement('div');
@@ -423,7 +441,7 @@ const UI = {
                             <option value="mote">Dust Mote</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    wrapper.appendChild(controlsDiv);
                 } else if (layer.type === 'text') {
                     const controlsDiv = document.createElement('div');
                     controlsDiv.innerHTML = `
@@ -470,13 +488,15 @@ const UI = {
                             <option value="ink">Ink Resolve</option>
                         </select>
                     </div>`;
-                    layerDiv.appendChild(controlsDiv);
+                    wrapper.appendChild(controlsDiv);
                 }
 
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'layer-content-' + layer.id;
                 contentDiv.className = 'control-grid';
-                layerDiv.appendChild(contentDiv);
+                wrapper.appendChild(contentDiv);
+
+                layerDiv.appendChild(wrapper);
 
                 layersContainer.appendChild(layerDiv);
 
