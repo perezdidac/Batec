@@ -417,12 +417,22 @@ const UI = {
                     const colorDiv = document.createElement('div');
                     colorDiv.style.marginBottom = '12px';
                     colorDiv.style.display = 'flex';
-                    colorDiv.style.alignItems = 'center';
+                    colorDiv.style.flexDirection = 'column';
                     colorDiv.style.gap = '8px';
+
+                    let colorPickersHTML = '';
+                    for (let i = 0; i < 6; i++) {
+                        colorPickersHTML += `<input type="color" id="layerColor_${i}_${layer.id}" style="width: 30px; height: 20px; padding: 0; border: none; cursor: pointer;">`;
+                    }
+
                     colorDiv.innerHTML = `
-                        <input type="checkbox" id="useLayerColor_${layer.id}">
-                        <label style="font-size: 0.7rem; color: var(--text-secondary);">Custom Color Override</label>
-                        <input type="color" id="layerColor_${layer.id}" style="width: 30px; height: 20px; padding: 0; border: none; cursor: pointer;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <input type="checkbox" id="useLayerColor_${layer.id}">
+                            <label style="font-size: 0.7rem; color: var(--text-secondary);">Custom Color Override</label>
+                        </div>
+                        <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                            ${colorPickersHTML}
+                        </div>
                     `;
                     wrapper.appendChild(colorDiv);
                 }
@@ -540,14 +550,26 @@ const UI = {
                 // Bind specific controls values
                 if (['particles', 'waves', 'rays'].includes(layer.type)) {
                     const useColChk = this.safeGet(`useLayerColor_${layer.id}`);
-                    const colInp = this.safeGet(`layerColor_${layer.id}`);
                     if (useColChk) {
                         useColChk.checked = !!layer.settings.useLayerColor;
                         useColChk.onchange = e => layer.settings.useLayerColor = e.target.checked;
                     }
-                    if (colInp) {
-                        colInp.value = layer.settings.layerColor || '#ffffff';
-                        colInp.oninput = e => layer.settings.layerColor = e.target.value;
+
+                    // Fallback for legacy configurations
+                    if (!layer.settings.layerColors || !Array.isArray(layer.settings.layerColors)) {
+                        layer.settings.layerColors = [];
+                        const baseColor = layer.settings.layerColor || '#ffffff';
+                        for (let i = 0; i < 6; i++) {
+                            layer.settings.layerColors.push(baseColor);
+                        }
+                    }
+
+                    for (let i = 0; i < 6; i++) {
+                        const colInp = this.safeGet(`layerColor_${i}_${layer.id}`);
+                        if (colInp) {
+                            colInp.value = layer.settings.layerColors[i] || '#ffffff';
+                            colInp.oninput = e => layer.settings.layerColors[i] = e.target.value;
+                        }
                     }
                 }
 
@@ -880,9 +902,11 @@ const UI = {
                     settings.particleShape = 'mote';
                     settings.useLayerColor = false;
                     settings.layerColor = '#ffffff';
+                    settings.layerColors = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff'];
                 } else if (type === 'waves' || type === 'rays') {
                     settings.useLayerColor = false;
                     settings.layerColor = '#ffffff';
+                    settings.layerColors = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff'];
                 } else if (type === 'text') {
                     settings.textList = ["NEW TEXT", "", "", "", ""];
                     settings.textSequenceMode = 'order';

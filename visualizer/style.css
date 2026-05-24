@@ -77,6 +77,25 @@ canvas {
   display: none;
 }
 
+#telemetryContainer {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  bottom: 24px;
+  width: 340px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  pointer-events: none;
+}
+
+#telemetryContainer::-webkit-scrollbar {
+  display: none;
+}
+
 .floating-panel,
 .help-modal {
   padding: 14px;
