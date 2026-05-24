@@ -14,7 +14,15 @@ function renderRays(engine, ctx, time, layerId) {
     const progress = (engine.session.targetIndex !== null && !isNaN(engine.session.transitionStart)) ? Math.min(1, (time - engine.session.transitionStart) / engine.session.transitionDuration) : 0;
     
     for (let i = 0; i < count; i++) {
-        const colorA = engine.active.settings.palette[i % 6], colorB = engine.target ? engine.target.settings.palette[i % 6] : colorA;
+        const layerSettings = engine.active.layers.find(l => l.id === layerId)?.settings;
+        let colorA = engine.active.settings.palette[i % 6];
+        let colorB = engine.target ? engine.target.settings.palette[i % 6] : colorA;
+
+        if (layerSettings && layerSettings.useLayerColor) {
+            colorA = layerSettings.layerColor;
+            colorB = colorA;
+        }
+
         const color = ColorUtils.lerpColor(colorA, colorB, progress);
         
         const angleChaos = Math.sin(time/400 + i) * chaos * engine.trend;
