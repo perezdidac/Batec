@@ -19,7 +19,11 @@ function renderRays(engine, ctx, time, layerId) {
         let colorB = engine.target ? engine.target.settings.palette[i % 6] : colorA;
 
         if (layerSettings && layerSettings.useLayerColor) {
-            colorA = layerSettings.layerColor;
+            if (Array.isArray(layerSettings.layerColors)) {
+                colorA = layerSettings.layerColors[i % layerSettings.layerColors.length];
+            } else {
+                colorA = layerSettings.layerColor || '#ffffff';
+            }
             colorB = colorA;
         }
 
