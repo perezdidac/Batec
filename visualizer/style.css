@@ -697,3 +697,80 @@ button {
   border-radius: 4px;
   padding-left: 4px;
 }
+/* Themes */
+body.theme-cyberpunk {
+  --bg-color: #0b0f19;
+  --panel-bg: rgba(13, 17, 23, 0.65);
+  --panel-border: rgba(0, 255, 255, 0.2);
+  --text-primary: #e0fbfc;
+  --text-secondary: rgba(224, 251, 252, 0.6);
+  --accent-glow: #00ffff;
+  --accent-base: #ff00ff;
+}
+
+body.theme-matrix {
+  --bg-color: #000000;
+  --panel-bg: rgba(0, 20, 0, 0.65);
+  --panel-border: rgba(0, 255, 0, 0.2);
+  --text-primary: #00ff00;
+  --text-secondary: rgba(0, 255, 0, 0.5);
+  --accent-glow: #00ff00;
+  --accent-base: #00cc00;
+}
+
+body.theme-light {
+  --bg-color: #f0f0f0;
+  --panel-bg: rgba(255, 255, 255, 0.7);
+  --panel-border: rgba(0, 0, 0, 0.1);
+  --text-primary: #111111;
+  --text-secondary: rgba(17, 17, 17, 0.6);
+  --accent-glow: #0066cc;
+  --accent-base: #0044aa;
+}
+
+/* Hide all UI temp */
+body.hide-all-ui-temp .glass-panel,
+body.hide-all-ui-temp #controlsContainer,
+body.hide-all-ui-temp #telemetryContainer,
+body.hide-all-ui-temp #dmxPanel,
+body.hide-all-ui-temp #btnShowUI {
+  display: none !important;
+}
+
+/* Layouts */
+body.layout-compact #controlsContainer {
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 300px;
+  max-height: none;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border-left: 1px solid var(--panel-border);
+  padding: 10px;
+}
+
+body.layout-compact .floating-panel {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0;
+}
+
+body.layout-compact #telemetryContainer {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 280px;
+  max-height: none;
+  background: var(--panel-bg);
+  backdrop-filter: blur(var(--panel-blur));
+  border-right: 1px solid var(--panel-border);
+  padding: 10px;
+}
+
+body.layout-compact #advancedPanel {
+  left: 290px;
+  right: 310px;
+}

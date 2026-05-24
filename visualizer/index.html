@@ -54,9 +54,24 @@
             <div class="control-actions">
                 <button id="btnAdvanced" class="primary-btn">Parameters</button>
             </div>
+            <div class="control-actions" style="display:flex; gap:8px;">
+                <select id="uiTheme" class="text-input-minimal" style="flex:1;">
+                    <option value="">Default Theme</option>
+                    <option value="theme-cyberpunk">Cyberpunk</option>
+                    <option value="theme-matrix">Matrix</option>
+                    <option value="theme-light">Light</option>
+                </select>
+                <select id="uiLayout" class="text-input-minimal" style="flex:1;">
+                    <option value="">Floating Layout</option>
+                    <option value="layout-compact">Compact Layout</option>
+                </select>
+            </div>
             <div class="control-actions">
                 <button id="btnPause" class="secondary-btn">Pause Audio</button>
                 <button id="btnHideUI" class="secondary-btn">Performance Mode</button>
+            </div>
+            <div style="font-size: 0.65rem; color: var(--text-secondary); text-align: center; margin-top: 8px;">
+                Hold 'h' to temporarily hide UI
             </div>
         </div>
 
