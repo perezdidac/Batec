@@ -719,22 +719,13 @@ body.theme-matrix {
 }
 
 body.theme-light {
-  --bg-color: #f0f0f0;
-  --panel-bg: rgba(255, 255, 255, 0.7);
-  --panel-border: rgba(0, 0, 0, 0.1);
-  --text-primary: #111111;
-  --text-secondary: rgba(17, 17, 17, 0.6);
-  --accent-glow: #0066cc;
-  --accent-base: #0044aa;
-}
-
-/* Hide all UI temp */
-body.hide-all-ui-temp .glass-panel,
-body.hide-all-ui-temp #controlsContainer,
-body.hide-all-ui-temp #telemetryContainer,
-body.hide-all-ui-temp #dmxPanel,
-body.hide-all-ui-temp #btnShowUI {
-  display: none !important;
+  --bg-color: #f4f4f4;
+  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-border: rgba(0, 0, 0, 0.15);
+  --text-primary: #1a1a1a;
+  --text-secondary: rgba(0, 0, 0, 0.7);
+  --accent-glow: #ff5500;
+  --accent-base: #cc4400;
 }
 
 /* Layouts */
@@ -773,4 +764,62 @@ body.layout-compact #telemetryContainer {
 body.layout-compact #advancedPanel {
   left: 290px;
   right: 310px;
+}
+
+body.layout-live #controlsContainer {
+  right: 24px;
+  top: 24px;
+  bottom: auto;
+}
+
+body.layout-live #advancedPanel {
+  right: 24px;
+  top: 360px;
+  bottom: 24px;
+  left: auto;
+  width: 340px;
+}
+
+body.layout-live #telemetryContainer {
+  left: 24px;
+  top: 24px;
+  bottom: 24px;
+}
+
+body.layout-bottom #controlsContainer {
+  bottom: 24px;
+  top: auto;
+  left: 24px;
+  right: 24px;
+  flex-direction: row;
+  width: auto;
+  max-width: none;
+}
+
+body.layout-bottom #controlsContainer .glass-panel {
+  width: auto;
+  flex: 1;
+}
+
+body.layout-bottom #advancedPanel {
+  bottom: 200px;
+  top: auto;
+  left: 24px;
+  right: 24px;
+  height: 35vh;
+}
+
+body.layout-bottom #telemetryContainer {
+  top: 24px;
+  bottom: auto;
+  left: 24px;
+  right: 24px;
+  flex-direction: row;
+  width: auto;
+  max-width: none;
+}
+
+body.layout-bottom #telemetryContainer .glass-panel {
+  width: auto;
+  flex: 1;
 }

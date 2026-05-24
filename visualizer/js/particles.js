@@ -40,7 +40,11 @@ class BatecParticle {
             grad.addColorStop(1, `rgba(255, 200, 100, 0)`);
             ctx.fillStyle = grad;
         } else {
-            const colorBase = eng.active.settings.palette[this.colorIdx];
+            const layerSettings = eng.active.layers.find(l => l.id === this.layerId)?.settings;
+            let colorBase = eng.active.settings.palette[this.colorIdx];
+            if (layerSettings && layerSettings.useLayerColor) {
+                colorBase = layerSettings.layerColor;
+            }
             const rgb = ColorUtils.hexToRgb(colorBase); const hsla = ColorUtils.rgbToHsl(rgb.r, rgb.g, rgb.b);
             ctx.fillStyle = `hsla(${(hsla[0] + this.hueOffset) % 360}, ${hsla[1]}%, ${hsla[2]}%, ${Math.max(0, Math.min(1, eng.pLayer(this.layerId, 'particleOpacity')))})`;
         }

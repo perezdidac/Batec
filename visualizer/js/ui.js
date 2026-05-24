@@ -413,6 +413,20 @@ const UI = {
                 };
 
                 // Add special UI controls for specific layer types
+                if (['particles', 'waves', 'rays'].includes(layer.type)) {
+                    const colorDiv = document.createElement('div');
+                    colorDiv.style.marginBottom = '12px';
+                    colorDiv.style.display = 'flex';
+                    colorDiv.style.alignItems = 'center';
+                    colorDiv.style.gap = '8px';
+                    colorDiv.innerHTML = `
+                        <input type="checkbox" id="useLayerColor_${layer.id}">
+                        <label style="font-size: 0.7rem; color: var(--text-secondary);">Custom Color Override</label>
+                        <input type="color" id="layerColor_${layer.id}" style="width: 30px; height: 20px; padding: 0; border: none; cursor: pointer;">
+                    `;
+                    wrapper.appendChild(colorDiv);
+                }
+
                 if (layer.type === 'photos') {
                     const controlsDiv = document.createElement('div');
                     controlsDiv.innerHTML = `
@@ -524,6 +538,19 @@ const UI = {
                 layersContainer.appendChild(layerDiv);
 
                 // Bind specific controls values
+                if (['particles', 'waves', 'rays'].includes(layer.type)) {
+                    const useColChk = this.safeGet(`useLayerColor_${layer.id}`);
+                    const colInp = this.safeGet(`layerColor_${layer.id}`);
+                    if (useColChk) {
+                        useColChk.checked = !!layer.settings.useLayerColor;
+                        useColChk.onchange = e => layer.settings.useLayerColor = e.target.checked;
+                    }
+                    if (colInp) {
+                        colInp.value = layer.settings.layerColor || '#ffffff';
+                        colInp.oninput = e => layer.settings.layerColor = e.target.value;
+                    }
+                }
+
                 if (layer.type === 'photos') {
                     const sel = this.safeGet(`imgBlendMode_${layer.id}`);
                     if(sel) { sel.value = layer.settings.imgBlendMode || 'screen'; sel.onchange = e => layer.settings.imgBlendMode = e.target.value; }
@@ -724,7 +751,11 @@ const UI = {
 
         const uiTheme = this.safeGet('uiTheme');
         if (uiTheme) {
-            uiTheme.onchange = (ev) => {
+            // Restore previous choice if any
+            const currentTheme = Array.from(document.body.classList).find(c => c.startsWith('theme-'));
+            if (currentTheme) uiTheme.value = currentTheme;
+
+            uiTheme.addEventListener('change', (ev) => {
                 document.body.classList.remove('theme-cyberpunk', 'theme-matrix', 'theme-light');
                 if (ev.target.value) {
                     document.body.classList.add(ev.target.value);
@@ -733,17 +764,21 @@ const UI = {
                 if (uiOpacity) {
                     uiOpacity.dispatchEvent(new Event('input'));
                 }
-            };
+            });
         }
 
         const uiLayout = this.safeGet('uiLayout');
         if (uiLayout) {
-            uiLayout.onchange = (ev) => {
-                document.body.classList.remove('layout-compact');
+            // Restore previous choice if any
+            const currentLayout = Array.from(document.body.classList).find(c => c.startsWith('layout-'));
+            if (currentLayout) uiLayout.value = currentLayout;
+
+            uiLayout.addEventListener('change', (ev) => {
+                document.body.classList.remove('layout-compact', 'layout-live', 'layout-bottom');
                 if (ev.target.value) {
                     document.body.classList.add(ev.target.value);
                 }
-            };
+            });
         }
 
         this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
@@ -843,6 +878,11 @@ const UI = {
                     settings.imgBlendMode = 'screen';
                 } else if (type === 'particles') {
                     settings.particleShape = 'mote';
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#ffffff';
+                } else if (type === 'waves' || type === 'rays') {
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#ffffff';
                 } else if (type === 'text') {
                     settings.textList = ["NEW TEXT", "", "", "", ""];
                     settings.textSequenceMode = 'order';
@@ -941,11 +981,26 @@ const UI = {
 
 
     initHotkeys() {
+        const toggleUI = (hide) => {
+            const panels = [
+                document.getElementById('controlsContainer'),
+                document.getElementById('telemetryContainer'),
+                document.getElementById('advancedPanel'),
+                document.getElementById('dmxPanel')
+            ];
+            panels.forEach(p => {
+                if (p) {
+                    p.style.opacity = hide ? '0' : '';
+                    p.style.pointerEvents = hide ? 'none' : '';
+                }
+            });
+        };
+
         window.addEventListener('keydown', (ev) => {
             if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') return;
 
             if (ev.key === 'h' || ev.key === 'H') {
-                document.body.classList.add('hide-all-ui-temp');
+                if (!ev.repeat) toggleUI(true);
             }
 
             if (ev.key >= '0' && ev.key <= '9') {
@@ -961,7 +1016,7 @@ const UI = {
 
         window.addEventListener('keyup', (ev) => {
             if (ev.key === 'h' || ev.key === 'H') {
-                document.body.classList.remove('hide-all-ui-temp');
+                toggleUI(false);
             }
         });
     },

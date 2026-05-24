@@ -10,7 +10,14 @@ function renderWaves(engine, ctx, time, layerId) {
         const radius = (engine.wavePhases[layerId][i] / 100) * maxR;
         const alpha = Math.sin((engine.wavePhases[layerId][i] / 100) * Math.PI) * 0.6 * engine.trend;
         const progress = engine.session.targetIndex !== null ? Math.min(1, (time - engine.session.transitionStart) / engine.session.transitionDuration) : 0;
-        const colorA = engine.active.settings.palette[i % 6], colorB = engine.target ? engine.target.settings.palette[i % 6] : colorA;
+        const layerSettings = engine.active.layers.find(l => l.id === layerId)?.settings;
+        let colorA = engine.active.settings.palette[i % 6];
+        let colorB = engine.target ? engine.target.settings.palette[i % 6] : colorA;
+
+        if (layerSettings && layerSettings.useLayerColor) {
+            colorA = layerSettings.layerColor;
+            colorB = colorA;
+        }
 
         ctx.beginPath();
         const segments = 60;
