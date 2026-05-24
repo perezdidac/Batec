@@ -26,30 +26,39 @@ class BatecParticle {
     draw(ctx) {
         const eng = this.engine, ctxP = { x: this.x, y: this.y };
         const size = Math.max(0.1, eng.pLayer(this.layerId, 'particleSize', ctxP)), rot = eng.pLayer(this.layerId, 'particleRotation', ctxP);
-        const shp = (eng.active.layers.find(l => l.id === this.layerId)?.settings.particleShape || 'mote');
+        const layerSettings = eng.active.layers.find(l => l.id === this.layerId)?.settings;
+        const shp = (layerSettings?.particleShape || 'mote');
         
         ctx.save();
         ctx.translate(this.x, this.y); ctx.rotate(rot);
         
+        let colorBase = eng.active.settings.palette[this.colorIdx];
+        if (layerSettings && layerSettings.useLayerColor) {
+            if (Array.isArray(layerSettings.layerColors)) {
+                colorBase = layerSettings.layerColors[this.colorIdx % layerSettings.layerColors.length];
+            } else {
+                colorBase = layerSettings.layerColor || '#ffffff';
+            }
+        }
+        const rgb = ColorUtils.hexToRgb(colorBase);
+
         if (shp === 'mote') {
-            // Artsy Dust Mote: Soft radial glow, warm golden-white
             const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
             const op = eng.pLayer(this.layerId, 'particleOpacity');
-            grad.addColorStop(0, `rgba(255, 245, 200, ${op})`);
-            grad.addColorStop(0.4, `rgba(255, 220, 150, ${op * 0.4})`);
-            grad.addColorStop(1, `rgba(255, 200, 100, 0)`);
+
+            if (layerSettings && layerSettings.useLayerColor) {
+                grad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${op})`);
+                grad.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${op * 0.4})`);
+                grad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+            } else {
+                // Artsy Dust Mote: Soft radial glow, warm golden-white
+                grad.addColorStop(0, `rgba(255, 245, 200, ${op})`);
+                grad.addColorStop(0.4, `rgba(255, 220, 150, ${op * 0.4})`);
+                grad.addColorStop(1, `rgba(255, 200, 100, 0)`);
+            }
             ctx.fillStyle = grad;
         } else {
-            const layerSettings = eng.active.layers.find(l => l.id === this.layerId)?.settings;
-            let colorBase = eng.active.settings.palette[this.colorIdx];
-            if (layerSettings && layerSettings.useLayerColor) {
-                if (Array.isArray(layerSettings.layerColors)) {
-                    colorBase = layerSettings.layerColors[this.colorIdx % layerSettings.layerColors.length];
-                } else {
-                    colorBase = layerSettings.layerColor || '#ffffff';
-                }
-            }
-            const rgb = ColorUtils.hexToRgb(colorBase); const hsla = ColorUtils.rgbToHsl(rgb.r, rgb.g, rgb.b);
+            const hsla = ColorUtils.rgbToHsl(rgb.r, rgb.g, rgb.b);
             ctx.fillStyle = `hsla(${(hsla[0] + this.hueOffset) % 360}, ${hsla[1]}%, ${hsla[2]}%, ${Math.max(0, Math.min(1, eng.pLayer(this.layerId, 'particleOpacity')))})`;
         }
 
