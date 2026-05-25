@@ -4,9 +4,10 @@ function applyAnalogPostFX(engine, sourceCanvas) {
     const stA = engine.active.settings;
     const src = sourceCanvas || engine.bufferCanvas;
 
-    // Clear the destination canvas to black, preventing alpha ghosting artifacts with Overlay blend modes
+    // Clear the destination canvas to the configured background color to prevent alpha ghosting
     finalCtx.globalCompositeOperation = 'source-over';
-    finalCtx.fillStyle = 'black';
+    let bgHex = stA.bgColor || '#000000';
+    finalCtx.fillStyle = bgHex;
     finalCtx.fillRect(0, 0, w, h);
     
     finalCtx.drawImage(src, 0, 0, w, h);

@@ -931,6 +931,12 @@ const UI = {
 
         [1, 2, 3, 4, 5, 6].forEach(i => { const el = this.safeGet(`palette${i}`); if (el) { el.value = active.settings.palette[i - 1]; el.oninput = (ev) => active.settings.palette[i - 1] = ev.target.value; } });
 
+        const canvasBgColorInput = this.safeGet('canvasBgColor');
+        if (canvasBgColorInput) {
+            canvasBgColorInput.value = active.settings.bgColor || '#000000';
+            canvasBgColorInput.oninput = (ev) => active.settings.bgColor = ev.target.value;
+        }
+
         // Project Import/Export
         this.safeGet('btnCopySession').onclick = () => {
             const clone = JSON.parse(JSON.stringify(e.session));

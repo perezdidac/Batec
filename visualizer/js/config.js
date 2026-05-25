@@ -121,6 +121,7 @@ function createDefaultPreset(name = "New Preset") {
         ],
         settings: {
             palette: ['#FFD700', '#FF8C00', '#FF4500', '#87CEEB', '#00BFFF', '#228B22'],
+            bgColor: '#000000',
 
             // Global Toggles
             physicsEnabled: true,

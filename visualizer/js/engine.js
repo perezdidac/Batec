@@ -352,7 +352,13 @@ class BatecEngine {
         const progress = this.session.targetIndex !== null ? Math.min(1, (time - this.session.transitionStart) / this.session.transitionDuration) : 0;
 
         ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = `rgba(1, 1, 1, ${Math.max(0, Math.min(1, this.p('clearOpacity')))})`;
+        let bgHex = stA.bgColor || '#000000';
+        // Parse hex to RGB
+        let r = parseInt(bgHex.slice(1, 3), 16) || 1;
+        let g = parseInt(bgHex.slice(3, 5), 16) || 1;
+        let b = parseInt(bgHex.slice(5, 7), 16) || 1;
+
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${Math.max(0, Math.min(1, this.p('clearOpacity')))})`;
         ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
         if (stA.webglEnabled && this.shader && this.shader.supported) {
