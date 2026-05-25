@@ -517,6 +517,11 @@ select {
   cursor: pointer;
 }
 
+option {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+}
+
 .text-input {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--panel-border);
