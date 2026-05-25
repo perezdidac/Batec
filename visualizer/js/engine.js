@@ -464,10 +464,17 @@ class BatecEngine {
         if (!this.particleLayers[layerId]) this.particleLayers[layerId] = [];
         const particles = this.particleLayers[layerId];
 
-        while (particles.length < required) particles.push(new BatecParticle(this, layerId));
-        if (particles.length > required) particles.length = required;
-        ctx.save(); ctx.globalCompositeOperation = 'lighter';
-        particles.forEach(p => { p.update(time); p.draw(ctx); });
+        while (particles.length < required) {
+            particles.push(new BatecParticle(this, layerId));
+        }
+
+        ctx.save();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 0; i < required; i++) {
+            const p = particles[i];
+            p.update(time);
+            p.draw(ctx);
+        }
         ctx.restore();
     }
 

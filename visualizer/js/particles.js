@@ -58,7 +58,7 @@ class BatecParticle {
             }
             ctx.fillStyle = grad;
         } else {
-            const hsla = ColorUtils.rgbToHsl(rgb.r, rgb.g, rgb.b);
+            const hsla = ColorUtils.hexToHsl(colorBase);
             ctx.fillStyle = `hsla(${(hsla[0] + this.hueOffset) % 360}, ${hsla[1]}%, ${hsla[2]}%, ${Math.max(0, Math.min(1, eng.pLayer(this.layerId, 'particleOpacity')))})`;
         }
 

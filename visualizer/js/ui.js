@@ -735,39 +735,7 @@ const UI = {
             uiOpacity.oninput = (ev) => {
                 const val = ev.target.value;
                 document.getElementById('uiOpacityVal').textContent = parseFloat(val).toFixed(2);
-
-                // Fetch the base theme color components
-                let bgColor = getComputedStyle(document.body).getPropertyValue('--panel-bg').trim();
-
-                // Regex to handle both rgba and #hex and create an alpha adjusted version, simpler to just re-apply an alpha wrapper based on var
-                // It's cleaner if the theme variables remain clean, we can just hack the panels themselves if needed, but the original approach overwritten theme logic.
-                // Let's implement it better: we will add a global data-opacity attribute, and handle logic in CSS or just override the variable at root level that our themes can use.
-                // Actually, the original implementation overwrites --panel-bg, which destroys theme settings.
-                // Let's override the background directly on the glass-panels but parsing their background is hard.
-                // We'll set a CSS variable --dynamic-panel-bg that our CSS *should* use, but wait, we only edited the static ones in style.css.
-                // To keep it simple and robust across themes: we will get the computed rgb, and apply rgba.
-
-                // Let's just adjust the opacity of the glass panels directly for now, without overwriting --panel-bg completely
-                document.querySelectorAll('.glass-panel').forEach(p => {
-                    // It's simpler to use an opacity filter or background-color with alpha.
-                    // If we just use CSS variables, we should define --panel-opacity.
-                    document.documentElement.style.setProperty('--panel-opacity', val);
-                    // For now, let's just apply it via the root variable but respect the theme. We can do this by just changing the alpha channel of --panel-bg.
-                    // This is complex in pure JS without knowing the current theme color.
-                    // Let's just stick to a simple opacity filter if possible, or leave original behavior but it breaks theme colors.
-
-                    // Actually, a quick fix:
-                    if(document.body.classList.contains('theme-light')) {
-                        p.style.backgroundColor = `rgba(255, 255, 255, ${val})`;
-                    } else if(document.body.classList.contains('theme-matrix')) {
-                        p.style.backgroundColor = `rgba(0, 20, 0, ${val})`;
-                    } else if(document.body.classList.contains('theme-cyberpunk')) {
-                        p.style.backgroundColor = `rgba(13, 17, 23, ${val})`;
-                    } else {
-                        p.style.backgroundColor = `rgba(10, 10, 10, ${val})`;
-                    }
-                    p.style.backdropFilter = `blur(${val * 28}px)`;
-                });
+                document.documentElement.style.setProperty('--panel-opacity', val);
             };
         }
 

@@ -271,6 +271,29 @@ class BatecGLPostFX {
             stainIntensity: this.gl.getUniformLocation(this.program, 'u_stainIntensity'),
             scratches: this.gl.getUniformLocation(this.program, 'u_scratches')
         };
+
+        // Compiled Lightweight Passthrough Shader
+        const ptVsSource = `
+            attribute vec2 a_position;
+            varying vec2 v_uv;
+            void main() {
+                v_uv = (a_position * 0.5) + 0.5;
+                gl_Position = vec4(a_position, 0.0, 1.0);
+            }
+        `;
+        const ptFsSource = `
+            precision mediump float;
+            varying vec2 v_uv;
+            uniform sampler2D u_tex;
+            void main() {
+                gl_FragColor = texture2D(u_tex, v_uv);
+            }
+        `;
+        this.passthroughProgram = this.compileProgram(ptVsSource, ptFsSource);
+        this.passthroughUniforms = {
+            tex: this.gl.getUniformLocation(this.passthroughProgram, 'u_tex')
+        };
+        this.passthroughPositionAttribute = this.gl.getAttribLocation(this.passthroughProgram, 'a_position');
     }
 
     compileProgram(vs, fs) {
@@ -353,20 +376,21 @@ class BatecGLPostFX {
         gl.enableVertexAttribArray(this.positionAttribute);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
-        // STEP 2: Draw the EXACT SAME FBO to the actual on-screen WebGL Canvas
+        // Swap read/write index. Now the newly written frame becomes readTex.
+        this.readIndex = 1 - this.readIndex;
+        const finalFBOTexture = this.readIndex === 0 ? this.texA : this.texB;
+
+        // STEP 2: Draw the final texture to the actual on-screen WebGL Canvas using passthrough
         gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        // We reuse the geometry, we just read from the FBO we just wrote to.
-        // Wait, simply unbinding the FBO and running the shader again won't output the previous frame perfectly if we re-run the melt.
-        // We must do a pure passthrough to the screen. 
-        // Best approach: Swap textures, then just blit readTex to screen?
-        // Actually, just drawing the whole shader directly to 'null' fbo works if we don't need multiple post-passes, but we DO need to save the frame.
-        // Since we wrote to writeFBO, we can just bind writeTex as TEXTURE0, and pass a bypass flag to a shader, OR simpler: 
-        // Swap read/write index. Now the NEW frame is in readTex. 
-        this.readIndex = 1 - this.readIndex; // SWAP
-        
-        // Wait! We can't easily blit FBO to screen in WebGL 1.0 without another shader pass... UNLESS! 
-        // We just draw the shader output TWICE (once to FBO, once to screen)! 
-        // It's technically 2 draws, but it's exceptionally fast. Let's do that for simplicity:
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); 
+        gl.useProgram(this.passthroughProgram);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, finalFBOTexture);
+        gl.uniform1i(this.passthroughUniforms.tex, 0);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffer);
+        gl.vertexAttribPointer(this.passthroughPositionAttribute, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.passthroughPositionAttribute);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 }

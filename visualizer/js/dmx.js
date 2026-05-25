@@ -72,23 +72,30 @@ class BatecDMX {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    yieldToEventLoop() {
+        return new Promise(resolve => {
+            const channel = new MessageChannel();
+            channel.port1.onmessage = () => resolve();
+            channel.port2.postMessage(null);
+        });
+    }
+
     // Experimental CPU Bit-banging for Open DMX
     async transmitLoop() {
         while (this.connected && this.port && this.writer) {
             try {
-                // 1. BREAK: Pull DMX line low (Min 92us, 1ms is safe for browsers)
+                // 1. BREAK: Pull DMX line low (Min 92us, yielding thread efficiently)
                 await this.port.setSignals({ break: true });
-                await this.sleep(1); 
+                await this.yieldToEventLoop(); 
                 
                 // 2. MAB: Mark After Break (DMX line high, Min 12us)
-                // We remove the sleep(1) here as the 'await' call itself provides enough micro-delay
                 await this.port.setSignals({ break: false });
                 
                 // 3. FLUSH: Send the 513 bytes of payload data immediately
                 await this.writer.write(this.universe);
                 
                 // Wait for the packets to physically leave the wire (~22ms @ 250kbps)
-                await this.sleep(18);
+                await this.sleep(20);
                 
             } catch (err) {
                 console.error("DMX Write Error. Disconnecting.", err);

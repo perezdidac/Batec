@@ -1,3 +1,5 @@
+const hexToVec3Cache = new Map();
+
 class BatecShader {
     constructor() {
         this.canvas = document.createElement('canvas');
@@ -366,12 +368,17 @@ class BatecShader {
 
     hexToVec3(hex) {
         if (!hex) return [0,0,0];
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? [
-            parseInt(result[1], 16) / 255.0,
-            parseInt(result[2], 16) / 255.0,
-            parseInt(result[3], 16) / 255.0
-        ] : [1,1,1];
+        let vec = hexToVec3Cache.get(hex);
+        if (!vec) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            vec = result ? [
+                parseInt(result[1], 16) / 255.0,
+                parseInt(result[2], 16) / 255.0,
+                parseInt(result[3], 16) / 255.0
+            ] : [1,1,1];
+            hexToVec3Cache.set(hex, vec);
+        }
+        return vec;
     }
 
     render(engine, time) {

@@ -1,12 +1,13 @@
 :root {
   --bg-color: #010101;
-  --panel-bg: rgba(10, 10, 10, 0.45);
+  --panel-bg-rgb: 10, 10, 10;
+  --panel-bg: rgba(var(--panel-bg-rgb), var(--panel-opacity, 0.45));
   --panel-border: rgba(255, 255, 255, 0.08);
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.5);
   --accent-glow: #ffbf00;
   --accent-base: #ff5500;
-  --panel-blur: 28px;
+  --panel-blur-calc: calc(var(--panel-opacity, 0.45) * 62px);
 }
 
 .hidden { display: none !important; }
@@ -48,8 +49,8 @@ canvas {
 /* Glassmorphism System */
 .glass-panel {
   background: var(--panel-bg);
-  backdrop-filter: blur(var(--panel-blur));
-  -webkit-backdrop-filter: blur(var(--panel-blur));
+  backdrop-filter: blur(var(--panel-blur-calc));
+  -webkit-backdrop-filter: blur(var(--panel-blur-calc));
   border: 1px solid var(--panel-border);
   border-radius: 20px;
   box-shadow: 0 12px 64px rgba(0, 0, 0, 0.95);
@@ -724,7 +725,8 @@ button {
 /* Themes */
 body.theme-cyberpunk {
   --bg-color: #0b0f19;
-  --panel-bg: rgba(13, 17, 23, 0.65);
+  --panel-bg-rgb: 13, 17, 23;
+  --panel-bg: rgba(var(--panel-bg-rgb), var(--panel-opacity, 0.65));
   --panel-border: rgba(0, 255, 255, 0.2);
   --text-primary: #e0fbfc;
   --text-secondary: rgba(224, 251, 252, 0.6);
@@ -734,7 +736,8 @@ body.theme-cyberpunk {
 
 body.theme-matrix {
   --bg-color: #000000;
-  --panel-bg: rgba(0, 20, 0, 0.65);
+  --panel-bg-rgb: 0, 20, 0;
+  --panel-bg: rgba(var(--panel-bg-rgb), var(--panel-opacity, 0.65));
   --panel-border: rgba(0, 255, 0, 0.2);
   --text-primary: #00ff00;
   --text-secondary: rgba(0, 255, 0, 0.5);
@@ -744,7 +747,8 @@ body.theme-matrix {
 
 body.theme-light {
   --bg-color: #f4f4f4;
-  --panel-bg: rgba(255, 255, 255, 0.85);
+  --panel-bg-rgb: 255, 255, 255;
+  --panel-bg: rgba(var(--panel-bg-rgb), var(--panel-opacity, 0.85));
   --panel-border: rgba(0, 0, 0, 0.15);
   --text-primary: #1a1a1a;
   --text-secondary: rgba(0, 0, 0, 0.7);
@@ -760,7 +764,7 @@ body.layout-compact #controlsContainer {
   width: 300px;
   max-height: none;
   background: var(--panel-bg);
-  backdrop-filter: blur(var(--panel-blur));
+  backdrop-filter: blur(var(--panel-blur-calc));
   border-left: 1px solid var(--panel-border);
   padding: 10px;
 }
@@ -780,7 +784,7 @@ body.layout-compact #telemetryContainer {
   width: 280px;
   max-height: none;
   background: var(--panel-bg);
-  backdrop-filter: blur(var(--panel-blur));
+  backdrop-filter: blur(var(--panel-blur-calc));
   border-right: 1px solid var(--panel-border);
   padding: 10px;
 }
