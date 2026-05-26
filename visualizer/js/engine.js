@@ -42,6 +42,7 @@ class BatecEngine {
         this.lyricIdx = 0;
         this.lyricLastSwap = 0;
         this.lyricFadeProgress = 1;
+        this.blackout = false;
 
         this.healPresets();
         this.initResize();
@@ -64,14 +65,27 @@ class BatecEngine {
         const defaults = createDefaultParams();
         const defSet = createDefaultPreset().settings;
         this.session.presets.forEach(p => {
+            // Reconstruct default definitions for both global and dynamic layer parameters
+            const allDefaults = { ...defaults };
+            if (p.layers) {
+                p.layers.forEach(layer => {
+                    const layerParams = getLayerParams(layer.type, layer.id);
+                    Object.assign(allDefaults, layerParams);
+                });
+            }
+
             // Restore missing parameters and heal static schema Definitions
-            Object.keys(defaults).forEach(k => {
+            Object.keys(allDefaults).forEach(k => {
                 if (!p.params[k]) {
-                    p.params[k] = JSON.parse(JSON.stringify(defaults[k]));
+                    p.params[k] = JSON.parse(JSON.stringify(allDefaults[k]));
                 } else {
-                    p.params[k] = { ...defaults[k], ...p.params[k] };
+                    p.params[k] = { ...allDefaults[k], ...p.params[k] };
                 }
             });
+
+            // Establish defaults for any newly filled parameters
+            establishDefaults(p.params);
+
             // Auto-heal missing settings
             Object.keys(defSet).forEach(k => {
                 if (p.settings[k] === undefined) {
@@ -347,6 +361,14 @@ class BatecEngine {
             if (fpsEl) fpsEl.textContent = this.fps;
         }
 
+        if (this.blackout) {
+            this.ctx.fillStyle = '#000000';
+            this.ctx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+            this.bufferCtx.fillStyle = '#000000';
+            this.bufferCtx.fillRect(0, 0, window.innerWidth, window.innerHeight);
+            return;
+        }
+
         const ctx = this.bufferCtx; // RE-ENABLE BUFFER (Testing if removing cpu flag fixed it)
         const stA = this.active.settings;
         const progress = this.session.targetIndex !== null ? Math.min(1, (time - this.session.transitionStart) / this.session.transitionDuration) : 0;
@@ -476,6 +498,31 @@ class BatecEngine {
             p.draw(ctx);
         }
         ctx.restore();
+    }
+
+    advanceManualLyrics() {
+        const localTime = performance.now() - this.timeOffset;
+        const active = this.active;
+        if (!active || !active.layers) return;
+        
+        active.layers.forEach(layer => {
+            if (layer.type === 'text' && layer.settings.textManualMode) {
+                if (!this.lyricStates) this.lyricStates = {};
+                if (!this.lyricStates[layer.id]) {
+                    this.lyricStates[layer.id] = { lyricIdx: 0, lyricLastSwap: 0 };
+                }
+                const state = this.lyricStates[layer.id];
+                const validTexts = layer.settings.textList.filter(t => t.trim().length > 0);
+                if (validTexts.length > 0) {
+                    state.lyricLastSwap = localTime;
+                    if (layer.settings.textSequenceMode === 'random') {
+                        state.lyricIdx = Math.floor(Math.random() * validTexts.length);
+                    } else {
+                        state.lyricIdx = (state.lyricIdx + 1) % validTexts.length;
+                    }
+                }
+            }
+        });
     }
 
 }

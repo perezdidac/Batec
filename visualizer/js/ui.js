@@ -9,6 +9,70 @@ const UI = {
     },
     safeGet(id) { return document.getElementById(id); },
 
+    toggleBlackout() {
+        const e = this.engine;
+        e.blackout = !e.blackout;
+        const btn = this.safeGet('btnBlackout');
+        if (btn) {
+            if (e.blackout) {
+                btn.classList.add('active-blackout');
+                btn.textContent = 'PANIC ACTIVE';
+            } else {
+                btn.classList.remove('active-blackout');
+                btn.textContent = 'PANIC BLACKOUT';
+            }
+        }
+    },
+
+    cloneActivePreset() {
+        const e = this.engine;
+        const active = e.active;
+        if (!active) return;
+
+        // 1. Deep clone active preset
+        const clone = JSON.parse(JSON.stringify(active));
+        clone.name = `${active.name} (Clone)`;
+
+        // 2. Map old layer IDs to new layer IDs
+        if (clone.layers) {
+            const idMapping = {};
+            clone.layers.forEach(layer => {
+                const oldId = layer.id;
+                const newId = Math.random().toString(36).substr(2, 9);
+                idMapping[oldId] = newId;
+                layer.id = newId;
+            });
+
+            // 3. Rename keys in params
+            const newParams = {};
+            for (const key in clone.params) {
+                let mapped = false;
+                for (const oldId in idMapping) {
+                    if (key.endsWith(`_${oldId}`)) {
+                        const baseKey = key.slice(0, -(oldId.length + 1));
+                        const newId = idMapping[oldId];
+                        newParams[`${baseKey}_${newId}`] = clone.params[key];
+                        mapped = true;
+                        break;
+                    }
+                }
+                if (!mapped) {
+                    newParams[key] = clone.params[key];
+                }
+            }
+            clone.params = newParams;
+        }
+
+        // 4. Push clone to presets and switch to it
+        e.session.presets.push(clone);
+        const newIndex = e.session.presets.length - 1;
+        e.switchTo(newIndex);
+        this.buildSlots();
+        setTimeout(() => {
+            this.rebuildConfigUI();
+        }, 500);
+    },
+
 
     buildImageSelectorsForLayer(layer) {
         const container = this.safeGet(`panel-image-select_${layer.id}`);
@@ -199,6 +263,11 @@ const UI = {
             // Wrap contents
             const wrapper = document.createElement('div');
             wrapper.className = 'section-content';
+
+            if (['webgl', 'gpu_fx', 'analog'].includes(cat)) {
+                wrapper.classList.add('collapsed');
+                icon.classList.add('collapsed');
+            }
 
             // Move all siblings after h4 into wrapper
             while (h4.nextSibling) {
@@ -497,6 +566,10 @@ const UI = {
                             Freeze Sequence
                             <input type="checkbox" id="textFreeze_${layer.id}" style="width:auto; margin:0;">
                         </label>
+                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                            Manual Advance
+                            <input type="checkbox" id="textManualMode_${layer.id}" style="width:auto; margin:0;">
+                        </label>
                     </div>
 
                     <div class="control-group" style="margin-bottom: 12px;">
@@ -603,6 +676,8 @@ const UI = {
                 } else if (layer.type === 'text') {
                     const frz = this.safeGet(`textFreeze_${layer.id}`);
                     if(frz) { frz.checked = layer.settings.textFreeze; frz.onchange = e => layer.settings.textFreeze = e.target.checked; }
+                    const man = this.safeGet(`textManualMode_${layer.id}`);
+                    if(man) { man.checked = layer.settings.textManualMode || false; man.onchange = e => layer.settings.textManualMode = e.target.checked; }
                     [0, 1, 2, 3, 4].forEach(i => {
                         const el = this.safeGet(`text${i}_${layer.id}`);
                         if(el) { el.value = layer.settings.textList[i] || ""; el.oninput = e => layer.settings.textList[i] = e.target.value; }
@@ -839,6 +914,21 @@ const UI = {
         };
 
         // Stage Management
+        const btnBlackout = this.safeGet('btnBlackout');
+        if (btnBlackout) btnBlackout.onclick = () => this.toggleBlackout();
+
+        const btnClonePreset = this.safeGet('btnClonePreset');
+        if (btnClonePreset) btnClonePreset.onclick = () => this.cloneActivePreset();
+
+        const btnTapTempo = this.safeGet('btnTapTempo');
+        if (btnTapTempo) btnTapTempo.onclick = () => e.bpmTracker.tap(performance.now());
+
+        const btnNudgeMinus = this.safeGet('btnNudgeMinus');
+        if (btnNudgeMinus) btnNudgeMinus.onclick = () => e.bpmTracker.nudge(-10);
+
+        const btnNudgePlus = this.safeGet('btnNudgePlus');
+        if (btnNudgePlus) btnNudgePlus.onclick = () => e.bpmTracker.nudge(10);
+
         this.safeGet('btnNewPreset').onclick = () => { e.session.presets.push(createDefaultPreset(`Stage ${e.session.presets.length + 1}`)); this.buildSlots(); };
         this.safeGet('btnDeletePreset').onclick = () => { if (e.session.presets.length <= 1) return; e.session.presets.splice(e.session.activeIndex, 1); e.session.activeIndex = 0; this.buildSlots(); this.rebuildConfigUI(); };
         this.safeGet('activePresetName').oninput = (ev) => {
@@ -881,6 +971,7 @@ const UI = {
                     settings.textFontFamily = 'Lora';
                     settings.textDissolveStyle = 'ink';
                     settings.textFreeze = false;
+                    settings.textManualMode = false;
                 }
 
                 active.layers.push({ id: layerId, type: type, name: type.toUpperCase() + ' LAYER', enabled: true, settings: settings });
@@ -996,6 +1087,27 @@ const UI = {
 
         window.addEventListener('keydown', (ev) => {
             if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') return;
+
+            if (ev.key === 'Escape') {
+                ev.preventDefault();
+                this.toggleBlackout();
+            }
+
+            if (ev.key === ' ' || ev.key === 'Spacebar') {
+                ev.preventDefault();
+                this.engine.bpmTracker.tap(performance.now());
+            }
+
+            if (ev.key === 'ArrowRight' || ev.key === 'Enter') {
+                const active = this.engine.active;
+                if (active && active.layers) {
+                    const hasManualText = active.layers.some(layer => layer.type === 'text' && layer.settings.textManualMode);
+                    if (hasManualText) {
+                        ev.preventDefault();
+                        this.engine.advanceManualLyrics();
+                    }
+                }
+            }
 
             if (ev.key === 'h' || ev.key === 'H') {
                 if (!ev.repeat) toggleUI(true);

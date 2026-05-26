@@ -112,6 +112,13 @@ class BatecDMX {
     updateFromEngine(engine) {
         if (!this.connected) return;
 
+        if (engine.blackout) {
+            for (let i = 1; i <= 14; i++) {
+                this.setChannel(i, 0);
+            }
+            return;
+        }
+
         // Auto-reactive Sync: Channel 1 pulses to live music bass
         const autoBass = Math.min(255, engine.smoothed.bass * 2.5); 
         

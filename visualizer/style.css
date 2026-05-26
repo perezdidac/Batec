@@ -851,3 +851,41 @@ body.layout-bottom #telemetryContainer .glass-panel {
   width: auto;
   flex: 1;
 }
+
+/* Panic Blackout styles */
+.panic-btn {
+  background: rgba(255, 68, 68, 0.15);
+  color: #ff4444;
+  border: 1px solid rgba(255, 68, 68, 0.4);
+  padding: 10px 14px;
+  width: 100%;
+  font-size: 0.75rem;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.panic-btn:hover {
+  background: rgba(255, 68, 68, 0.25);
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+}
+
+.panic-btn.active-blackout {
+  background: #ff4444;
+  color: #000000;
+  border-color: #ff4444;
+  animation: blackout-flash 1s infinite alternate;
+}
+
+@keyframes blackout-flash {
+  0% {
+    background: #ff4444;
+    box-shadow: 0 0 5px #ff4444;
+  }
+  100% {
+    background: #990000;
+    box-shadow: 0 0 20px #ff4444;
+  }
+}

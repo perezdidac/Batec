@@ -40,7 +40,10 @@
             <div class="session-bar-container">
                 <div class="session-header">
                     <span class="param-label">Project Stages</span>
-                    <button id="btnNewPreset" class="icon-btn-minimal" title="New Stage">+</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="btnClonePreset" class="icon-btn-minimal" title="Clone Active Stage">❐</button>
+                        <button id="btnNewPreset" class="icon-btn-minimal" title="New Stage">+</button>
+                    </div>
                 </div>
                 <div id="presetSlots" class="preset-slots-grid">
                     <!-- Generated via JS: [1] [2] [3] ... [0] -->
@@ -67,6 +70,9 @@
                     <option value="layout-live">Live Layout</option>
                     <option value="layout-bottom">Bottom Dock</option>
                 </select>
+            </div>
+            <div class="control-actions">
+                <button id="btnBlackout" class="panic-btn" title="Panic Blackout (Escape)">PANIC BLACKOUT</button>
             </div>
             <div class="control-actions">
                 <button id="btnPause" class="secondary-btn">Pause Audio</button>
@@ -273,9 +279,15 @@
             <div class="meter-row" style="justify-content: space-between;"><span class="meter-label"
                     style="color:var(--accent-glow);">fps</span><span id="txt-fps"
                     style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
-            <div class="meter-row" style="justify-content: space-between; margin-top: 4px;"><span class="meter-label"
-                    style="color:var(--accent-glow);">bpm</span><span id="txt-bpm"
-                    style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">120</span></div>
+            <div class="meter-row" style="justify-content: space-between; margin-top: 4px; align-items: center;">
+                <span class="meter-label" style="color:var(--accent-glow);">bpm</span>
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <span id="txt-bpm" style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow); margin-right: 4px;">120</span>
+                    <button id="btnTapTempo" class="icon-btn-minimal" style="font-size: 0.6rem; padding: 2px 4px; border: 1px solid var(--accent-glow); line-height: 1;" title="Tap Tempo (Spacebar)">TAP</button>
+                    <button id="btnNudgeMinus" class="icon-btn-minimal" style="font-size: 0.6rem; padding: 2px 4px; border: 1px solid var(--accent-glow); line-height: 1;" title="Nudge -10ms">-</button>
+                    <button id="btnNudgePlus" class="icon-btn-minimal" style="font-size: 0.6rem; padding: 2px 4px; border: 1px solid var(--accent-glow); line-height: 1;" title="Nudge +10ms">+</button>
+                </div>
+            </div>
             
             <button id="btnResetTime" class="secondary-btn" style="width:100%; font-size:0.6rem; padding: 4px; margin-top: 8px;">SYNC / RESET PHYSICS TIME</button>
             <button id="btnCalibrateAll" class="secondary-btn" style="width:100%; font-size:0.6rem; padding: 4px; margin-top: 4px; color: #fff;">[ ! ] CALIBRATE ALL FORMULAS</button>

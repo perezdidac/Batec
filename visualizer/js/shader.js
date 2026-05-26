@@ -11,6 +11,7 @@ class BatecShader {
             return;
         }
         this.supported = true;
+        this.uniformCache = {};
         this.resize();
         window.addEventListener('resize', () => this.resize());
         this.initShaders();
@@ -381,47 +382,59 @@ class BatecShader {
         return vec;
     }
 
+    cacheUniform1f(name, val) {
+        if (this.uniformCache[name] === val) return;
+        this.gl.uniform1f(this.uniforms[name], val);
+        this.uniformCache[name] = val;
+    }
+
+    cacheUniform3fv(name, vec) {
+        const c = this.uniformCache[name];
+        if (c && c[0] === vec[0] && c[1] === vec[1] && c[2] === vec[2]) return;
+        this.gl.uniform3fv(this.uniforms[name], vec);
+        this.uniformCache[name] = [vec[0], vec[1], vec[2]];
+    }
+
     render(engine, time) {
         if (!this.supported) return;
 
         this.gl.useProgram(this.program);
 
-        // Bind Standard Variables
+        // Bind Standard Variables (These change every frame)
         this.gl.uniform1f(this.uniforms.time, time / 1000.0);
         this.gl.uniform2f(this.uniforms.resolution, this.canvas.width, this.canvas.height);
         this.gl.uniform1f(this.uniforms.trend, engine.trend);
         this.gl.uniform1f(this.uniforms.bass, engine.smoothed.bass / 255.0);
 
         // Bind Colors (Use the active preset's palette)
-        // Taking the first and second colors of the palette as the primary and secondary synthwave colors
         const palette = engine.active.settings.palette;
-        this.gl.uniform3fv(this.uniforms.colorA, this.hexToVec3(palette[0]));
-        this.gl.uniform3fv(this.uniforms.colorB, this.hexToVec3(palette[1]));
+        this.cacheUniform3fv('colorA', this.hexToVec3(palette[0]));
+        this.cacheUniform3fv('colorB', this.hexToVec3(palette[1]));
 
-        // Bind Engine Parameters (with LERP evaluation built into engine.p())
-        this.gl.uniform1f(this.uniforms.speed, engine.p('webglSpeed'));
-        this.gl.uniform1f(this.uniforms.elevation, engine.p('webglElevation'));
-        this.gl.uniform1f(this.uniforms.glow, engine.p('webglGlow'));
-        this.gl.uniform1f(this.uniforms.distortion, engine.p('webglDistortion'));
+        // Bind Engine Parameters (evaluated with engine.p())
+        this.cacheUniform1f('speed', engine.p('webglSpeed'));
+        this.cacheUniform1f('elevation', engine.p('webglElevation'));
+        this.cacheUniform1f('glow', engine.p('webglGlow'));
+        this.cacheUniform1f('distortion', engine.p('webglDistortion'));
 
         // Panot Uniforms
-        this.gl.uniform1f(this.uniforms.panotScale, engine.p('panotScale'));
-        this.gl.uniform1f(this.uniforms.panotBloom, engine.p('panotBloom'));
-        this.gl.uniform1f(this.uniforms.panotRotation, engine.p('panotRotation'));
-        this.gl.uniform1f(this.uniforms.panotMortar, engine.p('panotMortar'));
-        this.gl.uniform1f(this.uniforms.panotThickness, engine.p('panotThickness'));
-        this.gl.uniform1f(this.uniforms.panotRoundness, engine.p('panotRoundness'));
-        this.gl.uniform1f(this.uniforms.panotShadow, engine.p('panotShadow'));
-        this.gl.uniform1f(this.uniforms.horizonSpeed, engine.p('horizonSpeed'));
-        this.gl.uniform1f(this.uniforms.horizonComplexity, engine.p('horizonComplexity'));
-        this.gl.uniform1f(this.uniforms.horizonEnabled, engine.active.settings.horizonEnabled ? 1.0 : 0.0);
-        this.gl.uniform1f(this.uniforms.projectionMode, engine.active.settings.webglProjection === '3d' ? 1.0 : 0.0);
+        this.cacheUniform1f('panotScale', engine.p('panotScale'));
+        this.cacheUniform1f('panotBloom', engine.p('panotBloom'));
+        this.cacheUniform1f('panotRotation', engine.p('panotRotation'));
+        this.cacheUniform1f('panotMortar', engine.p('panotMortar'));
+        this.cacheUniform1f('panotThickness', engine.p('panotThickness'));
+        this.cacheUniform1f('panotRoundness', engine.p('panotRoundness'));
+        this.cacheUniform1f('panotShadow', engine.p('panotShadow'));
+        this.cacheUniform1f('horizonSpeed', engine.p('horizonSpeed'));
+        this.cacheUniform1f('horizonComplexity', engine.p('horizonComplexity'));
+        this.cacheUniform1f('horizonEnabled', engine.active.settings.horizonEnabled ? 1.0 : 0.0);
+        this.cacheUniform1f('projectionMode', engine.active.settings.webglProjection === '3d' ? 1.0 : 0.0);
         
         let styleVal = 0.0;
         if (engine.active.settings.shaderStyle === 'panot') styleVal = 1.0;
         else if (engine.active.settings.shaderStyle === 'mosaic') styleVal = 2.0;
         else if (engine.active.settings.shaderStyle === 'cells') styleVal = 3.0;
-        this.gl.uniform1f(this.uniforms.shaderStyle, styleVal);
+        this.cacheUniform1f('shaderStyle', styleVal);
 
         // Draw the Quad
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);

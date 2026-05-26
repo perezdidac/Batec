@@ -47,19 +47,26 @@ class BatecParticle {
             const op = eng.pLayer(this.layerId, 'particleOpacity');
 
             if (layerSettings && layerSettings.useLayerColor) {
-                grad.addColorStop(0, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${op})`);
-                grad.addColorStop(0.4, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${op * 0.4})`);
-                grad.addColorStop(1, `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0)`);
+                let rgbaPrefix = rgb.rgbaPrefix;
+                if (!rgbaPrefix) {
+                    rgbaPrefix = `rgba(${rgb.r},${rgb.g},${rgb.b},`;
+                    rgb.rgbaPrefix = rgbaPrefix;
+                }
+                grad.addColorStop(0, rgbaPrefix + op + ')');
+                grad.addColorStop(0.4, rgbaPrefix + (op * 0.4) + ')');
+                grad.addColorStop(1, rgbaPrefix + '0)');
             } else {
                 // Artsy Dust Mote: Soft radial glow, warm golden-white
-                grad.addColorStop(0, `rgba(255, 245, 200, ${op})`);
-                grad.addColorStop(0.4, `rgba(255, 220, 150, ${op * 0.4})`);
-                grad.addColorStop(1, `rgba(255, 200, 100, 0)`);
+                grad.addColorStop(0, `rgba(255,245,200,${op})`);
+                grad.addColorStop(0.4, `rgba(255,220,150,${op * 0.4})`);
+                grad.addColorStop(1, 'rgba(255,200,100,0)');
             }
             ctx.fillStyle = grad;
         } else {
-            const hsla = ColorUtils.hexToHsl(colorBase);
-            ctx.fillStyle = `hsla(${(hsla[0] + this.hueOffset) % 360}, ${hsla[1]}%, ${hsla[2]}%, ${Math.max(0, Math.min(1, eng.pLayer(this.layerId, 'particleOpacity')))})`;
+            const hslParts = ColorUtils.hexToHslParts(colorBase);
+            const h = Math.round(hslParts.h + this.hueOffset) % 360;
+            const op = Math.max(0, Math.min(1, eng.pLayer(this.layerId, 'particleOpacity')));
+            ctx.fillStyle = `hsla(${h}${hslParts.suffix}${op})`;
         }
 
         ctx.beginPath();

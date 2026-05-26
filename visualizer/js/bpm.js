@@ -7,6 +7,31 @@ class BatecBpmAnalyzer {
         this.beatBuffer = [];
         this.lastBeatTime = 0;
         this.thresholdMultiplier = 1.4; // Flux must be 40% louder than local average
+        this.tapTimes = [];
+    }
+
+    tap(now) {
+        this.tapTimes.push(now);
+        // Clear oldest tap when tap history gets larger than 4 beats
+        if (this.tapTimes.length > 4) {
+            this.tapTimes.shift();
+        }
+        
+        if (this.tapTimes.length >= 2) {
+            const deltas = [];
+            for (let i = 1; i < this.tapTimes.length; i++) {
+                deltas.push(this.tapTimes[i] - this.tapTimes[i - 1]);
+            }
+            const avgDelta = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+            this.bpm = Math.round(60000 / avgDelta);
+            // Align the transient phase marker with the tap moment
+            this.lastBeatTime = now;
+        }
+    }
+
+    nudge(amountMs) {
+        // Shift the transient phase marker by nudging lastBeatTime
+        this.lastBeatTime += amountMs;
     }
 
     analyze(spectrum, now) {

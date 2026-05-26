@@ -71,6 +71,10 @@ class BatecMIDI {
         
         // --- PAD / NOTE ON Logic ---
         if (type === 0x90 && data2 > 0) {
+            if (data1 === 43) {
+                this.engine.advanceManualLyrics();
+                return;
+            }
             const map = this.mappings.pads[data1];
             if (map) {
                 if (map.type === 'toggle') {

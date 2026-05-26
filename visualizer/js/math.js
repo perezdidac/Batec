@@ -18,6 +18,7 @@ const FormulaEngine = {
 
 const hexToRgbCache = new Map();
 const hexToHslCache = new Map();
+const hexToHslPartsCache = new Map();
 
 const ColorUtils = {
     hexToRgb(hex) {
@@ -55,6 +56,19 @@ const ColorUtils = {
             hexToHslCache.set(hex, hsl);
         }
         return hsl;
+    },
+    hexToHslParts(hex) {
+        if (!hex) return { h: 0, suffix: ',0%,0%,' };
+        let parts = hexToHslPartsCache.get(hex);
+        if (!parts) {
+            const hsl = this.hexToHsl(hex);
+            parts = {
+                h: hsl[0],
+                suffix: `,${Math.round(hsl[1])}%,${Math.round(hsl[2])}%,`
+            };
+            hexToHslPartsCache.set(hex, parts);
+        }
+        return parts;
     },
     lerpColor(hexA, hexB, t) {
         const a = this.hexToRgb(hexA);

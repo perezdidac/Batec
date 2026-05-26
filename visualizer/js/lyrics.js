@@ -15,7 +15,7 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
         state.lyricLastSwap = time; // Reset if physics time was synced/reset
     }
 
-    if (time - state.lyricLastSwap > hold + fade) {
+    if (!layer.settings.textManualMode && (time - state.lyricLastSwap > hold + fade)) {
         state.lyricLastSwap = time;
         if (layer.settings.textSequenceMode === 'random') state.lyricIdx = Math.floor(Math.random() * validTexts.length);
         else state.lyricIdx = (state.lyricIdx + 1) % validTexts.length;
@@ -42,8 +42,12 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
 
     let opacity = engine.pLayer(layerId, 'textOpacity');
     if (!isFrozen) {
-        if (elapsed < fade) opacity *= (elapsed / fade);
-        else if (elapsed > hold) opacity *= (1 - (elapsed - hold) / fade);
+        if (layer.settings.textManualMode) {
+            if (elapsed < fade) opacity *= (elapsed / fade);
+        } else {
+            if (elapsed < fade) opacity *= (elapsed / fade);
+            else if (elapsed > hold) opacity *= (1 - (elapsed - hold) / fade);
+        }
     }
 
     // INK RESOLVE: Non-linear opacity mask for organic soaking effect
