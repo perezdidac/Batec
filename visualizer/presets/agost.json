@@ -2,6 +2,60 @@
   "presets": [
     {
       "name": "Friday",
+      "layers": [
+        {
+          "id": "photos_friday",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              4
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "screen"
+          }
+        },
+        {
+          "id": "particles_friday",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "pollen",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_friday",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "AGOST",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "'Inter', sans-serif",
+            "textDissolveStyle": "ink",
+            "textFreeze": true,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#ea3434",
@@ -11,29 +65,7 @@
           "#3f51b5",
           "#1a237e"
         ],
-        "particleShape": "pollen",
-        "imgBlendMode": "screen",
-        "imgIndices": [
-          4
-        ],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "AGOST",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "'Inter', sans-serif",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": true,
-        "particlesEnabled": true,
         "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "3d",
@@ -41,7 +73,6 @@
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": false,
-        "textFreeze": true,
         "isPaused": false
       },
       "params": {
@@ -60,197 +91,142 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
+        "imgScale_photos_friday": {
           "value": 1.2,
           "formula": "1.6 + trend*0.5",
           "useFormula": false
         },
-        "imgGlitch": {
+        "imgGlitch_photos_friday": {
           "value": 0,
           "formula": "120 + bass",
           "useFormula": false
         },
-        "imgBlur": {
+        "imgBlur_photos_friday": {
           "value": 0,
           "formula": "20 + bass/10",
           "useFormula": false
         },
-        "imgSaturate": {
+        "imgSaturate_photos_friday": {
           "value": 150,
           "formula": "100 + trend*200",
           "useFormula": true
         },
-        "photoRotation": {
+        "photoRotation_photos_friday": {
           "value": 0,
           "formula": "Math.sin(time/2000) * 0.2",
           "useFormula": false
         },
-        "photoContrast": {
+        "photoContrast_photos_friday": {
           "value": 110,
           "formula": "100 + bass",
           "useFormula": false
         },
-        "particleCount": {
+        "particleCount_particles_friday": {
           "value": 100,
           "formula": "Math.floor(trend*1000)",
           "useFormula": true
         },
-        "particleSize": {
+        "particleSize_particles_friday": {
           "value": 42.4,
           "formula": "3 + (bass/255) * 8 * trend",
           "useFormula": false
         },
-        "particleSpeed": {
+        "particleSpeed_particles_friday": {
           "value": 0.4,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_friday": {
           "value": 10,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_friday": {
           "value": 0.05,
           "formula": "0.2 + trend*0.5",
           "useFormula": false
         },
-        "particleDirection": {
+        "particleDirection_particles_friday": {
           "value": 2.80840734641021,
           "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
           "useFormula": false
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_friday": {
           "value": 27,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_friday": {
           "value": 0,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_friday": {
           "value": 0,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_friday": {
           "value": 2,
           "formula": "2.0 + (trend * 10)",
           "useFormula": true
         },
-        "particleBreezeStrength": {
+        "particleBreezeStrength_particles_friday": {
           "value": 0.78,
           "formula": "0.5",
           "useFormula": false
         },
-        "textScale": {
+        "textScale_text_friday": {
           "value": 2.1,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_friday": {
           "value": 23,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_friday": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": false
         },
-        "textJitterY": {
+        "textJitterY_text_friday": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": false
         },
-        "textRotation": {
+        "textRotation_text_friday": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_friday": {
           "value": 0.45,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_friday": {
           "value": 60,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_friday": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_friday": {
           "value": 60,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_friday": {
           "value": 0,
           "formula": "0.2 + trend",
           "useFormula": true
         },
-        "textInkResolve": {
+        "textInkResolve_text_friday": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -395,12 +371,12 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
+        "imgOpacity_photos_friday": {
           "value": 0.3,
           "formula": "0.3 + (bass/255)*0.5",
           "useFormula": true
         },
-        "textGlow": {
+        "textGlow_text_friday": {
           "value": 5,
           "formula": "0",
           "useFormula": false
@@ -419,6 +395,40 @@
     },
     {
       "name": "Gravel",
+      "layers": [
+        {
+          "id": "photos_gravel",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              0
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "multiply"
+          }
+        },
+        {
+          "id": "particles_gravel",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "mote",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#a1887f",
@@ -428,37 +438,14 @@
           "#ffb74d",
           "#607d8b"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "multiply",
-        "imgIndices": [
-          0
-        ],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": false,
-        "textList": [
-          "ROAD TRIP",
-          "NO VULL PAS",
-          "ARRIBAR MAI",
-          "CAMÍ DE POLS",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": true,
-        "particlesEnabled": true,
         "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": true,
-        "textFreeze": false
+        "gpu_fxEnabled": true
       },
       "params": {
         "sensitivity": {
@@ -476,197 +463,87 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
+        "imgScale_photos_gravel": {
           "value": 1,
           "formula": "1.6 + trend*0.5",
           "useFormula": false
         },
-        "imgGlitch": {
+        "imgGlitch_photos_gravel": {
           "value": 275.5905511811024,
           "formula": "bass/8",
           "useFormula": true
         },
-        "imgBlur": {
+        "imgBlur_photos_gravel": {
           "value": 20,
           "formula": "20 + bass/10",
           "useFormula": true
         },
-        "imgSaturate": {
+        "imgSaturate_photos_gravel": {
           "value": 150,
           "formula": "100 + trend*200",
           "useFormula": true
         },
-        "photoRotation": {
+        "photoRotation_photos_gravel": {
           "value": 0,
           "formula": "Math.sin(time/2000) * 0.2",
           "useFormula": false
         },
-        "photoContrast": {
+        "photoContrast_photos_gravel": {
           "value": 160,
           "formula": "100 + bass",
           "useFormula": false
         },
-        "particleCount": {
+        "particleCount_particles_gravel": {
           "value": 800,
           "formula": "500 + Math.floor(trend*1000)",
           "useFormula": false
         },
-        "particleSize": {
+        "particleSize_particles_gravel": {
           "value": 4,
           "formula": "3 + (bass/255) * 8 * trend",
           "useFormula": true
         },
-        "particleSpeed": {
+        "particleSpeed_particles_gravel": {
           "value": 2,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_gravel": {
           "value": 60,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_gravel": {
           "value": 0.4,
           "formula": "0.2 + trend*0.5",
           "useFormula": false
         },
-        "particleDirection": {
+        "particleDirection_particles_gravel": {
           "value": 0,
           "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
           "useFormula": true
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_gravel": {
           "value": 10,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_gravel": {
           "value": 0,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_gravel": {
           "value": -0.5,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_gravel": {
           "value": 10,
           "formula": "2.0 + (trend * 10)",
           "useFormula": true
         },
-        "particleBreezeStrength": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
-          "value": 1,
-          "formula": "1.0 + trend",
-          "useFormula": false
-        },
-        "textBlur": {
-          "value": 30,
-          "formula": "30 + (1-trend)*20",
-          "useFormula": false
-        },
-        "textJitterX": {
-          "value": 0,
-          "formula": "Math.sin(time/50) * 15",
-          "useFormula": true
-        },
-        "textJitterY": {
-          "value": 0,
-          "formula": "Math.cos(time/200) * trend * 30",
-          "useFormula": true
-        },
-        "textRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/1000) * 0.1",
-          "useFormula": false
-        },
-        "textOpacity": {
-          "value": 0.4,
-          "formula": "0.4 + trend*0.6",
-          "useFormula": false
-        },
-        "textHoldTime": {
-          "value": 5,
-          "formula": "5",
-          "useFormula": false
-        },
-        "textFadeTime": {
-          "value": 1,
-          "formula": "1",
-          "useFormula": false
-        },
-        "textTypeSpeed": {
-          "value": 60,
-          "formula": "60",
-          "useFormula": false
-        },
-        "textEnvironmentDrift": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": true
-        },
-        "textInkResolve": {
+        "particleBreezeStrength_particles_gravel": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -811,7 +688,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
+        "imgOpacity_photos_gravel": {
           "value": 0.6,
           "formula": "0.2 + (avg/255)*0.8",
           "useFormula": false
@@ -819,11 +696,6 @@
         "analogScratches": {
           "value": 0,
           "formula": "0.2 + (bass/255)*0.3",
-          "useFormula": false
-        },
-        "textGlow": {
-          "value": 0,
-          "formula": "0",
           "useFormula": false
         },
         "analogFlash": {
@@ -835,6 +707,46 @@
     },
     {
       "name": "Rain",
+      "layers": [
+        {
+          "id": "particles_rain",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "circle",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_rain",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "PLUJA AL CARRER",
+              "N\u00daVOLS GRISOS",
+              "EL FRED",
+              "EL VENT",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "'Courier New', monospace",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#455a64",
@@ -844,35 +756,14 @@
           "#ffffff",
           "#00bcd4"
         ],
-        "particleShape": "circle",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "PLUJA AL CARRER",
-          "NÚVOLS GRISOS",
-          "EL FRED",
-          "EL VENT",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "'Courier New', monospace",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": false,
-        "particlesEnabled": true,
         "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -890,197 +781,112 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
+        "particleCount_particles_rain": {
           "value": 500,
           "formula": "500 + Math.floor(trend*1000)",
           "useFormula": false
         },
-        "particleSize": {
+        "particleSize_particles_rain": {
           "value": 1,
           "formula": "3 + (bass/255) * 8 * trend",
           "useFormula": false
         },
-        "particleSpeed": {
+        "particleSpeed_particles_rain": {
           "value": 15,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_rain": {
           "value": 60,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_rain": {
           "value": 0.4,
           "formula": "0.2 + trend*0.5",
           "useFormula": false
         },
-        "particleDirection": {
+        "particleDirection_particles_rain": {
           "value": 0,
           "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
           "useFormula": true
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_rain": {
           "value": 10,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_rain": {
           "value": 0,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_rain": {
           "value": 8,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_rain": {
           "value": 2,
           "formula": "2.0 + (trend * 10)",
           "useFormula": true
         },
-        "particleBreezeStrength": {
+        "particleBreezeStrength_particles_rain": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
         },
-        "textScale": {
+        "textScale_text_rain": {
           "value": 1,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_rain": {
           "value": 5,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_rain": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_rain": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_rain": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_rain": {
           "value": 0.7,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_rain": {
           "value": 5,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_rain": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_rain": {
           "value": 60,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_rain": {
           "value": 0.2,
           "formula": "0.2 + trend",
           "useFormula": true
         },
-        "textInkResolve": {
+        "textInkResolve_text_rain": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -1225,17 +1031,12 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
         "analogFlash": {
           "value": 0,
           "formula": "(bass/255 > 0.82) ? (bass/255)*1.2 : 0",
           "useFormula": true
         },
-        "textGlow": {
+        "textGlow_text_rain": {
           "value": 0,
           "formula": "0",
           "useFormula": false
@@ -1249,6 +1050,28 @@
     },
     {
       "name": "Summer",
+      "layers": [
+        {
+          "id": "text_summer",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "ESTIU",
+              "ARA ARRIBA",
+              "EN ELS TEUS BRA\u00c7OS",
+              "VULL",
+              "REFUGIAR-ME"
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "Lora",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#ffeb3b",
@@ -1258,35 +1081,14 @@
           "#4caf50",
           "#cddc39"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "ESTIU",
-          "ARA ARRIBA",
-          "EN ELS TEUS BRAÇOS",
-          "VULL",
-          "REFUGIAR-ME"
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": false,
-        "particlesEnabled": false,
         "analogEnabled": true,
         "webglEnabled": true,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -1304,197 +1106,57 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
-          "value": 500,
-          "formula": "500 + Math.floor(trend*1000)",
-          "useFormula": false
-        },
-        "particleSize": {
-          "value": 4,
-          "formula": "3 + (bass/255) * 8 * trend",
-          "useFormula": true
-        },
-        "particleSpeed": {
-          "value": 2,
-          "formula": "2.0 + trend*5",
-          "useFormula": false
-        },
-        "particleChaos": {
-          "value": 60,
-          "formula": "60 + bass",
-          "useFormula": false
-        },
-        "particleOpacity": {
-          "value": 0.4,
-          "formula": "0.2 + trend*0.5",
-          "useFormula": false
-        },
-        "particleDirection": {
-          "value": 0,
-          "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
-          "useFormula": true
-        },
-        "particleColorSpeed": {
-          "value": 10,
-          "formula": "10 + trend*50",
-          "useFormula": false
-        },
-        "particleRotation": {
-          "value": 0,
-          "formula": "time/1000",
-          "useFormula": false
-        },
-        "particleGravity": {
-          "value": 0,
-          "formula": "trend > 0.8 ? -2 : 1",
-          "useFormula": false
-        },
-        "particleWind": {
-          "value": 2,
-          "formula": "2.0 + (trend * 10)",
-          "useFormula": true
-        },
-        "particleBreezeStrength": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
+        "textScale_text_summer": {
           "value": 1.5,
           "formula": "1.5 + trend*0.2",
           "useFormula": true
         },
-        "textBlur": {
+        "textBlur_text_summer": {
           "value": 30,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_summer": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_summer": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_summer": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_summer": {
           "value": 0.4,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_summer": {
           "value": 5,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_summer": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_summer": {
           "value": 60,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_summer": {
           "value": 0.2,
           "formula": "0.2 + trend",
           "useFormula": true
         },
-        "textInkResolve": {
+        "textInkResolve_text_summer": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -1639,12 +1301,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
+        "textGlow_text_summer": {
           "value": 0,
           "formula": "(bass/255)*40 + 10",
           "useFormula": true
@@ -1663,6 +1320,45 @@
     },
     {
       "name": "Nothing",
+      "layers": [
+        {
+          "id": "rays_nothing",
+          "type": "rays",
+          "name": "RAYS LAYER",
+          "enabled": true,
+          "settings": {
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_nothing",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "RES",
+              "JA NO QUEDA",
+              "TEMPS",
+              "MARXO EN",
+              "DOS DIES"
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "Lora",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#b71c1c",
@@ -1672,35 +1368,14 @@
           "#424242",
           "#7f0000"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "RES",
-          "JA NO QUEDA",
-          "TEMPS",
-          "MARXO EN",
-          "DOS DIES"
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": true,
-        "photosEnabled": false,
-        "particlesEnabled": false,
         "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -1718,42 +1393,17 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
+        "rayCount_rays_nothing": {
           "value": 37,
           "formula": "0",
           "useFormula": false
         },
-        "raySpeed": {
+        "raySpeed_rays_nothing": {
           "value": 0,
           "formula": "0.5 + Math.sin(time/5000)",
           "useFormula": false
         },
-        "rayThickness": {
+        "rayThickness_rays_nothing": {
           "min": 1,
           "max": 50,
           "value": 50,
@@ -1763,7 +1413,7 @@
           "calibRawMin": 29.61129317084263,
           "calibRawMax": 203.2860293650981
         },
-        "rayCenterHole": {
+        "rayCenterHole_rays_nothing": {
           "min": 0,
           "max": 800,
           "value": 80,
@@ -1773,152 +1423,67 @@
           "calibRawMin": 81.19414122902123,
           "calibRawMax": 95.4739562633849
         },
-        "rayChaos": {
+        "rayChaos_rays_nothing": {
           "value": 1.5,
           "formula": "1.5 + trend",
           "useFormula": true
         },
-        "rayOpacity": {
+        "rayOpacity_rays_nothing": {
           "value": 0.4,
           "formula": "0.9",
           "useFormula": false
         },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
-          "value": 500,
-          "formula": "500 + Math.floor(trend*1000)",
-          "useFormula": false
-        },
-        "particleSize": {
-          "value": 4,
-          "formula": "3 + (bass/255) * 8 * trend",
-          "useFormula": true
-        },
-        "particleSpeed": {
-          "value": 2,
-          "formula": "2.0 + trend*5",
-          "useFormula": false
-        },
-        "particleChaos": {
-          "value": 60,
-          "formula": "60 + bass",
-          "useFormula": false
-        },
-        "particleOpacity": {
-          "value": 0.35,
-          "formula": "0.2 + trend*0.5",
-          "useFormula": false
-        },
-        "particleDirection": {
-          "value": 0,
-          "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
-          "useFormula": true
-        },
-        "particleColorSpeed": {
-          "value": 10,
-          "formula": "10 + trend*50",
-          "useFormula": false
-        },
-        "particleRotation": {
-          "value": 0,
-          "formula": "time/1000",
-          "useFormula": false
-        },
-        "particleGravity": {
-          "value": 0,
-          "formula": "trend > 0.8 ? -2 : 1",
-          "useFormula": false
-        },
-        "particleWind": {
-          "value": 2,
-          "formula": "2.0 + (trend * 10)",
-          "useFormula": true
-        },
-        "particleBreezeStrength": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
+        "textScale_text_nothing": {
           "value": 1,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_nothing": {
           "value": 30,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_nothing": {
           "value": 50,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_nothing": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_nothing": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_nothing": {
           "value": 0.4,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_nothing": {
           "value": 5,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_nothing": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_nothing": {
           "value": 60,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_nothing": {
           "value": 0.2,
           "formula": "0.2 + trend",
           "useFormula": true
         },
-        "textInkResolve": {
+        "textInkResolve_text_nothing": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -2063,12 +1628,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
+        "textGlow_text_nothing": {
           "value": 20,
           "formula": "bass/10",
           "useFormula": true
@@ -2087,6 +1647,26 @@
     },
     {
       "name": "Us",
+      "layers": [
+        {
+          "id": "particles_us",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "mote",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#2e7d32",
@@ -2096,35 +1676,14 @@
           "#29b6f6",
           "#ffffff"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": false,
-        "textList": [
-          "US",
-          "STEADY",
-          "PROGRESS",
-          "TOGETHER",
-          "STEPS"
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": false,
-        "particlesEnabled": true,
         "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -2142,197 +1701,57 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 275.5905511811024,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
+        "particleCount_particles_us": {
           "value": 620,
           "formula": "500 + Math.floor(trend*1000)",
           "useFormula": false
         },
-        "particleSize": {
+        "particleSize_particles_us": {
           "value": 70.4,
           "formula": "3 + (bass/255) * 8 * trend",
           "useFormula": false
         },
-        "particleSpeed": {
+        "particleSpeed_particles_us": {
           "value": 0.6,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_us": {
           "value": 19,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_us": {
           "value": 0.05,
           "formula": "0.2 + trend*0.5",
           "useFormula": false
         },
-        "particleDirection": {
+        "particleDirection_particles_us": {
           "value": 0,
           "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
           "useFormula": false
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_us": {
           "value": 9,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_us": {
           "value": -0.991592653589793,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_us": {
           "value": 0,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_us": {
           "value": -17.2,
           "formula": "2.0 + (trend * 10)",
           "useFormula": true
         },
-        "particleBreezeStrength": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
-          "value": 1,
-          "formula": "1.0 + trend",
-          "useFormula": false
-        },
-        "textBlur": {
-          "value": 30,
-          "formula": "30 + (1-trend)*20",
-          "useFormula": false
-        },
-        "textJitterX": {
-          "value": 0,
-          "formula": "Math.sin(time/200) * trend * 30",
-          "useFormula": true
-        },
-        "textJitterY": {
-          "value": 0,
-          "formula": "Math.cos(time/200) * trend * 30",
-          "useFormula": true
-        },
-        "textRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/1000) * 0.1",
-          "useFormula": false
-        },
-        "textOpacity": {
-          "value": 0.4,
-          "formula": "0.4 + trend*0.6",
-          "useFormula": false
-        },
-        "textHoldTime": {
-          "value": 5,
-          "formula": "5",
-          "useFormula": false
-        },
-        "textFadeTime": {
-          "value": 1,
-          "formula": "1",
-          "useFormula": false
-        },
-        "textTypeSpeed": {
-          "value": 60,
-          "formula": "60",
-          "useFormula": false
-        },
-        "textEnvironmentDrift": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": true
-        },
-        "textInkResolve": {
+        "particleBreezeStrength_particles_us": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -2477,16 +1896,6 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.18,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
-          "value": 10,
-          "formula": "0",
-          "useFormula": false
-        },
         "analogFlash": {
           "value": 0,
           "formula": "0",
@@ -2501,6 +1910,45 @@
     },
     {
       "name": "You",
+      "layers": [
+        {
+          "id": "rays_you",
+          "type": "rays",
+          "name": "RAYS LAYER",
+          "enabled": true,
+          "settings": {
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_you",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "QUAN EM MIRES",
+              "PERDO EL",
+              "FIL DEL VENT",
+              "",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "Lora",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#ff0055",
@@ -2510,35 +1958,14 @@
           "#ffffff",
           "#e1bee7"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "QUAN EM MIRES",
-          "PERDO EL",
-          "FIL DEL VENT",
-          "",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": true,
-        "photosEnabled": false,
-        "particlesEnabled": false,
         "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -2556,197 +1983,87 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 2,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": -4.4,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 13,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.5,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
+        "rayCount_rays_you": {
           "value": 13,
           "formula": "0",
           "useFormula": false
         },
-        "raySpeed": {
+        "raySpeed_rays_you": {
           "value": 0.1,
           "formula": "0.5 + Math.sin(time/5000)",
           "useFormula": false
         },
-        "rayThickness": {
+        "rayThickness_rays_you": {
           "value": 5,
           "formula": "4 + (bass/50)",
           "useFormula": false
         },
-        "rayCenterHole": {
+        "rayCenterHole_rays_you": {
           "value": 610,
           "formula": "800-(1/375)*time",
           "useFormula": true
         },
-        "rayChaos": {
+        "rayChaos_rays_you": {
           "value": 1.7,
           "formula": "0.2 + trend",
           "useFormula": false
         },
-        "rayOpacity": {
+        "rayOpacity_rays_you": {
           "value": 0.9,
           "formula": "0.9",
           "useFormula": false
         },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
-          "value": 300,
-          "formula": "500 + Math.floor(trend*1000)",
-          "useFormula": false
-        },
-        "particleSize": {
-          "value": 4,
-          "formula": "3 + (bass/255) * 8 * trend",
-          "useFormula": true
-        },
-        "particleSpeed": {
-          "value": 2,
-          "formula": "2.0 + trend*5",
-          "useFormula": false
-        },
-        "particleChaos": {
-          "value": 60,
-          "formula": "60 + bass",
-          "useFormula": false
-        },
-        "particleOpacity": {
-          "value": 0.8,
-          "formula": "0.2 + trend*0.5",
-          "useFormula": false
-        },
-        "particleDirection": {
-          "value": 0,
-          "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
-          "useFormula": true
-        },
-        "particleColorSpeed": {
-          "value": 10,
-          "formula": "10 + trend*50",
-          "useFormula": false
-        },
-        "particleRotation": {
-          "value": 0,
-          "formula": "time/1000",
-          "useFormula": false
-        },
-        "particleGravity": {
-          "value": 0,
-          "formula": "trend > 0.8 ? -2 : 1",
-          "useFormula": false
-        },
-        "particleWind": {
-          "value": 2,
-          "formula": "2.0 + (trend * 10)",
-          "useFormula": true
-        },
-        "particleBreezeStrength": {
-          "value": 0.1,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
+        "textScale_text_you": {
           "value": 0.55,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_you": {
           "value": 105,
           "formula": "time/3000",
           "useFormula": true
         },
-        "textJitterX": {
+        "textJitterX_text_you": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_you": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_you": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_you": {
           "value": 0.4,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_you": {
           "value": 5,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_you": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_you": {
           "value": 200,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_you": {
           "value": 0.2,
           "formula": "0.2 + trend",
           "useFormula": false
         },
-        "textInkResolve": {
+        "textInkResolve_text_you": {
           "value": 0.34,
           "formula": "0.5",
           "useFormula": false
@@ -2891,12 +2208,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
+        "textGlow_text_you": {
           "value": 149,
           "formula": "trend * 30",
           "useFormula": false
@@ -2915,6 +2227,46 @@
     },
     {
       "name": "Beach",
+      "layers": [
+        {
+          "id": "particles_beach",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "circle",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_beach",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "Quan ja",
+              "No Visquis",
+              "Aqu\u00ed",
+              "",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "Lora",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#6685ff",
@@ -2924,35 +2276,14 @@
           "#46319b",
           "#2421c4"
         ],
-        "particleShape": "circle",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "Quan ja",
-          "No Visquis",
-          "Aquí",
-          "",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "Lora",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": false,
-        "particlesEnabled": true,
         "analogEnabled": true,
         "webglEnabled": true,
         "webglProjection": "3d",
         "shaderStyle": "cells",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -2970,197 +2301,112 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": -1,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.4,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
+        "particleCount_particles_beach": {
           "value": 1110,
           "formula": "(180000-time)/1000",
           "useFormula": true
         },
-        "particleSize": {
+        "particleSize_particles_beach": {
           "value": 2.1,
           "formula": "3 + (bass/255) * 8 * trend",
           "useFormula": false
         },
-        "particleSpeed": {
+        "particleSpeed_particles_beach": {
           "value": 20,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_beach": {
           "value": 200,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_beach": {
           "value": 1,
           "formula": "(180000-time)/180000",
           "useFormula": true
         },
-        "particleDirection": {
+        "particleDirection_particles_beach": {
           "value": -1.29159265358979,
           "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
           "useFormula": false
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_beach": {
           "value": 0,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_beach": {
           "value": 0.128407346410207,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_beach": {
           "value": 10,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_beach": {
           "value": -11.9,
           "formula": "2.0 + (trend * 10)",
           "useFormula": false
         },
-        "particleBreezeStrength": {
+        "particleBreezeStrength_particles_beach": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
         },
-        "textScale": {
+        "textScale_text_beach": {
           "value": 0.75,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_beach": {
           "value": 6,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_beach": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_beach": {
           "value": 0,
           "formula": "Math.sin(time/200)*trend*50",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_beach": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_beach": {
           "value": 0.4,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_beach": {
           "value": 13,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_beach": {
           "value": 2,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_beach": {
           "value": 125,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_beach": {
           "value": 0.25,
           "formula": "0.2 + trend",
           "useFormula": false
         },
-        "textInkResolve": {
+        "textInkResolve_text_beach": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
@@ -3305,12 +2551,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
+        "textGlow_text_beach": {
           "value": 0,
           "formula": "0",
           "useFormula": false
@@ -3329,6 +2570,46 @@
     },
     {
       "name": "Chestnut",
+      "layers": [
+        {
+          "id": "particles_chestnut",
+          "type": "particles",
+          "name": "PARTICLES LAYER",
+          "enabled": true,
+          "settings": {
+            "particleShape": "petal",
+            "useLayerColor": false,
+            "layerColors": [
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff",
+              "#ffffff"
+            ]
+          }
+        },
+        {
+          "id": "text_chestnut",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "LES FLORS",
+              "DEL CASTANYER",
+              "VAN CAIENT",
+              "AL CARRER",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "'Courier New', monospace",
+            "textDissolveStyle": "ink",
+            "textFreeze": false,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#dcedc8",
@@ -3338,35 +2619,14 @@
           "#ffab91",
           "#795548"
         ],
-        "particleShape": "petal",
-        "imgBlendMode": "screen",
-        "imgIndices": [],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "LES FLORS",
-          "DEL CASTANYER",
-          "VAN CAIENT",
-          "AL CARRER",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "'Courier New', monospace",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": false,
-        "particlesEnabled": true,
         "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": false
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -3384,197 +2644,112 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
-          "value": 1.6,
-          "formula": "1.6 + trend*0.5",
-          "useFormula": false
-        },
-        "imgGlitch": {
-          "value": 120,
-          "formula": "120 + bass",
-          "useFormula": false
-        },
-        "imgBlur": {
-          "value": 20,
-          "formula": "20 + bass/10",
-          "useFormula": true
-        },
-        "imgSaturate": {
-          "value": 150,
-          "formula": "100 + trend*200",
-          "useFormula": true
-        },
-        "photoRotation": {
-          "value": 0,
-          "formula": "Math.sin(time/2000) * 0.2",
-          "useFormula": false
-        },
-        "photoContrast": {
-          "value": 110,
-          "formula": "100 + bass",
-          "useFormula": false
-        },
-        "particleCount": {
+        "particleCount_particles_chestnut": {
           "value": 500,
           "formula": "500 + Math.floor(trend*1000)",
           "useFormula": false
         },
-        "particleSize": {
+        "particleSize_particles_chestnut": {
           "value": 2.1,
           "formula": "5 + bass/50",
           "useFormula": false
         },
-        "particleSpeed": {
+        "particleSpeed_particles_chestnut": {
           "value": 18.6,
           "formula": "2.0 + trend*5",
           "useFormula": false
         },
-        "particleChaos": {
+        "particleChaos_particles_chestnut": {
           "value": 31,
           "formula": "60 + bass",
           "useFormula": false
         },
-        "particleOpacity": {
+        "particleOpacity_particles_chestnut": {
           "value": 0.4,
           "formula": "0.2 + trend*0.5",
           "useFormula": false
         },
-        "particleDirection": {
+        "particleDirection_particles_chestnut": {
           "value": 0.658407346410207,
           "formula": " Math.sin(time/1000)*2",
           "useFormula": true
         },
-        "particleColorSpeed": {
+        "particleColorSpeed_particles_chestnut": {
           "value": 30,
           "formula": "10 + trend*50",
           "useFormula": false
         },
-        "particleRotation": {
+        "particleRotation_particles_chestnut": {
           "value": 3.01840734641021,
           "formula": "time/1000",
           "useFormula": false
         },
-        "particleGravity": {
+        "particleGravity_particles_chestnut": {
           "value": 3.4,
           "formula": "trend > 0.8 ? -2 : 1",
           "useFormula": false
         },
-        "particleWind": {
+        "particleWind_particles_chestnut": {
           "value": 3,
           "formula": "3 + Math.sin(time/3000)*2",
           "useFormula": true
         },
-        "particleBreezeStrength": {
+        "particleBreezeStrength_particles_chestnut": {
           "value": 0.5,
           "formula": "0.5",
           "useFormula": false
         },
-        "textScale": {
+        "textScale_text_chestnut": {
           "value": 1.15,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_chestnut": {
           "value": 0,
           "formula": "30 + (1-trend)*20",
           "useFormula": false
         },
-        "textJitterX": {
+        "textJitterX_text_chestnut": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": true
         },
-        "textJitterY": {
+        "textJitterY_text_chestnut": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": true
         },
-        "textRotation": {
+        "textRotation_text_chestnut": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_chestnut": {
           "value": 0.65,
           "formula": "Math.sin(time/1000)*.2+0.5",
           "useFormula": true
         },
-        "textHoldTime": {
+        "textHoldTime_text_chestnut": {
           "value": 5,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_chestnut": {
           "value": 1,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_chestnut": {
           "value": 60,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_chestnut": {
           "value": 0.2,
           "formula": "0.2 + trend",
           "useFormula": true
         },
-        "textInkResolve": {
+        "textInkResolve_text_chestnut": {
           "value": 0.61,
           "formula": "0.5",
           "useFormula": false
@@ -3719,12 +2894,7 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": true
         },
-        "imgOpacity": {
-          "value": 0.7,
-          "formula": "0.2 + (avg/255)*0.8",
-          "useFormula": false
-        },
-        "textGlow": {
+        "textGlow_text_chestnut": {
           "value": 193,
           "formula": "0",
           "useFormula": false
@@ -3743,6 +2913,42 @@
     },
     {
       "name": "House",
+      "layers": [
+        {
+          "id": "photos_house",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              4
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "screen"
+          }
+        },
+        {
+          "id": "text_house",
+          "type": "text",
+          "name": "TEXT LAYER",
+          "enabled": true,
+          "settings": {
+            "textList": [
+              "AGOST",
+              "",
+              "",
+              "",
+              ""
+            ],
+            "textSequenceMode": "order",
+            "textFontFamily": "'Lora', serif",
+            "textDissolveStyle": "ink",
+            "textFreeze": true,
+            "textManualMode": false
+          }
+        }
+      ],
       "settings": {
         "palette": [
           "#FFD700",
@@ -3752,37 +2958,14 @@
           "#00BFFF",
           "#228B22"
         ],
-        "particleShape": "mote",
-        "imgBlendMode": "screen",
-        "imgIndices": [
-          4
-        ],
-        "photoSourceMode": "photos",
-        "webcamIndices": [],
-        "textEnabled": true,
-        "textList": [
-          "AGOST",
-          "",
-          "",
-          "",
-          ""
-        ],
-        "textSequenceMode": "order",
-        "textFontFamily": "'Lora', serif",
-        "textDissolveStyle": "ink",
         "physicsEnabled": true,
-        "wavesEnabled": false,
-        "raysEnabled": false,
-        "photosEnabled": true,
-        "particlesEnabled": false,
         "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "2d",
         "shaderStyle": "grid",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
-        "textFreeze": true
+        "gpu_fxEnabled": false
       },
       "params": {
         "sensitivity": {
@@ -3800,62 +2983,7 @@
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
-        "waveCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "waveSpeed": {
-          "value": 2,
-          "formula": "2.0 * (1 + trend)",
-          "useFormula": false
-        },
-        "waveThickness": {
-          "value": 10,
-          "formula": "10 + bass/5",
-          "useFormula": false
-        },
-        "waveChaos": {
-          "value": 20,
-          "formula": "Math.sin(time/200) * 50",
-          "useFormula": false
-        },
-        "waveOpacity": {
-          "value": 0.8,
-          "formula": "0.8",
-          "useFormula": false
-        },
-        "rayCount": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
-        },
-        "raySpeed": {
-          "value": 0.5,
-          "formula": "0.5 + Math.sin(time/5000)",
-          "useFormula": false
-        },
-        "rayThickness": {
-          "value": 4,
-          "formula": "4 + (bass/50)",
-          "useFormula": true
-        },
-        "rayCenterHole": {
-          "value": 80,
-          "formula": "80 + (trend * 150)",
-          "useFormula": true
-        },
-        "rayChaos": {
-          "value": 0.2,
-          "formula": "0.2 + trend",
-          "useFormula": false
-        },
-        "rayOpacity": {
-          "value": 0.9,
-          "formula": "0.9",
-          "useFormula": false
-        },
-        "imgScale": {
+        "imgScale_photos_house": {
           "min": 0.5,
           "max": 5,
           "value": 3.8,
@@ -3865,137 +2993,82 @@
           "calibRawMin": 3.8,
           "calibRawMax": 3.8
         },
-        "imgGlitch": {
+        "imgGlitch_photos_house": {
           "value": 0,
           "formula": "120 + bass",
           "useFormula": false
         },
-        "imgBlur": {
+        "imgBlur_photos_house": {
           "value": 0,
           "formula": "20 + bass/10",
           "useFormula": false
         },
-        "imgSaturate": {
+        "imgSaturate_photos_house": {
           "value": 0,
           "formula": "100 + trend*200",
           "useFormula": false
         },
-        "photoRotation": {
+        "photoRotation_photos_house": {
           "value": 0,
           "formula": "Math.sin(time/2000) * 0.2",
           "useFormula": false
         },
-        "photoContrast": {
+        "photoContrast_photos_house": {
           "value": 85,
           "formula": "100 + bass",
           "useFormula": false
         },
-        "particleCount": {
-          "value": 500,
-          "formula": "500 + Math.floor(trend*1000)",
-          "useFormula": false
-        },
-        "particleSize": {
-          "value": 4,
-          "formula": "3 + (bass/255) * 8 * trend",
-          "useFormula": true
-        },
-        "particleSpeed": {
-          "value": 2,
-          "formula": "2.0 + trend*5",
-          "useFormula": false
-        },
-        "particleChaos": {
-          "value": 60,
-          "formula": "60 + bass",
-          "useFormula": false
-        },
-        "particleOpacity": {
-          "value": 0.4,
-          "formula": "0.2 + trend*0.5",
-          "useFormula": false
-        },
-        "particleDirection": {
-          "value": 0,
-          "formula": "Math.atan2(y - window.innerHeight/2, x - window.innerWidth/2)",
-          "useFormula": true
-        },
-        "particleColorSpeed": {
-          "value": 10,
-          "formula": "10 + trend*50",
-          "useFormula": false
-        },
-        "particleRotation": {
-          "value": 0,
-          "formula": "time/1000",
-          "useFormula": false
-        },
-        "particleGravity": {
-          "value": 0,
-          "formula": "trend > 0.8 ? -2 : 1",
-          "useFormula": false
-        },
-        "particleWind": {
-          "value": 2,
-          "formula": "2.0 + (trend * 10)",
-          "useFormula": true
-        },
-        "particleBreezeStrength": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "textScale": {
+        "textScale_text_house": {
           "value": 1.5,
           "formula": "1.0 + trend",
           "useFormula": false
         },
-        "textBlur": {
+        "textBlur_text_house": {
           "value": 0,
           "formula": "1 + 40 * Math.pow(Math.E, -0.00001155 * time)",
           "useFormula": true
         },
-        "textJitterX": {
+        "textJitterX_text_house": {
           "value": 0,
           "formula": "Math.sin(time/200) * trend * 30",
           "useFormula": false
         },
-        "textJitterY": {
+        "textJitterY_text_house": {
           "value": 0,
           "formula": "Math.cos(time/200) * trend * 30",
           "useFormula": false
         },
-        "textRotation": {
+        "textRotation_text_house": {
           "value": 0,
           "formula": "Math.sin(time/1000) * 0.1",
           "useFormula": false
         },
-        "textOpacity": {
+        "textOpacity_text_house": {
           "value": 1,
           "formula": "0.4 + trend*0.6",
           "useFormula": false
         },
-        "textHoldTime": {
+        "textHoldTime_text_house": {
           "value": 60,
           "formula": "5",
           "useFormula": false
         },
-        "textFadeTime": {
+        "textFadeTime_text_house": {
           "value": 2.2,
           "formula": "1",
           "useFormula": false
         },
-        "textTypeSpeed": {
+        "textTypeSpeed_text_house": {
           "value": 200,
           "formula": "60",
           "useFormula": false
         },
-        "textEnvironmentDrift": {
+        "textEnvironmentDrift_text_house": {
           "value": 0,
           "formula": "0.2 + trend",
           "useFormula": false
         },
-        "textInkResolve": {
+        "textInkResolve_text_house": {
           "value": 1,
           "formula": "0.5",
           "useFormula": false
@@ -4140,12 +3213,12 @@
           "formula": "(time/1000) * 0.2",
           "useFormula": false
         },
-        "imgOpacity": {
+        "imgOpacity_photos_house": {
           "value": 0.7,
           "formula": "0.2 + (avg/255)*0.8",
           "useFormula": false
         },
-        "textGlow": {
+        "textGlow_text_house": {
           "value": 0,
           "formula": "(bass/255)*20",
           "useFormula": false
