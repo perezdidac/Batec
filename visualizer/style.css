@@ -889,3 +889,9 @@ body.layout-bottom #telemetryContainer .glass-panel {
     box-shadow: 0 0 20px #ff4444;
   }
 }
+
+/* Monochromatic Monospaced Telemetry Fonts */
+#txt-trend, #txt-time, #txt-fps, #txt-bpm {
+  font-family: 'Consolas', 'Courier New', monospace !important;
+  color: var(--text-primary) !important;
+}

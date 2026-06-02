@@ -33,7 +33,17 @@ class BatecEngine {
         this.webcamPool = [];
         this.availableWebcams = [];
         this.webcamsInitialized = false;
+        this.time = 0;
+        this.timePaused = false;
         this.timeOffset = 0;
+        this.mx = 0.5;
+        this.my = 0.5;
+        this.lastPointerMove = 0;
+        this.autoplay = false;
+        this.autoplayDuration = 30;
+        this.autoplayTimer = 0;
+        this.lfo1 = { shape: 'sine', rate: 1.0, value: 0 };
+        this.lfo2 = { shape: 'sine', rate: 0.5, value: 0 };
         this.bpmTracker = new BatecBpmAnalyzer();
         this.wavePhases = {};
         this.particleLayers = {};
@@ -109,8 +119,9 @@ class BatecEngine {
         if (preset.settings[catEnabledKey] === false) return 0;
 
         const ctx = {
-            time: performance.now() - this.timeOffset, bpm: this.bpmTracker.bpm, avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
-            treble: this.smoothed.treble, trend: this.trend, x: 0, y: 0, ...localContext
+            time: this.time, bpm: this.bpmTracker.bpm, avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
+            treble: this.smoothed.treble, trend: this.trend, x: 0, y: 0,
+            mx: this.mx, my: this.my, lfo1: this.lfo1.value, lfo2: this.lfo2.value, ...localContext
         };
         let val = param.useFormula ? FormulaEngine.eval(param.formula, ctx, param.value) : param.value;
 
@@ -161,8 +172,9 @@ class BatecEngine {
         if (!layer || !layer.enabled) return 0;
 
         const ctx = {
-            time: performance.now() - this.timeOffset, bpm: this.bpmTracker.bpm, avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
-            treble: this.smoothed.treble, trend: this.trend, x: 0, y: 0, ...localContext
+            time: this.time, bpm: this.bpmTracker.bpm, avg: this.smoothed.avg, bass: this.smoothed.bass, mid: this.smoothed.mid,
+            treble: this.smoothed.treble, trend: this.trend, x: 0, y: 0,
+            mx: this.mx, my: this.my, lfo1: this.lfo1.value, lfo2: this.lfo2.value, ...localContext
         };
         let val = param.useFormula ? FormulaEngine.eval(param.formula, ctx, param.value) : param.value;
 
@@ -203,7 +215,7 @@ class BatecEngine {
         this.session.transitionStart = performance.now();
         const speed = document.getElementById('sessionTransitionSpeed');
         this.session.transitionDuration = (speed ? parseFloat(speed.value) : 1) * 1000;
-        this.timeOffset = performance.now(); // Sync math arrays
+        this.time = 0; // Sync math arrays
     }
 
     initResize() {
@@ -299,6 +311,7 @@ class BatecEngine {
             document.getElementById('telemetryPanel').classList.remove('hidden');
             if (document.getElementById('dmxPanel')) document.getElementById('dmxPanel').classList.remove('hidden');
 
+            this.lastFrameTime = performance.now();
             requestAnimationFrame((t) => this.loop(t));
         } catch (e) { alert("Mic required."); }
     }
@@ -340,6 +353,32 @@ class BatecEngine {
 
     loop(time) {
         this.updateAudio();
+
+        // Update physics time
+        const now = performance.now();
+        const deltaTime = now - this.lastFrameTime;
+        this.lastFrameTime = now;
+
+        if (!this.timePaused && (!this.active || !this.active.settings.isPaused)) {
+            this.time += deltaTime;
+        }
+
+        // Update LFO values
+        this.updateLfos(deltaTime);
+
+        // Update Autoplay Scheduler
+        if (this.autoplay && !this.timePaused && (!this.active || !this.active.settings.isPaused)) {
+            this.autoplayTimer += deltaTime;
+            if (this.autoplayTimer >= this.autoplayDuration * 1000) {
+                this.autoplayTimer = 0;
+                this.switchTo((this.session.activeIndex + 1) % this.session.presets.length);
+                if (typeof UI !== 'undefined' && UI.buildSlots) {
+                    UI.buildSlots();
+                    setTimeout(() => { if (UI.rebuildConfigUI) UI.rebuildConfigUI(); }, 500);
+                }
+            }
+        }
+
         this.render(time);
 
         // Sync hardware to visualizer engine
@@ -349,9 +388,42 @@ class BatecEngine {
         requestAnimationFrame((t) => this.loop(t));
     }
 
+    updateLfos(deltaTime) {
+        const t = this.time / 1000.0;
+        [this.lfo1, this.lfo2].forEach(lfo => {
+            const phase = t * lfo.rate * Math.PI * 2;
+            let val = 0;
+            switch(lfo.shape) {
+                case 'sine':
+                    val = Math.sin(phase);
+                    break;
+                case 'triangle':
+                    val = 1.0 - 2.0 * Math.abs((phase / Math.PI) % 2.0 - 1.0);
+                    break;
+                case 'square':
+                    val = Math.sin(phase) >= 0 ? 1.0 : -1.0;
+                    break;
+                case 'saw':
+                    val = 1.0 - 2.0 * ((phase / (Math.PI * 2)) % 1.0);
+                    break;
+                case 'noise':
+                    // Smooth noise: interpolate between noise values
+                    const step = Math.floor(t * lfo.rate * 2);
+                    const fract = (t * lfo.rate * 2) % 1.0;
+                    const h1 = Math.sin(step * 12.9898 + 78.233) * 43758.5453;
+                    const h2 = Math.sin((step + 1) * 12.9898 + 78.233) * 43758.5453;
+                    const r1 = (h1 - Math.floor(h1)) * 2 - 1;
+                    const r2 = (h2 - Math.floor(h2)) * 2 - 1;
+                    val = r1 + (r2 - r1) * fract;
+                    break;
+            }
+            lfo.value = val;
+        });
+    }
+
     render(time) {
         // Track FPS
-        const localTime = time - this.timeOffset;
+        const localTime = this.time;
         this.frameCount++;
         if (time > this.fpsUpdateTime + 1000) {
             this.fps = Math.round((this.frameCount * 1000) / (time - this.fpsUpdateTime));
@@ -395,11 +467,24 @@ class BatecEngine {
         if (this.active.layers) {
             this.active.layers.forEach(layer => {
                 if (!layer.enabled) return;
+
+                // --- Apply Masking ---
+                const hasMask = layer.settings && layer.settings.maskType && layer.settings.maskType !== 'none';
+                if (hasMask) {
+                    ctx.save();
+                    this.applyLayerMask(ctx, layer);
+                }
+
                 if (layer.type === 'photos') this.renderPhotos(ctx, localTime, progress, layer.id);
                 if (layer.type === 'waves') renderWaves(this, ctx, localTime, layer.id);
                 if (layer.type === 'rays') renderRays(this, ctx, localTime, layer.id);
                 if (layer.type === 'particles') this.renderParticles(ctx, localTime, layer.id);
                 if (layer.type === 'text') renderLyrics(this, ctx, localTime, progress, layer.id);
+                if (layer.type === 'spectrum') this.renderSpectrum(ctx, localTime, layer.id);
+
+                if (hasMask) {
+                    ctx.restore();
+                }
             });
         }
 
@@ -501,7 +586,7 @@ class BatecEngine {
     }
 
     advanceManualLyrics() {
-        const localTime = performance.now() - this.timeOffset;
+        const localTime = this.time;
         const active = this.active;
         if (!active || !active.layers) return;
         
@@ -523,6 +608,165 @@ class BatecEngine {
                 }
             }
         });
+    }
+
+    applyLayerMask(ctx, layer) {
+        const type = layer.settings.maskType;
+        const invert = layer.settings.maskInvert || false;
+        
+        // Evaluate mask parameters (they support formulas!)
+        const mx = this.pLayer(layer.id, 'maskX') * window.innerWidth;
+        const my = this.pLayer(layer.id, 'maskY') * window.innerHeight;
+        const mSize = this.pLayer(layer.id, 'maskSize') * Math.max(window.innerWidth, window.innerHeight);
+
+        ctx.beginPath();
+        if (type === 'circle') {
+            if (invert) {
+                // Outer rectangle clockwise, inner shape counter-clockwise to subtract
+                ctx.rect(0, 0, window.innerWidth, window.innerHeight);
+                ctx.arc(mx, my, Math.max(0.1, mSize / 2), 0, Math.PI * 2, true);
+            } else {
+                ctx.arc(mx, my, Math.max(0.1, mSize / 2), 0, Math.PI * 2);
+            }
+        } else if (type === 'rect') {
+            const w = mSize;
+            const h = mSize * 0.75; // 4:3 aspect ratio default
+            const x = mx - w / 2;
+            const y = my - h / 2;
+            if (invert) {
+                ctx.rect(0, 0, window.innerWidth, window.innerHeight);
+                // Draw inner rect counter-clockwise
+                ctx.moveTo(x, y);
+                ctx.lineTo(x, y + h);
+                ctx.lineTo(x + w, y + h);
+                ctx.lineTo(x + w, y);
+                ctx.closePath();
+            } else {
+                ctx.rect(x, y, w, h);
+            }
+        } else if (type === 'horizontal_band') {
+            const h = mSize * 0.5;
+            const y1 = my - h / 2;
+            if (invert) {
+                ctx.rect(0, 0, window.innerWidth, Math.max(0, y1));
+                ctx.rect(0, my + h / 2, window.innerWidth, window.innerHeight - (my + h / 2));
+            } else {
+                ctx.rect(0, y1, window.innerWidth, h);
+            }
+        } else if (type === 'vertical_band') {
+            const w = mSize * 0.5;
+            const x1 = mx - w / 2;
+            if (invert) {
+                ctx.rect(0, 0, Math.max(0, x1), window.innerHeight);
+                ctx.rect(mx + w / 2, 0, window.innerWidth - (mx + w / 2), window.innerHeight);
+            } else {
+                ctx.rect(x1, 0, w, window.innerHeight);
+            }
+        } else if (type === 'grid') {
+            // Checkerboard grid mask
+            const cols = 4;
+            const rows = 3;
+            const w = window.innerWidth / cols;
+            const h = window.innerHeight / rows;
+            for (let c = 0; c < cols; c++) {
+                for (let r = 0; r < rows; r++) {
+                    if ((c + r) % 2 === (invert ? 1 : 0)) {
+                        ctx.rect(c * w + (w - w * mSize)/2, r * h + (h - h * mSize)/2, w * mSize, h * mSize);
+                    }
+                }
+            }
+        }
+        ctx.clip();
+    }
+
+    renderSpectrum(ctx, localTime, layerId) {
+        if (!this.audio.analyser || !this.audio.data) return;
+        
+        const count = Math.min(256, Math.floor(this.pLayer(layerId, 'spectrumCount')));
+        const scaleHeight = this.pLayer(layerId, 'spectrumHeight');
+        const specWidth = this.pLayer(layerId, 'spectrumWidth') * window.innerWidth;
+        const centerX = this.pLayer(layerId, 'spectrumX') * window.innerWidth;
+        const centerY = this.pLayer(layerId, 'spectrumY') * window.innerHeight;
+        const opacity = this.pLayer(layerId, 'spectrumOpacity');
+        const thick = this.pLayer(layerId, 'spectrumThickness');
+        
+        const layer = this.active.layers.find(l => l.id === layerId);
+        const style = layer?.settings?.spectrumStyle || 'bars';
+        
+        ctx.save();
+        
+        // Custom palette color blending if enabled
+        let colorBase = this.active.settings.palette[0];
+        if (layer?.settings?.useLayerColor) {
+            if (Array.isArray(layer.settings.layerColors) && layer.settings.layerColors.length > 0) {
+                colorBase = layer.settings.layerColors[0];
+            } else {
+                colorBase = layer.settings.layerColor || '#ffffff';
+            }
+        }
+        
+        ctx.strokeStyle = colorBase;
+        ctx.fillStyle = colorBase;
+        ctx.globalAlpha = opacity;
+        ctx.lineWidth = thick;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        
+        const data = this.audio.data;
+        const len = Math.min(data.length, count);
+        
+        if (style === 'bars') {
+            const barW = specWidth / len;
+            const startX = centerX - specWidth / 2;
+            for (let i = 0; i < len; i++) {
+                const val = (data[i] / 255.0) * scaleHeight;
+                ctx.fillRect(startX + i * barW, centerY - val / 2, Math.max(1, barW - 2), val);
+            }
+        } else if (style === 'waveform') {
+            const step = specWidth / len;
+            const startX = centerX - specWidth / 2;
+            ctx.beginPath();
+            for (let i = 0; i < len; i++) {
+                const val = (data[i] / 255.0) * scaleHeight;
+                const px = startX + i * step;
+                const py = centerY - val / 2;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+        } else if (style === 'circular_spectrum') {
+            const radius = specWidth / 6; // base radius
+            ctx.beginPath();
+            for (let i = 0; i < len; i++) {
+                const angle = (i / len) * Math.PI * 2;
+                const val = (data[i] / 255.0) * scaleHeight;
+                const r = radius + val;
+                const px = centerX + Math.cos(angle) * r;
+                const py = centerY + Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        } else if (style === 'circular_waveform') {
+            const radius = specWidth / 6;
+            ctx.beginPath();
+            for (let i = 0; i < len; i++) {
+                // Mirror it to make a smooth circle
+                const idx = i < len / 2 ? i : len - i;
+                const angle = (i / len) * Math.PI * 2;
+                const val = (data[Math.floor(idx)] / 255.0) * scaleHeight;
+                const r = radius + val;
+                const px = centerX + Math.cos(angle) * r;
+                const py = centerY + Math.sin(angle) * r;
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.closePath();
+            ctx.stroke();
+        }
+        
+        ctx.restore();
     }
 
 }

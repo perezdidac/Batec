@@ -3,6 +3,20 @@ const UI = {
         this.engine = engine;
         this.buildSlots(); this.rebuildConfigUI(); this.bindStaticUI();
 
+        // Pointer/Mouse Tracking for mx/my formula modulators
+        const canvas = engine.canvas;
+        if (canvas) {
+            const trackPointer = (ev) => {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = ev.touches ? ev.touches[0].clientX : ev.clientX;
+                const clientY = ev.touches ? ev.touches[0].clientY : ev.clientY;
+                engine.mx = (clientX - rect.left) / rect.width;
+                engine.my = (clientY - rect.top) / rect.height;
+                engine.lastPointerMove = performance.now();
+            };
+            canvas.addEventListener('mousemove', trackPointer);
+            canvas.addEventListener('touchmove', trackPointer, { passive: true });
+        }
 
         this.initCollapsibleSections();
         this.initInteractionTimer(); this.initHotkeys();
@@ -313,7 +327,30 @@ const UI = {
 
         const trendEl = this.safeGet('txt-trend'); if (trendEl) trendEl.textContent = engine.trend.toFixed(3);
         const bpmEl = document.getElementById('txt-bpm'); if (bpmEl) bpmEl.textContent = engine.bpmTracker.bpm;
-        const timeEl = this.safeGet('txt-time'); if (timeEl) timeEl.textContent = Math.floor(time - engine.timeOffset);
+        const timeEl = this.safeGet('txt-time');
+        if (timeEl) timeEl.textContent = (engine.time / 1000).toFixed(1) + 's';
+
+        const sliderTime = this.safeGet('sliderTimeScrub');
+        if (sliderTime && document.activeElement !== sliderTime) {
+            sliderTime.value = engine.time;
+        }
+
+        // Update LFO values readouts
+        const txtLfo1 = this.safeGet('txt-lfo1-val');
+        if (txtLfo1) txtLfo1.textContent = engine.lfo1.value.toFixed(2);
+        const txtLfo2 = this.safeGet('txt-lfo2-val');
+        if (txtLfo2) txtLfo2.textContent = engine.lfo2.value.toFixed(2);
+
+        // Update Autoplay progress bar
+        const progressAutoplay = this.safeGet('progressAutoplay');
+        if (progressAutoplay) {
+            if (engine.autoplay) {
+                const percent = (engine.autoplayTimer / (engine.autoplayDuration * 1000)) * 100;
+                progressAutoplay.style.width = `${Math.min(100, percent)}%`;
+            } else {
+                progressAutoplay.style.width = '0%';
+            }
+        }
 
         // Advanced Panel Metering: If Advanced UI is open, visually pulse the Fx Sliders
         const advPanel = document.getElementById('advancedPanel');
@@ -482,7 +519,7 @@ const UI = {
                 };
 
                 // Add special UI controls for specific layer types
-                if (['particles', 'waves', 'rays'].includes(layer.type)) {
+                if (['particles', 'waves', 'rays', 'spectrum'].includes(layer.type)) {
                     const colorDiv = document.createElement('div');
                     colorDiv.style.marginBottom = '12px';
                     colorDiv.style.display = 'flex';
@@ -609,7 +646,46 @@ const UI = {
                         </select>
                     </div>`;
                     wrapper.appendChild(controlsDiv);
+                } else if (layer.type === 'spectrum') {
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.innerHTML = `
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label>Spectrum Style</label>
+                        <select id="spectrumStyle_${layer.id}">
+                            <option value="bars">Frequential Bars</option>
+                            <option value="waveform">Linear Waveform</option>
+                            <option value="circular_spectrum">Circular Spectrum</option>
+                            <option value="circular_waveform">Circular Waveform</option>
+                        </select>
+                    </div>`;
+                    wrapper.appendChild(controlsDiv);
                 }
+
+                // General Masking Setup UI for all layers
+                const maskDiv = document.createElement('div');
+                maskDiv.style.marginBottom = '12px';
+                maskDiv.style.borderTop = '1px solid rgba(255,255,255,0.06)';
+                maskDiv.style.paddingTop = '12px';
+                maskDiv.innerHTML = `
+                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                        <div class="control-group" style="flex: 2;">
+                            <label>Layer Mask Shape</label>
+                            <select id="maskType_${layer.id}" style="width:100%;">
+                                <option value="none">No Mask</option>
+                                <option value="circle">Circular Mask</option>
+                                <option value="rect">Rectangular Mask</option>
+                                <option value="horizontal_band">Horizontal Band</option>
+                                <option value="vertical_band">Vertical Band</option>
+                                <option value="grid">Checkerboard Grid</option>
+                            </select>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; flex: 1; padding-top: 14px;">
+                            <input type="checkbox" id="maskInvert_${layer.id}" style="width:auto; margin:0; cursor:pointer;">
+                            <label style="font-size: 0.65rem; color: var(--text-secondary); cursor:pointer;" for="maskInvert_${layer.id}">Invert</label>
+                        </div>
+                    </div>
+                `;
+                wrapper.appendChild(maskDiv);
 
                 const contentDiv = document.createElement('div');
                 contentDiv.id = 'layer-content-' + layer.id;
@@ -621,7 +697,7 @@ const UI = {
                 layersContainer.appendChild(layerDiv);
 
                 // Bind specific controls values
-                if (['particles', 'waves', 'rays'].includes(layer.type)) {
+                if (['particles', 'waves', 'rays', 'spectrum'].includes(layer.type)) {
                     const useColChk = this.safeGet(`useLayerColor_${layer.id}`);
                     if (useColChk) {
                         useColChk.checked = !!layer.settings.useLayerColor;
@@ -688,6 +764,21 @@ const UI = {
                     if(fnt) { fnt.value = layer.settings.textFontFamily || 'Lora'; fnt.onchange = e => layer.settings.textFontFamily = e.target.value; }
                     const dis = this.safeGet(`textDissolveStyle_${layer.id}`);
                     if(dis) { dis.value = layer.settings.textDissolveStyle || 'ink'; dis.onchange = e => layer.settings.textDissolveStyle = e.target.value; }
+                } else if (layer.type === 'spectrum') {
+                    const sel = this.safeGet(`spectrumStyle_${layer.id}`);
+                    if(sel) { sel.value = layer.settings.spectrumStyle || 'bars'; sel.onchange = e => layer.settings.spectrumStyle = e.target.value; }
+                }
+
+                // Bind Masking settings
+                const maskTypeSel = this.safeGet(`maskType_${layer.id}`);
+                if (maskTypeSel) {
+                    maskTypeSel.value = layer.settings.maskType || 'none';
+                    maskTypeSel.onchange = e => layer.settings.maskType = e.target.value;
+                }
+                const maskInvertChk = this.safeGet(`maskInvert_${layer.id}`);
+                if (maskInvertChk) {
+                    maskInvertChk.checked = !!layer.settings.maskInvert;
+                    maskInvertChk.onchange = e => layer.settings.maskInvert = e.target.checked;
                 }
             });
         }
@@ -868,7 +959,76 @@ const UI = {
         this.safeGet('btnCloseMidiHelp').onclick = () => this.safeGet('midiHelpModal').classList.add('hidden');
         
         const btnResetTime = document.getElementById('btnResetTime');
-        if (btnResetTime) btnResetTime.onclick = () => e.timeOffset = performance.now();
+        if (btnResetTime) {
+            btnResetTime.onclick = () => {
+                e.time = 0;
+                const slider = this.safeGet('sliderTimeScrub');
+                if (slider) slider.value = 0;
+            };
+        }
+
+        const sliderTime = this.safeGet('sliderTimeScrub');
+        if (sliderTime) {
+            sliderTime.oninput = (ev) => {
+                e.time = parseFloat(ev.target.value);
+                const txtTime = this.safeGet('txt-time');
+                if (txtTime) txtTime.textContent = (e.time / 1000).toFixed(1) + 's';
+            };
+        }
+
+        const btnTimePlay = this.safeGet('btnTimePlayPause');
+        if (btnTimePlay) {
+            btnTimePlay.onclick = () => {
+                e.timePaused = !e.timePaused;
+                btnTimePlay.textContent = e.timePaused ? '▶' : '⏸';
+                btnTimePlay.title = e.timePaused ? 'Play Time (T)' : 'Pause Time (T)';
+            };
+        }
+
+        // Autoplay Show Automation Bindings
+        const btnAutoplay = this.safeGet('btnAutoplayToggle');
+        if (btnAutoplay) {
+            btnAutoplay.onclick = () => {
+                e.autoplay = !e.autoplay;
+                btnAutoplay.textContent = e.autoplay ? '⏸ PAUSE' : '▶ PLAY';
+                btnAutoplay.style.color = e.autoplay ? 'var(--accent-glow)' : 'var(--text-secondary)';
+                if (!e.autoplay) {
+                    const progress = this.safeGet('progressAutoplay');
+                    if (progress) progress.style.width = '0%';
+                }
+            };
+        }
+        const sliderAutoplay = this.safeGet('sliderAutoplayInterval');
+        if (sliderAutoplay) {
+            sliderAutoplay.oninput = (ev) => {
+                e.autoplayDuration = parseFloat(ev.target.value);
+                const txt = this.safeGet('txt-autoplay-interval');
+                if (txt) txt.textContent = e.autoplayDuration + 's';
+            };
+        }
+
+        // LFO Waveform/Rate Controls Bindings
+        const selLfo1 = this.safeGet('selLfo1Shape');
+        if (selLfo1) {
+            selLfo1.value = e.lfo1.shape;
+            selLfo1.onchange = (ev) => e.lfo1.shape = ev.target.value;
+        }
+        const sliderLfo1 = this.safeGet('sliderLfo1Rate');
+        if (sliderLfo1) {
+            sliderLfo1.value = e.lfo1.rate;
+            sliderLfo1.oninput = (ev) => e.lfo1.rate = parseFloat(ev.target.value);
+        }
+
+        const selLfo2 = this.safeGet('selLfo2Shape');
+        if (selLfo2) {
+            selLfo2.value = e.lfo2.shape;
+            selLfo2.onchange = (ev) => e.lfo2.shape = ev.target.value;
+        }
+        const sliderLfo2 = this.safeGet('sliderLfo2Rate');
+        if (sliderLfo2) {
+            sliderLfo2.value = e.lfo2.rate;
+            sliderLfo2.oninput = (ev) => e.lfo2.rate = parseFloat(ev.target.value);
+        }
         
         const btnCalibrateAll = document.getElementById('btnCalibrateAll');
         if (btnCalibrateAll) {
@@ -950,7 +1110,11 @@ const UI = {
                 Object.assign(active.params, newParams);
 
                 // Create layer settings
-                const settings = {};
+                const settings = {
+                    maskType: 'none',
+                    maskInvert: false
+                };
+                
                 if (type === 'photos') {
                     settings.photoSourceMode = 'photos';
                     settings.imgIndices = [];
@@ -972,6 +1136,11 @@ const UI = {
                     settings.textDissolveStyle = 'ink';
                     settings.textFreeze = false;
                     settings.textManualMode = false;
+                } else if (type === 'spectrum') {
+                    settings.spectrumStyle = 'bars';
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#ffffff';
+                    settings.layerColors = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff'];
                 }
 
                 active.layers.push({ id: layerId, type: type, name: type.toUpperCase() + ' LAYER', enabled: true, settings: settings });
@@ -1111,6 +1280,12 @@ const UI = {
 
             if (ev.key === 'h' || ev.key === 'H') {
                 if (!ev.repeat) toggleUI(true);
+            }
+
+            if (ev.key === 't' || ev.key === 'T') {
+                ev.preventDefault();
+                const btnTimePlay = this.safeGet('btnTimePlayPause');
+                if (btnTimePlay) btnTimePlay.click();
             }
 
             if (ev.key >= '0' && ev.key <= '9') {

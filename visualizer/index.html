@@ -129,6 +129,7 @@
                                 <option value="rays">Laser Rays</option>
                                 <option value="particles">Particles</option>
                                 <option value="text">Text / Lyrics</option>
+                                <option value="spectrum">Audio Spectrum</option>
                             </select>
                             <button id="btnAddLayer" class="primary-btn" style="padding:4px 12px; width:auto; font-size:0.7rem;">ADD +</button>
                         </div>
@@ -274,8 +275,14 @@
             <div class="meter-row" style="margin-top: 12px; justify-content: space-between;"><span class="meter-label">trend
                     [0-1]</span><span id="txt-trend" style="font-size:0.75rem; font-weight:bold; color:white;">0.00</span>
             </div>
-            <div class="meter-row" style="justify-content: space-between;"><span class="meter-label">time [ms]</span><span
-                    id="txt-time" style="font-size:0.75rem; font-weight:bold; color:white;">0</span></div>
+            <div class="meter-row" style="justify-content: space-between; align-items: center; margin-top: 4px;">
+                <span class="meter-label">time</span>
+                <div style="display: flex; align-items: center; gap: 6px; flex: 1; justify-content: flex-end;">
+                    <button id="btnTimePlayPause" class="icon-btn-minimal" style="font-size: 0.6rem; padding: 2px 4px; border: 1px solid var(--accent-glow); line-height: 1;" title="Play/Pause Time (T)">⏸</button>
+                    <input type="range" id="sliderTimeScrub" min="0" max="300000" value="0" style="width: 70px; height: 10px; margin: 0;" title="Scrub Time (0-300s)">
+                    <span id="txt-time" style="font-size:0.75rem; font-weight:bold; color:white; min-width: 45px; text-align: right;">0.0s</span>
+                </div>
+            </div>
             <div class="meter-row" style="justify-content: space-between;"><span class="meter-label"
                     style="color:var(--accent-glow);">fps</span><span id="txt-fps"
                     style="font-size:0.75rem; font-weight:bold; color:var(--accent-glow);">60</span></div>
@@ -301,11 +308,59 @@
                     title="Hardware Help">?</button>
             </div>
 
+            <!-- AUTOPLAY / SHOW AUTOMATION -->
+            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                    <span class="meter-label" style="color: var(--accent-glow);">Show Autoplay</span>
+                    <button id="btnAutoplayToggle" class="icon-btn-minimal" style="font-size: 0.6rem; padding: 2px 6px; border: 1px solid var(--accent-glow); line-height: 1;" title="Toggle Preset Autoplay">▶ PLAY</button>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                    <span class="meter-label" style="font-size: 0.55rem; width: 45px;">Interval</span>
+                    <input type="range" id="sliderAutoplayInterval" min="5" max="120" value="30" style="flex: 1; height: 10px; margin: 0;" title="Stage Duration (5-120s)">
+                    <span id="txt-autoplay-interval" style="font-size: 0.6rem; font-weight: bold; width: 25px; text-align: right; color: white;">30s</span>
+                </div>
+                <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; margin-top: 2px;">
+                    <div id="progressAutoplay" style="width: 0%; height: 100%; background: var(--accent-glow); transition: width 0.1s linear;"></div>
+                </div>
+            </div>
+
+            <!-- GLOBAL LFO MODULATORS -->
+            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+                <span style="font-size: 0.6rem; color: var(--accent-glow); display: block; margin-bottom: 6px; text-transform: uppercase;">Global LFO Oscillators</span>
+                
+                <!-- LFO 1 -->
+                <div style="display: flex; align-items: center; gap: 4px; margin-bottom: 6px;">
+                    <span class="meter-label" style="font-size: 0.55rem; width: 35px;">LFO 1</span>
+                    <select id="selLfo1Shape" class="text-input-minimal" style="padding: 2px; font-size: 0.55rem; max-width: 60px; height: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5);">
+                        <option value="sine">Sine</option>
+                        <option value="triangle">Tri</option>
+                        <option value="square">Square</option>
+                        <option value="saw">Saw</option>
+                        <option value="noise">Noise</option>
+                    </select>
+                    <input type="range" id="sliderLfo1Rate" min="0.05" max="10" step="0.05" value="1.0" style="flex: 1; height: 8px; margin: 0;" title="LFO 1 Speed (Hz)">
+                    <span id="txt-lfo1-val" style="font-size: 0.6rem; font-family: monospace; width: 35px; text-align: right; color: white;">0.00</span>
+                </div>
+
+                <!-- LFO 2 -->
+                <div style="display: flex; align-items: center; gap: 4px;">
+                    <span class="meter-label" style="font-size: 0.55rem; width: 35px;">LFO 2</span>
+                    <select id="selLfo2Shape" class="text-input-minimal" style="padding: 2px; font-size: 0.55rem; max-width: 60px; height: 18px; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5);">
+                        <option value="sine">Sine</option>
+                        <option value="triangle">Tri</option>
+                        <option value="square">Square</option>
+                        <option value="saw">Saw</option>
+                        <option value="noise">Noise</option>
+                    </select>
+                    <input type="range" id="sliderLfo2Rate" min="0.05" max="10" step="0.05" value="0.5" style="flex: 1; height: 8px; margin: 0;" title="LFO 2 Speed (Hz)">
+                    <span id="txt-lfo2-val" style="font-size: 0.6rem; font-family: monospace; width: 35px; text-align: right; color: white;">0.00</span>
+                </div>
+            </div>
+
             <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                 <span style="font-size: 0.6rem; color: var(--text-secondary); display: block; margin-bottom: 4px;">AVAILABLE
                     [Fx] VARIABLES:</span>
-                <span style="font-size: 0.55rem; color: #fff; font-family: monospace; display: block;">bass, mid, treble,
-                    avg, trend, time, bpm</span>
+                <span style="font-size: 0.52rem; color: #fff; font-family: monospace; display: block; line-height: 1.2;">bass, mid, treble, avg, trend, time, bpm, mx, my, lfo1, lfo2</span>
             </div>
         </div>
 

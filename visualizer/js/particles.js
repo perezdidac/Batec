@@ -12,6 +12,20 @@ class BatecParticle {
         this.vx += (Math.cos(dir) * (0.1 + trend * 0.5) * (chaosAmt / 100)) + (wind * 0.01);
         this.vy += (Math.sin(dir) * (0.1 + trend * 0.5) * (chaosAmt / 100)) + (grav * 0.05);
 
+        // Pointer attraction force (Interactive Field)
+        if (performance.now() - eng.lastPointerMove < 3000) {
+            const px = eng.mx * window.innerWidth;
+            const py = eng.my * window.innerHeight;
+            const dx = px - this.x;
+            const dy = py - this.y;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            if (dist < 250) {
+                const force = (1.0 - dist / 250) * 0.15;
+                this.vx += (dx / dist) * force;
+                this.vy += (dy / dist) * force;
+            }
+        }
+
         // BREEZE: Collective rhythmic sway
         const breezeStrength = eng.pLayer(this.layerId, 'particleBreezeStrength');
         this.vx += Math.sin(time / 1000 + this.x / 500) * breezeStrength * 0.2;

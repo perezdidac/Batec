@@ -47,7 +47,22 @@ function getLayerParams(type, layerId) {
         params[`textEnvironmentDrift_${layerId}`] = { cat: `text_${layerId}`, name: 'Atmospheric Breeze', min: 0, max: 1, step: 0.01, value: 0.2, formula: '0.2 + trend', useFormula: true, desc: 'How much the text sways in the collective rhythmic drift.' };
         params[`textInkResolve_${layerId}`] = { cat: `text_${layerId}`, name: 'Ink Resolve Speed', min: 0, max: 1, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'How quickly the text "soaks" into existence during its resolve animation.' };
         params[`textGlow_${layerId}`] = { cat: `text_${layerId}`, name: 'Text Aura [px]', min: 0, max: 200, step: 1, value: 0, formula: '(bass/255)*20', useFormula: true, desc: 'Adds an atmospheric glowing drop-shadow behind text.' };
+    } else if (type === 'spectrum') {
+        params[`spectrumCount_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Spectrum Detail', min: 10, max: 256, step: 1, value: 64, formula: '64', useFormula: false, desc: 'Number of frequency bands or analyzer points.' };
+        params[`spectrumHeight_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Amplitude Scale', min: 10, max: 1000, step: 10, value: 200, formula: '200 + bass', useFormula: false, desc: 'Vertical height/scale of spectrum visualization.' };
+        params[`spectrumWidth_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Visualizer Span', min: 0.1, max: 2.0, step: 0.05, value: 0.8, formula: '0.8', useFormula: false, desc: 'Width of the visualizer line on screen.' };
+        params[`spectrumX_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Center X', min: 0, max: 1.0, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'Horizontal position of center.' };
+        params[`spectrumY_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Center Y', min: 0, max: 1.0, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'Vertical position of center.' };
+        params[`spectrumOpacity_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Layer Weight', min: 0, max: 1, step: 0.05, value: 0.9, formula: '0.9', useFormula: false, desc: 'Transparency of the spectrum layer.' };
+        params[`spectrumThickness_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Line Thickness', min: 1, max: 50, step: 1, value: 3, formula: '3', useFormula: false, desc: 'Line stroke width.' };
     }
+
+    // Append Masking Parameters globally for all layers
+    params[`maskX_${layerId}`] = { cat: `mask_${layerId}`, name: 'Mask Center X', min: 0, max: 1.0, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'Horizontal position of the mask center.' };
+    params[`maskY_${layerId}`] = { cat: `mask_${layerId}`, name: 'Mask Center Y', min: 0, max: 1.0, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'Vertical position of the mask center.' };
+    params[`maskSize_${layerId}`] = { cat: `mask_${layerId}`, name: 'Mask Size', min: 0.01, max: 2.0, step: 0.01, value: 1.0, formula: '1.0', useFormula: false, desc: 'Sizing scale of the mask shape.' };
+    params[`maskFeather_${layerId}`] = { cat: `mask_${layerId}`, name: 'Mask Feather', min: 0, max: 200, step: 1, value: 0, formula: '0', useFormula: false, desc: 'Feather / softness of the mask edges.' };
+
     return establishDefaults(params);
 }
 
