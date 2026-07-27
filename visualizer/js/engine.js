@@ -15,13 +15,18 @@ class BatecEngine {
         this.frameCount = 0;
         this.fpsUpdateTime = 0;
 
-        this.session = {
-            presets: [createDefaultPreset("Default Project")],
-            activeIndex: 0,
-            targetIndex: null,
-            transitionStart: 0,
-            transitionDuration: 1000
-        };
+        if (window.AGOST_DEFAULT_SESSION) {
+            this.session = JSON.parse(JSON.stringify(window.AGOST_DEFAULT_SESSION));
+            this.session.imported = true;
+        } else {
+            this.session = {
+                presets: [createDefaultPreset("Default Project")],
+                activeIndex: 0,
+                targetIndex: null,
+                transitionStart: 0,
+                transitionDuration: 1000
+            };
+        }
 
         this.audio = { ctx: null, analyser: null, data: null, source: null };
         this.smoothed = { bass: 0, mid: 0, treble: 0, avg: 0 };
@@ -210,12 +215,43 @@ class BatecEngine {
     }
 
     switchTo(index) {
-        if (index === this.session.activeIndex || index >= this.session.presets.length || index < 0) return;
+        if (index >= this.session.presets.length || index < 0) return;
+
+        // If a transition is already in progress, instantly complete it first
+        if (this.session.targetIndex !== null) {
+            this.session.activeIndex = this.session.targetIndex;
+            this.session.targetIndex = null;
+        }
+
+        if (index === this.session.activeIndex) return;
+
         this.session.targetIndex = index;
         this.session.transitionStart = performance.now();
         const speed = document.getElementById('sessionTransitionSpeed');
         this.session.transitionDuration = (speed ? parseFloat(speed.value) : 1) * 1000;
         this.time = 0; // Sync math arrays
+    }
+
+    nextPreset() {
+        if (this.session.presets.length <= 1) return;
+        const currentBase = this.session.targetIndex !== null ? this.session.targetIndex : this.session.activeIndex;
+        const nextIdx = (currentBase + 1) % this.session.presets.length;
+        this.switchTo(nextIdx);
+        if (typeof UI !== 'undefined' && UI.buildSlots) {
+            UI.buildSlots();
+            setTimeout(() => { if (UI.rebuildConfigUI) UI.rebuildConfigUI(); }, 100);
+        }
+    }
+
+    prevPreset() {
+        if (this.session.presets.length <= 1) return;
+        const currentBase = this.session.targetIndex !== null ? this.session.targetIndex : this.session.activeIndex;
+        const prevIdx = (currentBase - 1 + this.session.presets.length) % this.session.presets.length;
+        this.switchTo(prevIdx);
+        if (typeof UI !== 'undefined' && UI.buildSlots) {
+            UI.buildSlots();
+            setTimeout(() => { if (UI.rebuildConfigUI) UI.rebuildConfigUI(); }, 100);
+        }
     }
 
     initResize() {

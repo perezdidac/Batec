@@ -77,7 +77,15 @@ class BatecMIDI {
             }
             const map = this.mappings.pads[data1];
             if (map) {
-                if (map.type === 'toggle') {
+                if (map.type === 'action') {
+                    if (map.key === 'nextPreset') {
+                        this.engine.nextPreset();
+                        return;
+                    } else if (map.key === 'prevPreset') {
+                        this.engine.prevPreset();
+                        return;
+                    }
+                } else if (map.type === 'toggle') {
                     const preset = this.engine.active;
                     preset.settings[map.cat + 'Enabled'] = !preset.settings[map.cat + 'Enabled'];
                     UI.rebuildConfigUI();

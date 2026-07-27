@@ -1,4 +1,4 @@
-{
+window.AGOST_DEFAULT_SESSION = {
   "presets": [
     {
       "name": "Friday",
@@ -3149,4 +3149,4 @@
     "pads": {}
   },
   "imported": true
-}
+};

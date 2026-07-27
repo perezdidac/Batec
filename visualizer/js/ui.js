@@ -20,6 +20,44 @@ const UI = {
 
         this.initCollapsibleSections();
         this.initInteractionTimer(); this.initHotkeys();
+        this.loadDefaultPresetFile();
+    },
+    loadDefaultPresetFile() {
+        if (window.AGOST_DEFAULT_SESSION) {
+            try {
+                const raw = JSON.parse(JSON.stringify(window.AGOST_DEFAULT_SESSION));
+                raw.presets.forEach(p => p.params = establishDefaults(p.params));
+                this.engine.session = raw;
+                this.engine.session.imported = true;
+                this.engine.healPresets();
+                const io = this.safeGet('styleIO');
+                if (io) io.value = JSON.stringify(raw, null, 2);
+                this.buildSlots();
+                this.rebuildConfigUI();
+                return;
+            } catch (err) {
+                console.warn('Error applying window.AGOST_DEFAULT_SESSION:', err);
+            }
+        }
+
+        fetch('presets/agost.json')
+            .then(res => {
+                if (!res.ok) throw new Error('Failed to load agost.json');
+                return res.json();
+            })
+            .then(raw => {
+                raw.presets.forEach(p => p.params = establishDefaults(p.params));
+                this.engine.session = raw;
+                this.engine.session.imported = true;
+                this.engine.healPresets();
+                const io = this.safeGet('styleIO');
+                if (io) io.value = JSON.stringify(raw, null, 2);
+                this.buildSlots();
+                this.rebuildConfigUI();
+            })
+            .catch(err => {
+                console.warn('Auto-loading presets/agost.json:', err);
+            });
     },
     safeGet(id) { return document.getElementById(id); },
 
@@ -380,13 +418,15 @@ const UI = {
             btn.className = `slot ${isActiveState ? 'active' : ''}`;
             btn.style.zIndex = "1200"; // Ensure slots are always on top
             btn.style.pointerEvents = "auto";
-            btn.textContent = (i + 1) % 10; btn.title = `Stage: ${p.name}`;
+            
+            const hotkey = (i === 9) ? '0' : (i < 9 ? `${i + 1}` : '');
+            btn.innerHTML = `<span class="stage-num">${hotkey ? '[' + hotkey + ']' : ''}</span><span class="stage-name">${p.name || 'Unnamed Stage'}</span>`;
+            
             btn.onclick = (ev) => {
                 ev.stopPropagation();
                 this.engine.switchTo(i);
                 this.buildSlots();
                 this.rebuildConfigUI();
-                 // Ensure checkboxes update
             };
             grid.appendChild(btn);
         });
@@ -400,6 +440,37 @@ const UI = {
 
 
     rebuildConfigUI() {
+        // Update Session MIDI learn buttons styling
+        let prevPad = null;
+        let nextPad = null;
+        if (this.engine.midi && this.engine.midi.mappings && this.engine.midi.mappings.pads) {
+            for (const pad in this.engine.midi.mappings.pads) {
+                const map = this.engine.midi.mappings.pads[pad];
+                if (map && map.type === 'action') {
+                    if (map.key === 'prevPreset') prevPad = pad;
+                    if (map.key === 'nextPreset') nextPad = pad;
+                }
+            }
+        }
+        const btnPrev = this.safeGet('btnMidiPrevPreset');
+        if (btnPrev) {
+            btnPrev.textContent = prevPad ? `M (${prevPad})` : 'M';
+            btnPrev.classList.remove('learning');
+            if (this.engine.midi && this.engine.midi.learnTarget && 
+                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'prevPreset') {
+                btnPrev.classList.add('learning');
+            }
+        }
+        const btnNext = this.safeGet('btnMidiNextPreset');
+        if (btnNext) {
+            btnNext.textContent = nextPad ? `M (${nextPad})` : 'M';
+            btnNext.classList.remove('learning');
+            if (this.engine.midi && this.engine.midi.learnTarget && 
+                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'nextPreset') {
+                btnNext.classList.add('learning');
+            }
+        }
+
         const activePreset = this.engine.target || this.engine.active;
         ['panel-physics', 'panel-webgl', 'panel-gpu_fx', 'panel-analog'].forEach(id => {
             const el = this.safeGet(id); if (el) el.innerHTML = '';
@@ -598,34 +669,54 @@ const UI = {
                 } else if (layer.type === 'text') {
                     const controlsDiv = document.createElement('div');
                     controlsDiv.innerHTML = `
-                    <div class="control-group" style="margin-bottom: 12px; display: flex; gap: 10px;">
-                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
-                            Freeze Sequence
-                            <input type="checkbox" id="textFreeze_${layer.id}" style="width:auto; margin:0;">
-                        </label>
-                        <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
-                            Manual Advance
-                            <input type="checkbox" id="textManualMode_${layer.id}" style="width:auto; margin:0;">
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label style="display:flex; justify-content:space-between; align-items:center;">
+                            Timed Lyrics Mode
+                            <input type="checkbox" id="timedLyricsEnabled_${layer.id}" style="width:auto; margin:0;">
                         </label>
                     </div>
 
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Text Sequences (Up to 5)</label>
-                        <div class="lyric-inputs-grid">
-                            <input type="text" id="text0_${layer.id}" placeholder="Phrase 1" class="text-input-minimal">
-                            <input type="text" id="text1_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text2_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text3_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
-                            <input type="text" id="text4_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
+                    <div id="standardTextControls_${layer.id}">
+                        <div class="control-group" style="margin-bottom: 12px; display: flex; gap: 10px;">
+                            <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                                Freeze Sequence
+                                <input type="checkbox" id="textFreeze_${layer.id}" style="width:auto; margin:0;">
+                            </label>
+                            <label style="flex:1; display:flex; justify-content:space-between; align-items:center;">
+                                Manual Advance
+                                <input type="checkbox" id="textManualMode_${layer.id}" style="width:auto; margin:0;">
+                            </label>
+                        </div>
+
+                        <div class="control-group" style="margin-bottom: 12px;">
+                            <label>Text Sequences (Up to 5)</label>
+                            <div class="lyric-inputs-grid">
+                                <input type="text" id="text0_${layer.id}" placeholder="Phrase 1" class="text-input-minimal">
+                                <input type="text" id="text1_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
+                                <input type="text" id="text2_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
+                                <input type="text" id="text3_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
+                                <input type="text" id="text4_${layer.id}" placeholder="Empty (Optional)" class="text-input-minimal">
+                            </div>
+                        </div>
+
+                        <div class="control-group" style="margin-bottom: 12px;">
+                            <label>Sequencing Logic</label>
+                            <select id="textSequenceMode_${layer.id}">
+                                <option value="order">Sequential Loop</option>
+                                <option value="random">Randomized Shuffle</option>
+                            </select>
                         </div>
                     </div>
 
-                    <div class="control-group" style="margin-bottom: 12px;">
-                        <label>Sequencing Logic</label>
-                        <select id="textSequenceMode_${layer.id}">
-                            <option value="order">Sequential Loop</option>
-                            <option value="random">Randomized Shuffle</option>
-                        </select>
+                    <div id="timedLyricsControls_${layer.id}" style="display: none;">
+                        <div class="control-group" style="margin-bottom: 12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                                <label style="margin:0;">Timed Lyrics (SubRip SRT Format)</label>
+                                <button id="btnLoadLyrics_${layer.id}" class="secondary-btn" style="padding:2px 8px; font-size:0.65rem; width:auto; margin:0;">Load File</button>
+                                <input type="file" id="fileLyrics_${layer.id}" accept=".srt,.txt,.lrc" style="display:none;">
+                            </div>
+                            <textarea id="timedLyricsText_${layer.id}" placeholder="1&#10;00:00:02,000 --> 00:00:05,000&#10;Hello World&#10;&#10;2&#10;00:00:06,500 --> 00:00:09,000&#10;This is a multiline&#10;SubRip subtitle!" class="text-input-minimal" style="width:100%; height:120px; font-family:monospace; font-size:0.75rem; resize:vertical; padding:6px; background:rgba(0,0,0,0.25); border:1px solid rgba(255,255,255,0.15); border-radius:4px; color:white;"></textarea>
+                        </div>
                     </div>
 
                     <div class="control-group" style="margin-bottom: 12px;">
@@ -760,6 +851,52 @@ const UI = {
                     });
                     const seq = this.safeGet(`textSequenceMode_${layer.id}`);
                     if(seq) { seq.value = layer.settings.textSequenceMode || 'order'; seq.onchange = e => layer.settings.textSequenceMode = e.target.value; }
+
+                    // Timed Lyrics Mode Bindings
+                    const timedEnabled = this.safeGet(`timedLyricsEnabled_${layer.id}`);
+                    const standardCtrls = this.safeGet(`standardTextControls_${layer.id}`);
+                    const timedCtrls = this.safeGet(`timedLyricsControls_${layer.id}`);
+                    if (timedEnabled && standardCtrls && timedCtrls) {
+                        const updateVisibility = () => {
+                            const isTimed = timedEnabled.checked;
+                            standardCtrls.style.display = isTimed ? 'none' : 'block';
+                            timedCtrls.style.display = isTimed ? 'block' : 'none';
+                        };
+                        timedEnabled.checked = !!layer.settings.timedLyricsEnabled;
+                        timedEnabled.onchange = (e) => {
+                            layer.settings.timedLyricsEnabled = e.target.checked;
+                            updateVisibility();
+                        };
+                        updateVisibility();
+                    }
+
+                    const lyricsTextarea = this.safeGet(`timedLyricsText_${layer.id}`);
+                    if (lyricsTextarea) {
+                        lyricsTextarea.value = layer.settings.timedLyricsText || "";
+                        lyricsTextarea.oninput = (e) => {
+                            layer.settings.timedLyricsText = e.target.value;
+                            delete layer.parsedLyrics;
+                        };
+                    }
+
+                    const btnLoad = this.safeGet(`btnLoadLyrics_${layer.id}`);
+                    const fileInput = this.safeGet(`fileLyrics_${layer.id}`);
+                    if (btnLoad && fileInput) {
+                        btnLoad.onclick = () => fileInput.click();
+                        fileInput.onchange = (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            const reader = new FileReader();
+                            reader.onload = (evt) => {
+                                const contents = evt.target.result;
+                                layer.settings.timedLyricsText = contents;
+                                if (lyricsTextarea) lyricsTextarea.value = contents;
+                                delete layer.parsedLyrics;
+                            };
+                            reader.readAsText(file);
+                        };
+                    }
+
                     const fnt = this.safeGet(`textFontFamily_${layer.id}`);
                     if(fnt) { fnt.value = layer.settings.textFontFamily || 'Lora'; fnt.onchange = e => layer.settings.textFontFamily = e.target.value; }
                     const dis = this.safeGet(`textDissolveStyle_${layer.id}`);
@@ -967,6 +1104,38 @@ const UI = {
             };
         }
 
+        const btnPrev = this.safeGet('btnMidiPrevPreset');
+        if (btnPrev) {
+            btnPrev.onclick = () => {
+                if (e.midi) {
+                    e.midi.enterLearnMode({ type: 'action', key: 'prevPreset' });
+                }
+            };
+        }
+
+        const btnNext = this.safeGet('btnMidiNextPreset');
+        if (btnNext) {
+            btnNext.onclick = () => {
+                if (e.midi) {
+                    e.midi.enterLearnMode({ type: 'action', key: 'nextPreset' });
+                }
+            };
+        }
+
+        const btnPrevPreset = this.safeGet('btnPrevPreset');
+        if (btnPrevPreset) {
+            btnPrevPreset.onclick = () => {
+                e.prevPreset();
+            };
+        }
+
+        const btnNextPreset = this.safeGet('btnNextPreset');
+        if (btnNextPreset) {
+            btnNextPreset.onclick = () => {
+                e.nextPreset();
+            };
+        }
+
         const sliderTime = this.safeGet('sliderTimeScrub');
         if (sliderTime) {
             sliderTime.oninput = (ev) => {
@@ -1136,6 +1305,8 @@ const UI = {
                     settings.textDissolveStyle = 'ink';
                     settings.textFreeze = false;
                     settings.textManualMode = false;
+                    settings.timedLyricsEnabled = false;
+                    settings.timedLyricsText = "";
                 } else if (type === 'spectrum') {
                     settings.spectrumStyle = 'bars';
                     settings.useLayerColor = false;

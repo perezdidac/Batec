@@ -40,7 +40,11 @@
             <div class="session-bar-container">
                 <div class="session-header">
                     <span class="param-label">Project Stages</span>
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button id="btnMidiPrevPreset" class="icon-btn-minimal learn-btn" style="font-size:0.6rem; border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:2px 4px; line-height: 1;" title="MIDI Learn Prev Stage">M</button>
+                        <button id="btnPrevPreset" class="icon-btn-minimal" style="font-size: 0.95rem; padding: 2px 4px;" title="Previous Stage">◀</button>
+                        <button id="btnNextPreset" class="icon-btn-minimal" style="font-size: 0.95rem; padding: 2px 4px;" title="Next Stage">▶</button>
+                        <button id="btnMidiNextPreset" class="icon-btn-minimal learn-btn" style="font-size:0.6rem; border:1px solid rgba(255,255,255,0.1); border-radius:4px; padding:2px 4px; line-height: 1;" title="MIDI Learn Next Stage">M</button>
                         <button id="btnClonePreset" class="icon-btn-minimal" title="Clone Active Stage">❐</button>
                         <button id="btnNewPreset" class="icon-btn-minimal" title="New Stage">+</button>
                     </div>
@@ -500,6 +504,7 @@
     <script src="js/midi.js"></script>
     <script src="js/dmx.js"></script>
     <script src="js/bpm.js"></script>
+    <script src="presets/agost.js"></script>
     <script src="js/engine.js"></script>
     <script src="js/ui.js"></script>
     <script src="main.js"></script>
