@@ -116,8 +116,16 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
     if (!layer || !layer.enabled) return;
 
     if (!engine.lyricStates) engine.lyricStates = {};
-    if (!engine.lyricStates[layerId]) engine.lyricStates[layerId] = { lyricIdx: -1, lyricLastSwap: 0 };
+    if (!engine.lyricStates[layerId]) engine.lyricStates[layerId] = { lyricIdx: 0, lyricLastSwap: 0 };
     const state = engine.lyricStates[layerId];
+
+    // Check intro delay (wait before showing lyrics after selecting a preset)
+    const delayParam = engine.pLayer(layerId, 'textStartDelay');
+    const startDelay = (delayParam !== undefined && !isNaN(delayParam) ? delayParam : 15) * 1000;
+    if (time < startDelay) {
+        state.lyricLastSwap = startDelay;
+        return; // Wait during intro period for visual ambiance to establish
+    }
 
     const hold = engine.pLayer(layerId, 'textHoldTime') * 1000, fade = engine.pLayer(layerId, 'textFadeTime') * 1000;
     
@@ -169,7 +177,8 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
             }
         }
 
-        fullText = activeLyric.text.toUpperCase();
+        const rawTimed = activeLyric.text;
+        fullText = (layer.settings.textUppercase === true) ? rawTimed.toUpperCase() : rawTimed;
     } else {
         const validTexts = layer.settings.textList.filter(t => t.trim().length > 0);
         if (validTexts.length === 0) return;
@@ -189,7 +198,8 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
             state.lyricIdx = 0;
         }
 
-        fullText = validTexts[state.lyricIdx].toUpperCase();
+        const rawText = validTexts[state.lyricIdx];
+        fullText = (layer.settings.textUppercase === true) ? rawText.toUpperCase() : rawText;
     }
 
     const elapsed = time - state.lyricLastSwap;
@@ -197,12 +207,13 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
     const isFrozen = !layer.settings.timedLyricsEnabled && layer.settings.textFreeze && 
         (layer.settings.timedLyricsEnabled ? false : layer.settings.textList.filter(t => t.trim().length > 0).length === 1);
     
-    const charsToShow = (isFrozen || typeSpeed <= 0) ? fullText.length : Math.floor(elapsed / typeSpeed);
+    const isFadeMode = (layer.settings.textDissolveStyle === 'fade') || (typeSpeed <= 0);
+    const charsToShow = (isFrozen || isFadeMode) ? fullText.length : Math.floor(elapsed / typeSpeed);
     const displayText = fullText.substring(0, charsToShow);
     const isDone = charsToShow >= fullText.length;
     
-    // Add a blinking cursor if still typing and not ink mode
-    const cursor = (layer.settings.textDissolveStyle !== 'ink' && !isDone && Math.floor(time / 300) % 2 === 0) ? "|" : "";
+    // Add a blinking cursor if actively typing (not in simple fade mode, not in ink mode)
+    const cursor = (!isFadeMode && layer.settings.textDissolveStyle !== 'ink' && !isDone && Math.floor(time / 300) % 2 === 0) ? "|" : "";
 
     let opacity = engine.pLayer(layerId, 'textOpacity');
     if (!isFrozen) {
@@ -220,7 +231,7 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
                 if (elapsed < fade) opacity *= (elapsed / fade);
             } else {
                 if (elapsed < fade) opacity *= (elapsed / fade);
-                else if (elapsed > hold) opacity *= (1 - (elapsed - hold) / fade);
+                else if (elapsed > hold) opacity *= Math.max(0, 1 - (elapsed - hold) / fade);
             }
         }
     }
@@ -250,50 +261,72 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
 
     const baseFontSize = window.innerWidth * 0.08 * engine.pLayer(layerId, 'textScale');
     const font = layer.settings.textFontFamily || 'Inter';
-    ctx.font = `bold ${baseFontSize}px ${font}, serif`;
 
-    // Auto-fit calculation to prevent horizontal overflow/clipping
-    const lines = displayText.split('\n');
-    let maxLineWidth = 0;
-    lines.forEach(lineText => {
-        const metrics = ctx.measureText(lineText);
-        if (metrics.width > maxLineWidth) {
-            maxLineWidth = metrics.width;
+    // Cached auto-fit font size calculation to avoid measureText overhead on every frame
+    if (!state.cachedSize || state.cachedSize.text !== displayText || state.cachedSize.width !== window.innerWidth) {
+        ctx.font = `bold ${baseFontSize}px ${font}, serif`;
+        const lines = displayText.split('\n');
+        let maxLineWidth = 0;
+        lines.forEach(lineText => {
+            const metrics = ctx.measureText(lineText);
+            if (metrics.width > maxLineWidth) maxLineWidth = metrics.width;
+        });
+        const maxAllowedWidth = window.innerWidth * 0.85;
+        let finalFontSize = baseFontSize;
+        if (maxLineWidth > maxAllowedWidth) {
+            finalFontSize = baseFontSize * (maxAllowedWidth / maxLineWidth);
         }
-    });
-
-    const maxAllowedWidth = window.innerWidth * 0.85; // 85% of screen width
-    let finalFontSize = baseFontSize;
-    if (maxLineWidth > maxAllowedWidth) {
-        finalFontSize = baseFontSize * (maxAllowedWidth / maxLineWidth);
-        ctx.font = `bold ${finalFontSize}px ${font}, serif`;
+        state.cachedSize = { text: displayText, width: window.innerWidth, fontSize: finalFontSize, lines: lines };
     }
 
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.filter = `blur(${engine.pLayer(layerId, 'textBlur')}px)`;
-    const cA = preset.settings.palette[0], cB = engine.target ? engine.target.settings.palette[0] : cA;
+    const { fontSize, lines } = state.cachedSize;
+    ctx.font = `bold ${fontSize}px ${font}, serif`;
+    ctx.textAlign = 'center'; 
+    ctx.textBaseline = 'middle';
+
+    const blurAmt = engine.pLayer(layerId, 'textBlur');
+    if (blurAmt > 0.5) ctx.filter = `blur(${blurAmt}px)`;
+
+    let cA, cB;
+    if (layer.settings && layer.settings.useLayerColor && layer.settings.layerColor) {
+        cA = layer.settings.layerColor;
+        cB = (engine.target && engine.target.layers) ? (engine.target.layers.find(l => l.id === layerId)?.settings?.layerColor || cA) : cA;
+    } else {
+        const palA = preset.settings.palette;
+        const palB = engine.target ? engine.target.settings.palette : palA;
+        cA = palA[5] || palA[palA.length - 1] || '#ffffff';
+        cB = palB[5] || palB[palB.length - 1] || '#ffffff';
+    }
     const finalColor = ColorUtils.lerpColor(cA, cB, sessionProgress);
     ctx.fillStyle = finalColor;
     
-    // TEXT GLOW (Emotional Aura)
+    // Performance: Only activate expensive Canvas shadow blur if explicitly requested
     const glow = engine.pLayer(layerId, 'textGlow');
-    if (glow > 0) {
-        ctx.shadowColor = finalColor;
-        ctx.shadowBlur = glow;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0;
-    }
+    const hasGlow = glow > 1.0;
     
-    const fontSize = finalFontSize;
     const lineHeight = fontSize * 1.2;
     const totalHeight = lineHeight * (lines.length - 1);
     
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.lineWidth = Math.max(2, Math.round(fontSize * 0.04));
+    ctx.lineJoin = 'round';
+
     lines.forEach((lineText, idx) => {
         const yOffset = -totalHeight / 2 + idx * lineHeight;
-        const lineCursor = (idx === lines.length - 1) ? cursor : "";
-        ctx.fillText(lineText + lineCursor, 0, yOffset);
+        const fullLine = lineText + ((idx === lines.length - 1) ? cursor : "");
+        
+        // Stroke outline runs first without shadow for crisp, high-speed drawing
+        ctx.strokeText(fullLine, 0, yOffset);
+
+        // Fill text with aura only if glow > 0
+        if (hasGlow) {
+            ctx.shadowColor = finalColor;
+            ctx.shadowBlur = Math.min(20, glow);
+        }
+        ctx.fillText(fullLine, 0, yOffset);
+        if (hasGlow) ctx.shadowBlur = 0;
     });
     
-    if (glow > 0) ctx.shadowBlur = 0; // Reset for performance
+    if (blurAmt > 0.5) ctx.filter = 'none';
     ctx.restore();
 }

@@ -17,6 +17,10 @@ class BatecEngine {
 
         if (window.AGOST_DEFAULT_SESSION) {
             this.session = JSON.parse(JSON.stringify(window.AGOST_DEFAULT_SESSION));
+            if (this.session.activeIndex === undefined) this.session.activeIndex = 0;
+            if (this.session.targetIndex === undefined) this.session.targetIndex = null;
+            if (this.session.transitionStart === undefined) this.session.transitionStart = 0;
+            if (this.session.transitionDuration === undefined) this.session.transitionDuration = 1000;
             this.session.imported = true;
         } else {
             this.session = {
@@ -80,6 +84,7 @@ class BatecEngine {
         const defaults = createDefaultParams();
         const defSet = createDefaultPreset().settings;
         this.session.presets.forEach(p => {
+            if (!p.params) p.params = {};
             // Reconstruct default definitions for both global and dynamic layer parameters
             const allDefaults = { ...defaults };
             if (p.layers) {
@@ -98,6 +103,30 @@ class BatecEngine {
                 }
             });
 
+            // Ensure any parameters that came from custom presets also get valid schema metadata
+            Object.keys(p.params).forEach(k => {
+                if (!p.params[k].cat) {
+                    if (allDefaults[k] && allDefaults[k].cat) {
+                        p.params[k] = { ...allDefaults[k], ...p.params[k] };
+                    } else if (p.layers) {
+                        const matchedLayer = p.layers.find(l => k.endsWith('_' + l.id));
+                        if (matchedLayer) {
+                            const layerParams = getLayerParams(matchedLayer.type, matchedLayer.id);
+                            if (layerParams && layerParams[k]) {
+                                p.params[k] = { ...layerParams[k], ...p.params[k] };
+                            } else {
+                                p.params[k].cat = `${matchedLayer.type}_${matchedLayer.id}`;
+                                p.params[k].name = p.params[k].name || k.replace(/_[^_]+$/, '');
+                            }
+                        }
+                    }
+                }
+                if (p.params[k].name === undefined) p.params[k].name = k;
+                if (p.params[k].min === undefined) p.params[k].min = 0;
+                if (p.params[k].max === undefined) p.params[k].max = 100;
+                if (p.params[k].step === undefined) p.params[k].step = 1;
+            });
+
             // Establish defaults for any newly filled parameters
             establishDefaults(p.params);
 
@@ -112,8 +141,16 @@ class BatecEngine {
 
 
 
-    get active() { return this.session.presets[this.session.activeIndex]; }
-    get target() { return this.session.targetIndex !== null ? this.session.presets[this.session.targetIndex] : null; }
+    get active() {
+        if (!this.session || !this.session.presets || !this.session.presets.length) return null;
+        const idx = (typeof this.session.activeIndex === 'number') ? this.session.activeIndex : 0;
+        return this.session.presets[idx] || this.session.presets[0];
+    }
+    get target() {
+        if (!this.session || !this.session.presets) return null;
+        if (typeof this.session.targetIndex !== 'number' || this.session.targetIndex === null) return null;
+        return this.session.presets[this.session.targetIndex] || null;
+    }
 
     evalP(preset, key, localContext = {}) {
         const param = preset.params[key];
@@ -214,8 +251,17 @@ class BatecEngine {
         return valA + (valB - valA) * progress;
     }
 
-    switchTo(index) {
+    switchTo(index, forceRestart = false) {
         if (index >= this.session.presets.length || index < 0) return;
+
+        // If clicking the current active preset with forceRestart, reset time and lyrics
+        if (index === this.session.activeIndex) {
+            if (forceRestart) {
+                this.time = 0;
+                this.lyricStates = {};
+            }
+            return;
+        }
 
         // If a transition is already in progress, instantly complete it first
         if (this.session.targetIndex !== null) {
@@ -223,13 +269,12 @@ class BatecEngine {
             this.session.targetIndex = null;
         }
 
-        if (index === this.session.activeIndex) return;
-
         this.session.targetIndex = index;
         this.session.transitionStart = performance.now();
         const speed = document.getElementById('sessionTransitionSpeed');
         this.session.transitionDuration = (speed ? parseFloat(speed.value) : 1) * 1000;
         this.time = 0; // Sync math arrays
+        this.lyricStates = {}; // Fresh start for lyrics
     }
 
     nextPreset() {
@@ -275,8 +320,9 @@ class BatecEngine {
     }
 
     loadImages() {
-        const paths = ['images/olympics.jpg', 'images/seattle.jpg', 'images/snow.jpg', 'images/train.jpg', 'images/casa.jpg'];
+        const paths = ['images/olympics.jpg', 'images/seattle.jpg', 'images/snow.jpg', 'images/train.jpg', 'images/casa.jpg', 'images/agost.png'];
         const isLocalFile = window.location.protocol === 'file:';
+        this.imagePool = [];
 
         paths.forEach((p, idx) => {
             const img = new Image();
@@ -285,8 +331,10 @@ class BatecEngine {
 
             img.src = p;
             img.onload = () => {
-                this.imagePool.push({ img, path: p, name: p.split('/').pop().split('.')[0] });
-                UI.buildImageSelectors(); // Re-build UI when image finishes loading
+                this.imagePool[idx] = { img, path: p, name: p.split('/').pop().split('.')[0] };
+                if (window.UI && typeof UI.buildImageSelectors === 'function') {
+                    UI.buildImageSelectors();
+                }
             };
         });
     }
@@ -515,7 +563,6 @@ class BatecEngine {
                 if (layer.type === 'waves') renderWaves(this, ctx, localTime, layer.id);
                 if (layer.type === 'rays') renderRays(this, ctx, localTime, layer.id);
                 if (layer.type === 'particles') this.renderParticles(ctx, localTime, layer.id);
-                if (layer.type === 'text') renderLyrics(this, ctx, localTime, progress, layer.id);
                 if (layer.type === 'spectrum') this.renderSpectrum(ctx, localTime, layer.id);
 
                 if (hasMask) {
@@ -554,6 +601,22 @@ class BatecEngine {
         // 2. CPU Analog Post-FX & Screen Transfer
         applyAnalogPostFX(this, finalSource);
 
+        // 3. Render Lyric / Text Layers on Top (Clear, Crisp & Legible for Stage)
+        if (this.active.layers) {
+            this.active.layers.forEach(layer => {
+                if (!layer.enabled || layer.type !== 'text') return;
+                const hasMask = layer.settings && layer.settings.maskType && layer.settings.maskType !== 'none';
+                if (hasMask) {
+                    this.ctx.save();
+                    this.applyLayerMask(this.ctx, layer);
+                }
+                renderLyrics(this, this.ctx, localTime, progress, layer.id);
+                if (hasMask) {
+                    this.ctx.restore();
+                }
+            });
+        }
+
         const pnl = document.getElementById('controlsPanel');
         const showBtn = document.getElementById('btnShowUI');
         // If UI is hidden and user didn't move mouse, fade the recall button too
@@ -580,7 +643,10 @@ class BatecEngine {
             ctx.translate(window.innerWidth / 2, window.innerHeight / 2); ctx.rotate(this.pLayer(layerId, 'photoRotation'));
 
             indices.forEach((poolIdx, i) => {
-                const item = pool[poolIdx];
+                let item = pool[poolIdx];
+                if (!item && typeof poolIdx === 'string') {
+                    item = pool.find(p => p && (p.name === poolIdx || p.path.includes(poolIdx)));
+                }
                 if (!item) return;
 
                 const mediaObj = isWebcam ? item : item.img;
@@ -592,11 +658,32 @@ class BatecEngine {
 
                 const ox = glitch > 0 ? Math.sin(time / 1000 + i) * glitch : 0;
                 const oy = glitch > 0 ? Math.cos(time / 1200 + i) * glitch : 0;
-                ctx.filter = `hue-rotate(${i * 60 + this.trend * 360}deg) blur(${this.pLayer(layerId, 'imgBlur')}px) saturate(${this.pLayer(layerId, 'imgSaturate')}%) contrast(${this.pLayer(layerId, 'photoContrast')}%)`;
+                
+                const blurVal = this.pLayer(layerId, 'imgBlur');
+                const satVal = this.pLayer(layerId, 'imgSaturate');
+                const conVal = this.pLayer(layerId, 'photoContrast');
+                const hueVal = this.pLayer(layerId, 'imgHueRotate');
+
+                let filterParts = [];
+                if (hueVal !== undefined && !isNaN(hueVal) && hueVal !== 0) {
+                    filterParts.push(`hue-rotate(${hueVal}deg)`);
+                }
+                if (blurVal > 0.1) {
+                    filterParts.push(`blur(${blurVal}px)`);
+                }
+                if (satVal !== undefined && !isNaN(satVal) && satVal !== 100) {
+                    filterParts.push(`saturate(${satVal}%)`);
+                }
+                if (conVal !== undefined && !isNaN(conVal) && conVal !== 100) {
+                    filterParts.push(`contrast(${conVal}%)`);
+                }
+                ctx.filter = filterParts.length > 0 ? filterParts.join(' ') : 'none';
+
                 ctx.globalCompositeOperation = layer.settings.imgBlendMode || 'screen';
                 const w = window.innerWidth * scale, h = window.innerHeight * scale;
                 ctx.drawImage(mediaObj, -w / 2 + ox, -h / 2 + oy, w, h);
             });
+            ctx.filter = 'none';
             ctx.restore();
         }
     }

@@ -103,6 +103,16 @@ class BatecParticle {
         else if (shp === 'pollen' || shp === 'mote' || shp === 'circle') {
             ctx.arc(0, 0, size, 0, Math.PI * 2);
         }
+        else if (shp === 'nova') {
+            // 4-point glowing star with diffraction spikes
+            const spike = size * 2.2;
+            const inner = size * 0.25;
+            ctx.moveTo(0, -spike);
+            ctx.quadraticCurveTo(0, -inner, inner, 0);
+            ctx.quadraticCurveTo(0, inner, 0, spike);
+            ctx.quadraticCurveTo(0, inner, -inner, 0);
+            ctx.quadraticCurveTo(0, -inner, 0, -spike);
+        }
         ctx.closePath(); ctx.fill(); ctx.restore();
     }
 }

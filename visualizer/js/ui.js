@@ -26,6 +26,10 @@ const UI = {
         if (window.AGOST_DEFAULT_SESSION) {
             try {
                 const raw = JSON.parse(JSON.stringify(window.AGOST_DEFAULT_SESSION));
+                if (raw.activeIndex === undefined) raw.activeIndex = 0;
+                if (raw.targetIndex === undefined) raw.targetIndex = null;
+                if (raw.transitionStart === undefined) raw.transitionStart = 0;
+                if (raw.transitionDuration === undefined) raw.transitionDuration = 1000;
                 raw.presets.forEach(p => p.params = establishDefaults(p.params));
                 this.engine.session = raw;
                 this.engine.session.imported = true;
@@ -38,26 +42,9 @@ const UI = {
             } catch (err) {
                 console.warn('Error applying window.AGOST_DEFAULT_SESSION:', err);
             }
+        } else {
+            console.warn('window.AGOST_DEFAULT_SESSION not found. Presets are loaded from presets/agost.js.');
         }
-
-        fetch('presets/agost.json')
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to load agost.json');
-                return res.json();
-            })
-            .then(raw => {
-                raw.presets.forEach(p => p.params = establishDefaults(p.params));
-                this.engine.session = raw;
-                this.engine.session.imported = true;
-                this.engine.healPresets();
-                const io = this.safeGet('styleIO');
-                if (io) io.value = JSON.stringify(raw, null, 2);
-                this.buildSlots();
-                this.rebuildConfigUI();
-            })
-            .catch(err => {
-                console.warn('Auto-loading presets/agost.json:', err);
-            });
     },
     safeGet(id) { return document.getElementById(id); },
 
@@ -126,26 +113,35 @@ const UI = {
     },
 
 
+    buildImageSelectors() {
+        if (!this.engine || !this.engine.active) return;
+        const photoLayers = (this.engine.active.layers || []).filter(l => l.type === 'photos');
+        photoLayers.forEach(layer => this.buildImageSelectorsForLayer(layer));
+    },
+
     buildImageSelectorsForLayer(layer) {
         const container = this.safeGet(`panel-image-select_${layer.id}`);
-        if (!container || !this.engine.imagePool.length) return;
+        if (!container || !this.engine || !this.engine.imagePool) return;
+        const validImages = this.engine.imagePool.filter(item => item && item.name);
+        if (!validImages.length) return;
         container.innerHTML = '<label style="display:block; font-size: 0.65rem; margin-bottom: 8px; color: var(--accent-glow);">Active Images in Pool:</label>';
 
         const activeIdx = layer.settings.imgIndices || [];
 
         this.engine.imagePool.forEach((item, idx) => {
+            if (!item || !item.name) return;
             const row = document.createElement('div');
             row.style.display = 'flex'; row.style.alignItems = 'center'; row.style.gap = '8px'; row.style.marginBottom = '6px';
 
             const chk = document.createElement('input');
             chk.type = 'checkbox';
-            chk.checked = activeIdx.includes(idx);
+            chk.checked = activeIdx.includes(idx) || activeIdx.includes(item.name);
             chk.onchange = (e) => {
                 const current = layer.settings.imgIndices || [];
                 if (e.target.checked) {
                     if (!current.includes(idx)) current.push(idx);
                 } else {
-                    layer.settings.imgIndices = current.filter(i => i !== idx);
+                    layer.settings.imgIndices = current.filter(i => i !== idx && i !== item.name);
                 }
             };
 
@@ -424,7 +420,7 @@ const UI = {
             
             btn.onclick = (ev) => {
                 ev.stopPropagation();
-                this.engine.switchTo(i);
+                this.engine.switchTo(i, true);
                 this.buildSlots();
                 this.rebuildConfigUI();
             };
@@ -434,7 +430,7 @@ const UI = {
         const activePreset = this.engine.target || this.engine.active;
         const nameInput = this.safeGet('activePresetName'); 
         if (nameInput && document.activeElement !== nameInput) {
-            nameInput.value = activePreset.name;
+            nameInput.value = activePreset ? (activePreset.name || '') : '';
         }
     },
 
@@ -663,6 +659,7 @@ const UI = {
                             <option value="leaf">Sharp Leaf</option>
                             <option value="pollen">Dust Pollen</option>
                             <option value="mote">Dust Mote</option>
+                            <option value="nova">Cosmic Nova Star</option>
                         </select>
                     </div>`;
                     wrapper.appendChild(controlsDiv);
@@ -732,8 +729,10 @@ const UI = {
                     <div class="control-group" style="margin-bottom: 12px;">
                         <label>Dissolve Animation</label>
                         <select id="textDissolveStyle_${layer.id}">
-                            <option value="fade">Classic Fade</option>
+                            <option value="fade">Simple Fade</option>
+                            <option value="typewriter">Typewriter</option>
                             <option value="ink">Ink Resolve</option>
+                            <option value="glitch">Glitch</option>
                         </select>
                     </div>`;
                     wrapper.appendChild(controlsDiv);
@@ -922,18 +921,40 @@ const UI = {
 
         sortedKeys.forEach(key => {
             const param = params[key];
-            let container = this.safeGet(`panel-${param.cat}`);
+            if (!param) return;
+
+            let container = param.cat ? this.safeGet(`panel-${param.cat}`) : null;
 
             // If the category belongs to a layer, find the layer container
-            if (!container) {
-                const parts = param.cat.split('_');
-                if (parts.length > 1) {
-                    const layerId = parts[1];
+            // Handles layer IDs with underscores (e.g. photos_house, text_rain, mask_photos_house)
+            if (!container && param.cat && typeof param.cat === 'string') {
+                const firstUnderscore = param.cat.indexOf('_');
+                if (firstUnderscore !== -1) {
+                    const layerId = param.cat.slice(firstUnderscore + 1);
                     container = this.safeGet('layer-content-' + layerId);
                 }
             }
 
+            // Fallback: match layer ID directly from the parameter key
+            if (!container && activePreset.layers) {
+                const matchedLayer = activePreset.layers.find(l => key.endsWith('_' + l.id));
+                if (matchedLayer) {
+                    container = this.safeGet('layer-content-' + matchedLayer.id);
+                }
+            }
+
+            // Fallback for global parameters without a matched container
+            if (!container) {
+                container = this.safeGet('panel-physics');
+            }
+
             if (!container) return;
+
+            // Guarantee schema defaults on param
+            if (param.name === undefined) param.name = key;
+            if (param.min === undefined) param.min = 0;
+            if (param.max === undefined) param.max = 100;
+            if (param.step === undefined) param.step = 1;
             const row = document.createElement('div'); 
             row.className = 'param-row';
             row.id = `param-row-${key}`;
@@ -1224,16 +1245,22 @@ const UI = {
             document.querySelectorAll('.glass-panel').forEach(p => p.classList.add('hidden'));
             this.safeGet('telemetryPanel').classList.add('hidden');
             if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.add('hidden');
-            this.safeGet('btnShowUI').classList.remove('hidden');
-            this.safeGet('btnShowUI').classList.remove('inactive');
+            const btnShow = this.safeGet('btnShowUI');
+            if (btnShow) {
+                btnShow.classList.remove('hidden');
+                btnShow.classList.remove('inactive');
+            }
             e.lastInteraction = Date.now();
         };
-        this.safeGet('btnShowUI').onclick = () => {
-            this.safeGet('controlsPanel').classList.remove('hidden');
-            this.safeGet('telemetryPanel').classList.remove('hidden'); // Bring telemetry back
-            if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden');
-            this.safeGet('btnShowUI').classList.add('hidden');
-        };
+        const btnShow = this.safeGet('btnShowUI');
+        if (btnShow) {
+            btnShow.onclick = () => {
+                this.safeGet('controlsPanel').classList.remove('hidden');
+                this.safeGet('telemetryPanel').classList.remove('hidden'); // Bring telemetry back
+                if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden');
+                btnShow.classList.add('hidden');
+            };
+        }
 
         window.onclick = (ev) => {
             const hMod = this.safeGet('helpModal');
@@ -1423,10 +1450,37 @@ const UI = {
                     p.style.pointerEvents = hide ? 'none' : '';
                 }
             });
+            const btnShow = document.getElementById('btnShowUI');
+            if (btnShow) {
+                if (hide) {
+                    btnShow.classList.remove('hidden');
+                    btnShow.classList.remove('inactive');
+                } else {
+                    const controls = document.getElementById('controlsPanel');
+                    if (controls && !controls.classList.contains('hidden')) {
+                        btnShow.classList.add('hidden');
+                    }
+                }
+            }
         };
 
         window.addEventListener('keydown', (ev) => {
-            if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') return;
+            // When in performance mode or UI is hidden, pressing ANY key reveals the gear icon
+            const btnShow = this.safeGet('btnShowUI');
+            const controls = this.safeGet('controlsPanel');
+            const isUIHidden = controls && controls.classList.contains('hidden');
+            if (isUIHidden && btnShow) {
+                btnShow.classList.remove('hidden');
+                btnShow.classList.remove('inactive');
+            }
+
+            if (ev.target.tagName === 'INPUT' || ev.target.tagName === 'TEXTAREA') {
+                if (ev.key === 'Escape') {
+                    ev.target.blur();
+                } else {
+                    return;
+                }
+            }
 
             if (ev.key === 'Escape') {
                 ev.preventDefault();
@@ -1465,7 +1519,6 @@ const UI = {
                 this.buildSlots();
                 setTimeout(() => {
                     this.rebuildConfigUI();
-
                 }, 500);
             }
         });
@@ -1478,7 +1531,14 @@ const UI = {
     },
 
     initInteractionTimer() {
-        const r = () => { if (this.engine) this.engine.lastInteraction = Date.now(); };
+        const r = () => {
+            if (this.engine) this.engine.lastInteraction = Date.now();
+            const controls = document.getElementById('controlsPanel');
+            const btnShow = document.getElementById('btnShowUI');
+            if (controls && controls.classList.contains('hidden') && btnShow) {
+                btnShow.classList.remove('hidden', 'inactive');
+            }
+        };
         ['mousemove', 'keydown', 'mousedown', 'touchstart'].forEach(ev => window.addEventListener(ev, r));
     },
 

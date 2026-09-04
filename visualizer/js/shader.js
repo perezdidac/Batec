@@ -64,11 +64,9 @@ class BatecShader {
             uniform float u_horizonComplexity;
             uniform float u_horizonEnabled; // 0 or 1
 
-            // NOISE UTILS FOR CONCRETE
+            // NOISE UTILS FOR CONCRETE & COSMOS
             float hash(vec2 p) {
-                p = fract(p * vec2(123.34, 456.21));
-                p += dot(p, p + 45.32);
-                return fract(p.x * p.y);
+                return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
             }
 
             float noise(vec2 p) {
@@ -144,7 +142,7 @@ class BatecShader {
                 for (int y= -1; y <= 1; y++) {
                     for (int x= -1; x <= 1; x++) {
                         vec2 neighbor = vec2(float(x),float(y));
-                        vec2 point = vec2(hash(ipos + neighbor), hash(ipos + neighbor + 13.5));
+                        vec2 point = vec2(hash(ipos + neighbor), hash(ipos + neighbor + vec2(13.5, 13.5)));
                         point = 0.5 + 0.5*sin(u_time * 0.2 + 6.2831*point); // Animate pieces
                         vec2 diff = neighbor + point - fpos;
                         float dist = length(diff);
@@ -203,12 +201,69 @@ class BatecShader {
                 return 1.0 - smoothstep(0.0, u_panotRoundness, d);
             }
 
+            // Procedural Cosmic Galaxy & Deep Starfield
+            vec3 drawGalaxy(vec2 uv) {
+                // Background deep cosmic void
+                vec3 col = vec3(0.008, 0.010, 0.022);
+
+                // Twinkling Starfield across the deep sky
+                vec2 starUV = uv * (18.0 + u_panotScale * 3.0);
+                vec2 id = floor(starUV);
+                vec2 gv = fract(starUV) - 0.5;
+                float starRnd = hash(id);
+                if (starRnd > 0.62) {
+                    float twinkle = 0.4 + 0.6 * sin(u_time * (2.5 + starRnd * 6.0) + starRnd * 6.28);
+                    float d = length(gv);
+                    float starBrightness = (0.01 / (d + 0.006)) * twinkle * (0.5 + starRnd * 0.5);
+                    col += mix(vec3(0.85, 0.92, 1.0), u_colorB, starRnd * 0.7) * min(starBrightness, 1.8);
+                }
+
+                // Swirling Spiral Galaxy
+                vec2 gPos = uv * (1.1 + u_panotScale * 0.15);
+                gPos *= rotate2d(u_panotRotation);
+                float r = length(gPos);
+                float angle = atan(gPos.y, gPos.x);
+
+                // Celestial Rotation
+                float rot = u_time * u_speed * 0.1;
+
+                // Double spiral arms (logarithmic spiral)
+                float spiral = angle + rot - log(r + 0.01) * 3.0;
+                float arm1 = 0.5 + 0.5 * cos(spiral * 2.0);
+                arm1 = pow(arm1, 3.5);
+
+                // Interstellar Nebula Dust Clouds
+                vec2 nebUV = gPos * rotate2d(rot * 0.4);
+                float nebula = fbm(nebUV * 2.5 + vec2(u_time * 0.03, -u_time * 0.02));
+                nebula = smoothstep(0.25, 0.75, nebula);
+
+                // Arm & Nebula Color Mixing
+                float armGlow = arm1 * exp(-r * 2.0) * (1.0 + u_trend * 1.5);
+                vec3 nebulaCol = mix(u_colorA, u_colorB, arm1 * 0.75 + nebula * 0.25);
+                col += nebulaCol * armGlow * (1.0 + u_glow * 2.0);
+                col += u_colorA * nebula * exp(-r * 1.5) * (0.35 + u_bass * 0.45);
+
+                // Radiant Galactic Core
+                float core = (0.045 / (r + 0.035)) * (1.0 + u_bass * 0.8) * (0.7 + u_glow * 1.5);
+                vec3 coreCol = mix(vec3(1.0, 0.97, 0.9), u_colorB, 0.35);
+                col += coreCol * core;
+
+                return col;
+            }
+
             void main() {
                 vec2 uv = (gl_FragCoord.xy * 2.0 - u_resolution) / min(u_resolution.x, u_resolution.y);
                 
                 // Bass distortion warp on X axis
                 float bassWarp = u_bass * u_distortion * 0.05;
                 uv.x += sin(uv.y * 10.0 + u_time * 5.0) * bassWarp;
+
+                if (u_shaderStyle > 3.5) {
+                    // COSMIC GALAXY & DEEP STARFIELD (4.0)
+                    vec3 col = drawGalaxy(uv);
+                    gl_FragColor = vec4(col, 1.0);
+                    return;
+                }
 
                 // Move horizon up/down with stronger scaling for the min/max (-5 to 5)
                 float y = uv.y + 0.3 - (u_elevation * 0.3) - (u_trend * 0.05);
@@ -303,6 +358,12 @@ class BatecShader {
         const vertexShader = this.compileShader(this.gl.VERTEX_SHADER, vsSource);
         const fragmentShader = this.compileShader(this.gl.FRAGMENT_SHADER, fsSource);
 
+        if (!vertexShader || !fragmentShader) {
+            console.error('Shader compilation failed.');
+            this.supported = false;
+            return;
+        }
+
         this.program = this.gl.createProgram();
         this.gl.attachShader(this.program, vertexShader);
         this.gl.attachShader(this.program, fragmentShader);
@@ -310,6 +371,8 @@ class BatecShader {
 
         if (!this.gl.getProgramParameter(this.program, this.gl.LINK_STATUS)) {
             console.error('Unable to initialize the shader program: ' + this.gl.getProgramInfoLog(this.program));
+            this.supported = false;
+            return;
         }
 
         // Cache uniform locations
@@ -352,6 +415,7 @@ class BatecShader {
     }
 
     initGeometry() {
+        if (!this.supported || !this.program) return;
         // Just a massive rectangle covering the screen: (-1, -1) to (1, 1)
         const vertices = new Float32Array([
             -1.0, -1.0,
@@ -376,7 +440,7 @@ class BatecShader {
                 parseInt(result[1], 16) / 255.0,
                 parseInt(result[2], 16) / 255.0,
                 parseInt(result[3], 16) / 255.0
-            ] : [1,1,1];
+            ] : [0,0,0];
             hexToVec3Cache.set(hex, vec);
         }
         return vec;
@@ -396,7 +460,7 @@ class BatecShader {
     }
 
     render(engine, time) {
-        if (!this.supported) return;
+        if (!this.supported || !this.program) return;
 
         this.gl.useProgram(this.program);
 
@@ -434,6 +498,7 @@ class BatecShader {
         if (engine.active.settings.shaderStyle === 'panot') styleVal = 1.0;
         else if (engine.active.settings.shaderStyle === 'mosaic') styleVal = 2.0;
         else if (engine.active.settings.shaderStyle === 'cells') styleVal = 3.0;
+        else if (engine.active.settings.shaderStyle === 'galaxy') styleVal = 4.0;
         this.cacheUniform1f('shaderStyle', styleVal);
 
         // Draw the Quad
