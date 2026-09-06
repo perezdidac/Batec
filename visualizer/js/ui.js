@@ -35,7 +35,7 @@ const UI = {
                 this.engine.session.imported = true;
                 this.engine.healPresets();
                 const io = this.safeGet('styleIO');
-                if (io) io.value = JSON.stringify(raw, null, 2);
+                if (io) io.value = `window.AGOST_DEFAULT_SESSION = ${JSON.stringify(raw, null, 2)};\n`;
                 this.buildSlots();
                 this.rebuildConfigUI();
                 return;
@@ -1379,18 +1379,20 @@ const UI = {
                     delete obj.elSlider; delete obj.elReadout;
                 }
             });
-            this.safeGet('styleIO').value = JSON.stringify(clone, null, 2); 
+            this.safeGet('styleIO').value = `window.AGOST_DEFAULT_SESSION = ${JSON.stringify(clone, null, 2)};\n`; 
         };
         this.safeGet('btnImportSession').onclick = () => {
             try {
-                const raw = JSON.parse(this.safeGet('styleIO').value);
+                let rawText = this.safeGet('styleIO').value.trim();
+                if (rawText.startsWith('window.AGOST_DEFAULT_SESSION')) {
+                    rawText = rawText.replace(/^window\.AGOST_DEFAULT_SESSION\s*=\s*/, '').replace(/;*$/, '');
+                }
+                const raw = JSON.parse(rawText);
                 raw.presets.forEach(p => p.params = establishDefaults(p.params));
                 e.session = raw;
                 e.session.imported = true;
                 e.healPresets();
                 this.buildSlots(); this.rebuildConfigUI();
-
-
             } catch (err) { alert('Invalid Project JSON.'); }
         };
 

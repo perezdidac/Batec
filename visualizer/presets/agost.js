@@ -1,7 +1,7 @@
-{
-  "activeIndex": 14,
+window.AGOST_DEFAULT_SESSION = {
+  "activeIndex": 15,
   "targetIndex": null,
-  "transitionStart": 379087,
+  "transitionStart": 158564.5,
   "transitionDuration": 1000,
   "presets": [
     {
@@ -460,13 +460,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "It rains down the street",
-              "The fall clouds are here",
-              "The days go by like water through my fingers",
-              "I am here, counting the lonely nights"
+              "Rain in the street,\nsmell of cold earth.",
+              "Searching for a warmth\nthat is no longer there.",
+              "Only the wind whistling\nbetween bare trees.",
+              "Days slip through fingers,\ncounting the nights."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Lora', serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -593,6 +593,16 @@
           "useFormula": false
         },
         "textStartDelay_text_rain": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_rain": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_rain": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -623,8 +633,8 @@
           "useFormula": true
         },
         "textOpacity_text_rain": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_rain": {
@@ -853,13 +863,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "I don't know if I need a coffee or a beer",
-              "I am here, as I told you",
-              "Five days is too much without you",
-              ""
+              "A beer or a coffee,\nI don't even know.",
+              "Come down now,\nI'm picking you up.",
+              "Five days without you... \nthey hurt a lot.",
+              "It has gotten late,\nwatching the sun set."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Lora', serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -1021,6 +1031,16 @@
           "useFormula": false
         },
         "textStartDelay_text_friday": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_friday": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_friday": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -1051,8 +1071,8 @@
           "useFormula": false
         },
         "textOpacity_text_friday": {
-          "value": 0.9,
-          "formula": "0.9",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_friday": {
@@ -1246,13 +1266,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Cruising down this quiet road with you",
-              "I never want this drive to end",
-              "If I could freeze time, I would",
-              ""
+              "I don't want to arrive,\nand neither do you.",
+              "If we could freeze time,\nwe would stop it right here.",
+              "Taking the wrong exit,\nlost on a dirt road.",
+              "The radio forgets\nwhich song comes next."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Inter', sans-serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -1384,6 +1404,16 @@
           "useFormula": false
         },
         "textStartDelay_text_gravel": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_gravel": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_gravel": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -1414,8 +1444,8 @@
           "useFormula": false
         },
         "textOpacity_text_gravel": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_gravel": {
@@ -1637,13 +1667,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "You look angry tonight",
-              "You promised me",
-              "It wasn't about me",
-              "And now I feel a bit better"
+              "Silence is your weapon,\nlying to my face.",
+              "You swore to me\nit wasn't about me.",
+              "No more laughs,\nno more smiles.",
+              "Wondering what I'm worth,\nremembering that winter."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Inter', sans-serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -1744,6 +1774,16 @@
           "useFormula": false
         },
         "textStartDelay_text_pareces": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_pareces": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_pareces": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -1774,8 +1814,8 @@
           "useFormula": false
         },
         "textOpacity_text_pareces": {
-          "value": 0.9,
-          "formula": "0.9",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_pareces": {
@@ -1985,13 +2025,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Summer has arrived,\nsun-drenched and full of wild golden light.",
-              "Locked in your embrace,\nwishing this August would never slip away.",
-              "The sweet heartbreak of a summer romance\nthat burns bright and ends too soon.",
-              "The ocean breeze fades...\nand another unforgettable summer is gone."
+              "Summer is arriving,\non your lips I stay.",
+              "From this August,\nI never want to leave.",
+              "In your arms,\nsheltered from the cold.",
+              "Now it arrives, now it leaves...\nit's no longer here."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Inter', sans-serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -2084,6 +2124,16 @@
           "useFormula": false
         },
         "textStartDelay_text_summer": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_summer": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_summer": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -2114,8 +2164,8 @@
           "useFormula": true
         },
         "textOpacity_text_summer": {
-          "value": 0.9,
-          "formula": "0.9",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_summer": {
@@ -2374,10 +2424,10 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "When you no longer walk these shores with me,\nwhere will I find an answer?",
-              "Walking past the places we built together,\nrealizing our life has separated.",
-              "The quiet ache of divorce,\nwatching our footprints wash away in the tide.",
-              "Searching the empty coastline,\nlearning how to say goodbye."
+              "When you are no longer here,\nno longer living here.",
+              "Searching the shore\nto find an answer.",
+              "When you no longer\nlook at me that way.",
+              "Fighting until the end\nof this nightmare."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
@@ -2482,6 +2532,16 @@
           "useFormula": false
         },
         "textStartDelay_text_beach": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_beach": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_beach": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -2512,8 +2572,8 @@
           "useFormula": true
         },
         "textOpacity_text_beach": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_beach": {
@@ -2766,13 +2826,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Being a father is the hardest journey\nI have ever known.",
-              "Yet whenever you look at me, my son,\nall the doubt and fear melt away.",
-              "When you hold my hand,\na new fire ignites and everything falls into place.",
-              "Without a single word,\nmy heart belongs entirely to you."
+              "When you look at me,\nI lose the thread of the wind.",
+              "When you get angry,\neverything turns grey.",
+              "When you hold me,\na new fire ignites.",
+              "Without any words,\nonly for you."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Homemade Apple', cursive",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -2878,6 +2938,16 @@
           "useFormula": false
         },
         "textStartDelay_text_you": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_you": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_you": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -2908,8 +2978,8 @@
           "useFormula": true
         },
         "textOpacity_text_you": {
-          "value": 0.9,
-          "formula": "0.9",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_you": {
@@ -3592,13 +3662,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Over twenty years of love,\nsimple and quiet through all the seasons.",
-              "No single photograph could ever capture\neverything we have lived together.",
-              "We've weathered every storm and silence,\nstanding faithfully side by side.",
-              "And no mirror could ever reflect\nthe depth of what 'us' truly means."
+              "Waking up today,\nthinking of calling you.",
+              "A couple of cold beers,\nnot thinking about us.",
+              "No photo can depict\nhow beautiful you are.",
+              "No mirror can reflect\nthe depth of this ache."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Lora', serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -3699,6 +3769,16 @@
           "useFormula": true
         },
         "textStartDelay_text_us": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_us": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_us": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -3729,8 +3809,8 @@
           "useFormula": true
         },
         "textOpacity_text_us": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_us": {
@@ -3945,13 +4025,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "The city air has become too heavy,\nnoise and concrete suffocating our days.",
-              "Let's escape right now;\nthere is an open horizon waiting for us.",
-              "Leaving the traffic and asphalt behind,\naccelerating toward the quiet hills.",
-              "Waking up free under an open sky\nwhere we can finally breathe."
+              "Let's leave the city,\nnothing left for us here.",
+              "The noise is too heavy,\nI can't breathe anymore.",
+              "Chasing a new horizon\nwhere we can be free.",
+              "Waking up far away,\nescaping the disaster."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Inter', sans-serif",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -4078,6 +4158,16 @@
           "useFormula": false
         },
         "textStartDelay_text_marxeu": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_marxeu": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_marxeu": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -4108,8 +4198,8 @@
           "useFormula": true
         },
         "textOpacity_text_marxeu": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_marxeu": {
@@ -4264,10 +4354,10 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Growing up with my best friend Oriol,\nwatching chestnut blossoms fall on our street.",
-              "Morning coffee on the balcony,\ntalking about where our lives would go.",
-              "Years pass and the world changes,\nbut there is nothing like you and me.",
-              "The blossoms return every spring,\nand this brotherhood will always remain."
+              "Morning sun on the street,\nchestnut blossoms falling.",
+              "Watching the full moon\nfrom the quiet balcony.",
+              "If you ever doubt,\nthere's nothing like you and me.",
+              "Blossoms will return\nwhen the winter leaves."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
@@ -4382,6 +4472,16 @@
           "useFormula": false
         },
         "textStartDelay_text_chestnut": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_chestnut": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_chestnut": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -4412,8 +4512,8 @@
           "useFormula": true
         },
         "textOpacity_text_chestnut": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_chestnut": {
@@ -4690,10 +4790,10 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Only two days left,\nand time slips away without mercy.",
-              "Packing a suitcase with a frozen heart,\nlooking at your empty chair.",
-              "The quiet grief of losing someone\nwho meant the whole world to me.",
-              "I close my eyes to keep your memory alive,\ncarrying your warmth wherever I go."
+              "No more denying it,\nthere is no time left.",
+              "The clock runs ahead,\nthe future a thin grey thread.",
+              "Coffee on the balcony,\nlast ray of sunlight.",
+              "Packing my suitcase\nwith a frozen heart."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
@@ -4902,6 +5002,16 @@
           "useFormula": false
         },
         "textStartDelay_text_nothing": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_nothing": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_nothing": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -4932,8 +5042,8 @@
           "useFormula": false
         },
         "textOpacity_text_nothing": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_nothing": {
@@ -5190,23 +5300,6 @@
               "#00b4d8"
             ]
           }
-        },
-        {
-          "id": "waves_nothing2",
-          "type": "waves",
-          "name": "GRAVITATIONAL RIPPLES",
-          "enabled": true,
-          "settings": {
-            "useLayerColor": false,
-            "layerColors": [
-              "#00b4d8",
-              "#90e0ef",
-              "#ffffff",
-              "#4d194d",
-              "#00b4d8",
-              "#90e0ef"
-            ]
-          }
         }
       ],
       "settings": {
@@ -5351,22 +5444,22 @@
           "useFormula": false
         },
         "rayCount_rays_nothing2": {
-          "value": 24,
+          "value": 197,
           "formula": "24",
           "useFormula": false
         },
         "raySpeed_rays_nothing2": {
-          "value": 2.2,
+          "value": 1.5,
           "formula": "1.5 + trend*1.5",
           "useFormula": true
         },
         "rayCenterHole_rays_nothing2": {
-          "value": 70,
+          "value": 135,
           "formula": "70",
           "useFormula": false
         },
         "raySpread_rays_nothing2": {
-          "value": 1.8,
+          "value": 5,
           "formula": "1.8",
           "useFormula": false
         },
@@ -5381,33 +5474,8 @@
           "useFormula": true
         },
         "rayOpacity_rays_nothing2": {
-          "value": 0.45,
-          "formula": "0.45",
-          "useFormula": false
-        },
-        "waveCount_waves_nothing2": {
-          "value": 7,
-          "formula": "7",
-          "useFormula": false
-        },
-        "waveSpeed_waves_nothing2": {
-          "value": 1.8,
-          "formula": "1.2 + trend*1.2",
-          "useFormula": true
-        },
-        "waveThickness_waves_nothing2": {
-          "value": 6,
-          "formula": "6",
-          "useFormula": false
-        },
-        "waveChaos_waves_nothing2": {
-          "value": 22,
-          "formula": "14 + (bass/255)*25",
-          "useFormula": true
-        },
-        "waveOpacity_waves_nothing2": {
           "value": 0.35,
-          "formula": "0.35",
+          "formula": "0.45",
           "useFormula": false
         },
         "analogFlash": {
@@ -5549,26 +5617,6 @@
           "value": 0,
           "formula": "0",
           "useFormula": false
-        },
-        "maskX_waves_nothing2": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "maskY_waves_nothing2": {
-          "value": 0.5,
-          "formula": "0.5",
-          "useFormula": false
-        },
-        "maskSize_waves_nothing2": {
-          "value": 1,
-          "formula": "1.0",
-          "useFormula": false
-        },
-        "maskFeather_waves_nothing2": {
-          "value": 0,
-          "formula": "0",
-          "useFormula": false
         }
       }
     },
@@ -5616,13 +5664,13 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Living as an expat in America,\nbut my roots always pull me back home.",
-              "My sister waits on the balcony with teary eyes\nas I walk down the street.",
-              "The old neighborhood is paved now,\nand I wonder how much I have changed across the sea.",
-              "I find my old jacket in the closet...\nand realize how far this journey has taken me."
+              "Father and mother, I'm here,\nthe long road has ended.",
+              "The old neighborhood streets\nhave all been paved.",
+              "My sister on the balcony,\neyes full of emotion.",
+              "In the closet, my jacket...\nit doesn't fit me anymore."
             ],
             "textSequenceMode": "order",
-            "textFontFamily": "'Homemade Apple', cursive",
+            "textFontFamily": "Lora",
             "textDissolveStyle": "fade",
             "textFreeze": false,
             "textManualMode": false,
@@ -5779,6 +5827,16 @@
           "useFormula": false
         },
         "textStartDelay_text_backhome": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_backhome": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_backhome": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -5809,8 +5867,8 @@
           "useFormula": true
         },
         "textOpacity_text_backhome": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_backhome": {
@@ -6079,10 +6137,10 @@
           "enabled": true,
           "settings": {
             "textList": [
-              "Back in my hometown,\nwaking up surrounded by my lifelong best friends.",
-              "Morning sunlight spills through the blinds\nand melts all my worries away.",
-              "Time completely stops when we're together,\njust like no years have passed.",
-              "I wish I could freeze this moment\nand stay right here with all of you."
+              "Waking in the morning,\nstaying in bed.",
+              "Sunlight through the glass,\nmelting the anxiety away.",
+              "Just one more day,\nfeeling that time has stopped.",
+              "Let the days pass slowly,\nwith you by my side."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
@@ -6232,6 +6290,16 @@
           "useFormula": false
         },
         "textStartDelay_text_house": {
+          "value": 30,
+          "formula": "30",
+          "useFormula": false
+        },
+        "textStopDelay_text_house": {
+          "value": 240,
+          "formula": "240",
+          "useFormula": false
+        },
+        "textPauseTime_text_house": {
           "value": 15,
           "formula": "15",
           "useFormula": false
@@ -6262,8 +6330,8 @@
           "useFormula": true
         },
         "textOpacity_text_house": {
-          "value": 0.85,
-          "formula": "0.85",
+          "value": 0.5,
+          "formula": "0.5",
           "useFormula": false
         },
         "textHoldTime_text_house": {
@@ -6500,4 +6568,4 @@
     }
   ],
   "imported": true
-}
+};

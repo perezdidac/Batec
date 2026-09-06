@@ -121,13 +121,22 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
 
     // Check intro delay (wait before showing lyrics after selecting a preset)
     const delayParam = engine.pLayer(layerId, 'textStartDelay');
-    const startDelay = (delayParam !== undefined && !isNaN(delayParam) ? delayParam : 15) * 1000;
+    const startDelay = (delayParam !== undefined && !isNaN(delayParam) ? delayParam : 30) * 1000;
     if (time < startDelay) {
         state.lyricLastSwap = startDelay;
         return; // Wait during intro period for visual ambiance to establish
     }
 
+    // Check stop time (stop showing lyrics after specified seconds, default 240s = 4 mins)
+    const stopParam = engine.pLayer(layerId, 'textStopDelay');
+    const stopTime = (stopParam !== undefined && !isNaN(stopParam) ? stopParam : 240) * 1000;
+    if (time >= stopTime) {
+        return;
+    }
+
     const hold = engine.pLayer(layerId, 'textHoldTime') * 1000, fade = engine.pLayer(layerId, 'textFadeTime') * 1000;
+    const pauseParam = engine.pLayer(layerId, 'textPauseTime');
+    const pause = (pauseParam !== undefined && !isNaN(pauseParam) ? pauseParam : 15) * 1000;
     
     let fullText = "";
     let activeLyric = null;
@@ -187,7 +196,7 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
             state.lyricLastSwap = time; // Reset if physics time was synced/reset
         }
 
-        if (!layer.settings.textManualMode && (time - state.lyricLastSwap > hold + fade)) {
+        if (!layer.settings.textManualMode && (time - state.lyricLastSwap > hold + fade + pause)) {
             state.lyricLastSwap = time;
             if (layer.settings.textSequenceMode === 'random') state.lyricIdx = Math.floor(Math.random() * validTexts.length);
             else state.lyricIdx = (state.lyricIdx + 1) % validTexts.length;
@@ -243,7 +252,7 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
         opacity = Math.pow(opacity, 1.0 / (0.1 + resolve * 2.0));
     }
 
-    if (displayText.trim().length === 0) return;
+    if (displayText.trim().length === 0 || opacity <= 0.001) return;
 
     ctx.save(); ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = Math.max(0, Math.min(1, opacity));
@@ -260,7 +269,7 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
     ctx.rotate(engine.pLayer(layerId, 'textRotation'));
 
     const baseFontSize = window.innerWidth * 0.08 * engine.pLayer(layerId, 'textScale');
-    const font = layer.settings.textFontFamily || 'Inter';
+    const font = layer.settings.textFontFamily || 'Lora';
 
     // Cached auto-fit font size calculation to avoid measureText overhead on every frame
     if (!state.cachedSize || state.cachedSize.text !== displayText || state.cachedSize.width !== window.innerWidth) {
