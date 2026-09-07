@@ -864,8 +864,8 @@ window.AGOST_DEFAULT_SESSION = {
           "settings": {
             "textList": [
               "A beer or a coffee,\nI don't even know.",
-              "Come down now,\nI'm picking you up.",
-              "Five days without you... \nthey hurt a lot.",
+              "Come down now,\nI'm here for you.",
+              "Five days is too much without you...\nit hurts a lot.",
               "It has gotten late,\nwatching the sun set."
             ],
             "textSequenceMode": "order",
@@ -1668,10 +1668,12 @@ window.AGOST_DEFAULT_SESSION = {
           "enabled": true,
           "settings": {
             "textList": [
+              "You seem upset,\nlying to my face.",
               "Silence is your weapon,\nlying to my face.",
               "You swore to me\nit wasn't about me.",
               "No more laughs,\nno more smiles.",
               "Wondering what I'm worth,\nremembering that winter."
+              "Now I am feeling a bit better."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
@@ -2831,7 +2833,7 @@ window.AGOST_DEFAULT_SESSION = {
               "When you look at me,\nI lose the thread of the wind.",
               "When you get angry,\neverything turns grey.",
               "When you hold me,\na new fire ignites.",
-              "Without any words,\nonly for you."
+              "I am an open book,\nonly for you."
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
