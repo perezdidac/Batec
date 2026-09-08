@@ -1,6 +1,7 @@
 const UI = {
     init(engine) {
         this.engine = engine;
+        this.loadDefaultPresetFile();
         this.buildSlots(); this.rebuildConfigUI(); this.bindStaticUI();
 
         // Pointer/Mouse Tracking for mx/my formula modulators
@@ -20,17 +21,20 @@ const UI = {
 
         this.initCollapsibleSections();
         this.initInteractionTimer(); this.initHotkeys();
-        this.loadDefaultPresetFile();
     },
     loadDefaultPresetFile() {
         if (window.AGOST_DEFAULT_SESSION) {
             try {
                 const raw = JSON.parse(JSON.stringify(window.AGOST_DEFAULT_SESSION));
-                if (raw.activeIndex === undefined) raw.activeIndex = 0;
+                if (raw.activeIndex === undefined || raw.activeIndex >= (raw.presets ? raw.presets.length : 0)) raw.activeIndex = 0;
                 if (raw.targetIndex === undefined) raw.targetIndex = null;
                 if (raw.transitionStart === undefined) raw.transitionStart = 0;
                 if (raw.transitionDuration === undefined) raw.transitionDuration = 1000;
-                raw.presets.forEach(p => p.params = establishDefaults(p.params));
+                if (Array.isArray(raw.presets)) {
+                    raw.presets.forEach(p => {
+                        if (p && p.params) p.params = establishDefaults(p.params);
+                    });
+                }
                 this.engine.session = raw;
                 this.engine.session.imported = true;
                 this.engine.healPresets();
@@ -38,9 +42,10 @@ const UI = {
                 if (io) io.value = `window.AGOST_DEFAULT_SESSION = ${JSON.stringify(raw, null, 2)};\n`;
                 this.buildSlots();
                 this.rebuildConfigUI();
+                console.log(`Successfully loaded ${raw.presets ? raw.presets.length : 0} default presets from agost.js.`);
                 return;
             } catch (err) {
-                console.warn('Error applying window.AGOST_DEFAULT_SESSION:', err);
+                console.error('Error applying window.AGOST_DEFAULT_SESSION:', err);
             }
         } else {
             console.warn('window.AGOST_DEFAULT_SESSION not found. Presets are loaded from presets/agost.js.');
@@ -1095,7 +1100,17 @@ const UI = {
             });
         }
 
-        this.safeGet('btnStart').onclick = () => { e.startAudio(); this.safeGet('startOverlay').style.display = 'none'; this.safeGet('controlsPanel').classList.remove('hidden'); this.safeGet('telemetryPanel').classList.remove('hidden'); if(this.safeGet('dmxPanel')) this.safeGet('dmxPanel').classList.remove('hidden'); };
+        this.safeGet('btnStart').onclick = () => { 
+            e.startAudio(); 
+            const ov = this.safeGet('startOverlay');
+            if (ov) ov.style.display = 'none'; 
+            const cp = this.safeGet('controlsPanel');
+            if (cp) cp.classList.remove('hidden'); 
+            const tp = this.safeGet('telemetryPanel');
+            if (tp) tp.classList.remove('hidden'); 
+            const dp = this.safeGet('dmxPanel');
+            if (dp) dp.classList.remove('hidden'); 
+        };
         this.safeGet('btnAdvanced').onclick = () => this.safeGet('advancedPanel').classList.toggle('hidden');
 
         const dmxHeader = this.safeGet('dmxHeader');
@@ -1240,7 +1255,14 @@ const UI = {
             };
         }
         
-        this.safeGet('btnPause').onclick = (ev) => { active.settings.isPaused = !active.settings.isPaused; if (active.settings.isPaused) e.audio.ctx?.suspend(); else e.audio.ctx?.resume(); ev.target.textContent = active.settings.isPaused ? 'Resume Audio' : 'Pause Audio'; };
+        this.safeGet('btnPause').onclick = (ev) => { 
+            const cur = e.target || e.active;
+            if (cur && cur.settings) {
+                cur.settings.isPaused = !cur.settings.isPaused; 
+                if (cur.settings.isPaused) e.audio.ctx?.suspend(); else e.audio.ctx?.resume(); 
+                ev.target.textContent = cur.settings.isPaused ? 'Resume Audio' : 'Pause Audio'; 
+            }
+        };
         this.safeGet('btnHideUI').onclick = () => {
             document.querySelectorAll('.glass-panel').forEach(p => p.classList.add('hidden'));
             this.safeGet('telemetryPanel').classList.add('hidden');
@@ -1384,16 +1406,36 @@ const UI = {
         this.safeGet('btnImportSession').onclick = () => {
             try {
                 let rawText = this.safeGet('styleIO').value.trim();
-                if (rawText.startsWith('window.AGOST_DEFAULT_SESSION')) {
-                    rawText = rawText.replace(/^window\.AGOST_DEFAULT_SESSION\s*=\s*/, '').replace(/;*$/, '');
+                // Strip markdown backticks if pasted from AI/chat
+                if (rawText.startsWith('```')) {
+                    rawText = rawText.replace(/^```[a-z]*\s*/i, '').replace(/\s*```$/, '').trim();
                 }
+                // Strip variable assignment or window assignment
+                if (/^(?:window\.)?AGOST_DEFAULT_SESSION\s*=/i.test(rawText)) {
+                    rawText = rawText.replace(/^(?:window\.)?AGOST_DEFAULT_SESSION\s*=\s*/i, '');
+                } else if (/^(?:const|let|var)\s+\w+\s*=/i.test(rawText)) {
+                    rawText = rawText.replace(/^(?:const|let|var)\s+\w+\s*=\s*/i, '');
+                }
+                // Strip trailing semicolons or whitespace
+                rawText = rawText.replace(/;\s*$/, '').trim();
+
                 const raw = JSON.parse(rawText);
-                raw.presets.forEach(p => p.params = establishDefaults(p.params));
+                if (!raw || !Array.isArray(raw.presets)) {
+                    throw new Error("Parsed JSON does not contain a 'presets' array.");
+                }
+                raw.presets.forEach(p => {
+                    if (p && p.params) p.params = establishDefaults(p.params);
+                });
                 e.session = raw;
                 e.session.imported = true;
                 e.healPresets();
-                this.buildSlots(); this.rebuildConfigUI();
-            } catch (err) { alert('Invalid Project JSON.'); }
+                this.buildSlots(); 
+                this.rebuildConfigUI();
+                console.log('Project successfully imported:', raw.presets.length, 'stages.');
+            } catch (err) { 
+                console.error('Import error details:', err);
+                alert('Invalid Project JSON: ' + err.message); 
+            }
         };
 
         // Reset All Button

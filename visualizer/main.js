@@ -8,6 +8,10 @@ try {
     engine = new BatecEngine();
     window.engine = engine;
     UI.init(engine);
+    // Start visual rendering immediately upon page open
+    engine.isRunning = true;
+    engine.lastFrameTime = performance.now();
+    requestAnimationFrame((t) => engine.loop(t));
 } catch (err) {
     console.error('Error during engine/UI initialization:', err);
 }
@@ -25,6 +29,9 @@ if (btnStart) {
         }
         const overlay = document.getElementById('startOverlay');
         if (overlay) overlay.style.display = 'none';
+        btnStart.textContent = '● MIC ON';
+        btnStart.style.background = '#00ff88';
+        btnStart.style.color = '#000';
         const cp = document.getElementById('controlsPanel');
         if (cp) cp.classList.remove('hidden');
         const tp = document.getElementById('telemetryPanel');

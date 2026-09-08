@@ -1,7 +1,7 @@
 window.AGOST_DEFAULT_SESSION = {
   "activeIndex": 0,
   "targetIndex": null,
-  "transitionStart": 594695.1999999881,
+  "transitionStart": 0,
   "transitionDuration": 1000,
   "presets": [
     {
@@ -1672,7 +1672,7 @@ window.AGOST_DEFAULT_SESSION = {
               "Silence is your weapon,\nlying to my face.",
               "You swore to me\nit wasn't about me.",
               "No more laughs,\nno more smiles.",
-              "Wondering what I'm worth,\nremembering that winter."
+              "Wondering what I'm worth,\nremembering that winter.",
               "Now I am feeling a bit better."
             ],
             "textSequenceMode": "order",

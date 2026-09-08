@@ -15,23 +15,13 @@
     <!-- The Stage -->
     <canvas id="visualizerCanvas"></canvas>
 
-    <!-- Initial Calibration -->
-    <div id="startOverlay" class="overlay">
-        <div class="glass-panel">
-            <h1>Batec Engine</h1>
-            <p>Ready for stage projection. Calibrate microphone to begin.</p>
-            <button id="btnStart" class="primary-btn">Initialize Engine</button>
-        </div>
-    </div>
 
-    <!-- Floating Gear Icon to Restore UI in Performance Mode -->
-    <button id="btnShowUI" class="icon-btn hidden" title="Show Controls">⚙</button>
 
     <!-- Interaction Hub -->
     <div id="controlsContainer" class="controls-container">
 
         <!-- Main Quick-Hub -->
-        <div id="controlsPanel" class="glass-panel floating-panel hidden">
+        <div id="controlsPanel" class="glass-panel floating-panel">
             <div class="panel-header">
                 <h2>Control Hub</h2>
                 <div class="header-actions">
@@ -255,9 +245,12 @@
     <div id="telemetryContainer">
         
         <!-- INCOMING DATA STREAM -->
-        <div id="telemetryPanel" class="glass-panel floating-panel hidden" style="padding: 16px; pointer-events: auto;">
-            <h3 style="font-size: 0.7rem; color: var(--accent-glow); margin-bottom: 8px; text-transform: uppercase;">
-                Incoming Data Stream</h3>
+        <div id="telemetryPanel" class="glass-panel floating-panel" style="padding: 16px; pointer-events: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <h3 style="font-size: 0.7rem; color: var(--accent-glow); margin: 0; text-transform: uppercase;">
+                    Incoming Data Stream</h3>
+                <button id="btnStart" class="primary-btn" style="width: auto; padding: 3px 8px; font-size: 0.6rem; margin: 0;" title="Enable Live Audio/Microphone">🎙 AUDIO</button>
+            </div>
             <div class="meter-row"><span class="meter-label">bass</span>
                 <div class="meter-bar">
                     <div id="meter-bass" class="meter-fill"></div>

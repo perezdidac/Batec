@@ -395,8 +395,11 @@ class BatecEngine {
             document.getElementById('telemetryPanel').classList.remove('hidden');
             if (document.getElementById('dmxPanel')) document.getElementById('dmxPanel').classList.remove('hidden');
 
-            this.lastFrameTime = performance.now();
-            requestAnimationFrame((t) => this.loop(t));
+            if (!this.isRunning) {
+                this.isRunning = true;
+                this.lastFrameTime = performance.now();
+                requestAnimationFrame((t) => this.loop(t));
+            }
         } catch (e) { alert("Mic required."); }
     }
 
