@@ -444,31 +444,48 @@ const UI = {
         // Update Session MIDI learn buttons styling
         let prevPad = null;
         let nextPad = null;
+        const formatPadLabel = (pad) => {
+            if (!pad) return '';
+            if (pad.startsWith('note_')) return `NT ${pad.replace('note_', '')}`;
+            if (pad.startsWith('cc_')) return `CC ${pad.replace('cc_', '')}`;
+            if (pad.startsWith('pc_')) return `PC ${pad.replace('pc_', '')}`;
+            return `${pad}`;
+        };
         if (this.engine.midi && this.engine.midi.mappings && this.engine.midi.mappings.pads) {
             for (const pad in this.engine.midi.mappings.pads) {
                 const map = this.engine.midi.mappings.pads[pad];
                 if (map && map.type === 'action') {
-                    if (map.key === 'prevPreset') prevPad = pad;
-                    if (map.key === 'nextPreset') nextPad = pad;
+                    if (map.key === 'prevPreset') prevPad = formatPadLabel(pad);
+                    if (map.key === 'nextPreset') nextPad = formatPadLabel(pad);
                 }
             }
         }
         const btnPrev = this.safeGet('btnMidiPrevPreset');
         if (btnPrev) {
-            btnPrev.textContent = prevPad ? `M (${prevPad})` : 'M';
-            btnPrev.classList.remove('learning');
-            if (this.engine.midi && this.engine.midi.learnTarget && 
-                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'prevPreset') {
-                btnPrev.classList.add('learning');
+            const isLearning = this.engine.midi && this.engine.midi.learnTarget && 
+                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'prevPreset';
+            btnPrev.textContent = isLearning ? 'REC...' : (prevPad ? `M (${prevPad})` : 'M');
+            btnPrev.classList.toggle('learning', !!isLearning);
+            if (prevPad && !isLearning) {
+                btnPrev.style.color = 'var(--accent-glow)';
+                btnPrev.style.borderColor = 'rgba(0, 255, 255, 0.4)';
+            } else if (!isLearning) {
+                btnPrev.style.color = '';
+                btnPrev.style.borderColor = '';
             }
         }
         const btnNext = this.safeGet('btnMidiNextPreset');
         if (btnNext) {
-            btnNext.textContent = nextPad ? `M (${nextPad})` : 'M';
-            btnNext.classList.remove('learning');
-            if (this.engine.midi && this.engine.midi.learnTarget && 
-                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'nextPreset') {
-                btnNext.classList.add('learning');
+            const isLearning = this.engine.midi && this.engine.midi.learnTarget && 
+                this.engine.midi.learnTarget.type === 'action' && this.engine.midi.learnTarget.key === 'nextPreset';
+            btnNext.textContent = isLearning ? 'REC...' : (nextPad ? `M (${nextPad})` : 'M');
+            btnNext.classList.toggle('learning', !!isLearning);
+            if (nextPad && !isLearning) {
+                btnNext.style.color = 'var(--accent-glow)';
+                btnNext.style.borderColor = 'rgba(0, 255, 255, 0.4)';
+            } else if (!isLearning) {
+                btnNext.style.color = '';
+                btnNext.style.borderColor = '';
             }
         }
 
@@ -1142,7 +1159,8 @@ const UI = {
 
         const btnPrev = this.safeGet('btnMidiPrevPreset');
         if (btnPrev) {
-            btnPrev.onclick = () => {
+            btnPrev.onclick = (ev) => {
+                if (ev) { ev.stopPropagation(); ev.preventDefault(); }
                 if (e.midi) {
                     e.midi.enterLearnMode({ type: 'action', key: 'prevPreset' });
                 }
@@ -1151,7 +1169,8 @@ const UI = {
 
         const btnNext = this.safeGet('btnMidiNextPreset');
         if (btnNext) {
-            btnNext.onclick = () => {
+            btnNext.onclick = (ev) => {
+                if (ev) { ev.stopPropagation(); ev.preventDefault(); }
                 if (e.midi) {
                     e.midi.enterLearnMode({ type: 'action', key: 'nextPreset' });
                 }

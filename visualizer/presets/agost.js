@@ -18,9 +18,10 @@ window.AGOST_DEFAULT_SESSION = {
               5
             ],
             "webcamIndices": [],
-            "imgBlendMode": "overlay",
-            "maskType": "horizontal_band",
-            "maskInvert": false
+            "imgBlendMode": "hard-light",
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
           }
         },
         {
@@ -37,7 +38,8 @@ window.AGOST_DEFAULT_SESSION = {
               "#d4af37",
               "#5a2d48",
               "#f3e5ab"
-            ]
+            ],
+            "collapsed": false
           }
         },
         {
@@ -46,7 +48,7 @@ window.AGOST_DEFAULT_SESSION = {
           "name": "STAGE DUST MOTES",
           "enabled": true,
           "settings": {
-            "particleShape": "mote",
+            "particleShape": "star",
             "useLayerColor": false,
             "layerColors": [
               "#d4af37",
@@ -55,43 +57,44 @@ window.AGOST_DEFAULT_SESSION = {
               "#d4af37",
               "#f3e5ab",
               "#ffffff"
-            ]
+            ],
+            "collapsed": false
           }
         }
       ],
       "settings": {
         "palette": [
           "#08060c",
-          "#1c1224",
+          "#82ca16",
           "#421e35",
           "#8a4b62",
           "#d4af37",
           "#f3e5ab"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": false,
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#060408",
+        "bgColor": "#000000",
         "horizonStyle": "montserrat"
       },
       "params": {
         "sensitivity": {
-          "value": 1.5,
+          "value": 1.8,
           "formula": "1.5",
           "useFormula": false
         },
         "trendRate": {
-          "value": 0.02,
+          "value": 0.025,
           "formula": "0.02",
           "useFormula": false
         },
         "clearOpacity": {
-          "value": 0.15,
+          "value": 0.09,
           "formula": "0.15",
           "useFormula": false
         },
@@ -116,7 +119,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "imgOpacity_photos_intro": {
-          "value": 0.95,
+          "value": 0.76,
           "formula": "0.95",
           "useFormula": false
         },
@@ -146,7 +149,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "rayCount_rays_intro": {
-          "value": 16,
+          "value": 94,
           "formula": "16",
           "useFormula": false
         },
@@ -176,42 +179,42 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "rayOpacity_rays_intro": {
-          "value": 0.35,
+          "value": 0.55,
           "formula": "0.35",
           "useFormula": false
         },
         "particleCount_particles_intro": {
-          "value": 180,
+          "value": 1500,
           "formula": "180",
           "useFormula": false
         },
         "particleSize_particles_intro": {
-          "value": 2.5,
+          "value": 7,
           "formula": "2.5",
           "useFormula": false
         },
         "particleSpeed_particles_intro": {
-          "value": 0.35,
+          "value": 0.4,
           "formula": "0.35",
           "useFormula": false
         },
         "particleChaos_particles_intro": {
-          "value": 8,
+          "value": 32,
           "formula": "8",
           "useFormula": false
         },
         "particleOpacity_particles_intro": {
-          "value": 0.65,
+          "value": 0.15,
           "formula": "0.65",
           "useFormula": false
         },
         "particleDirection_particles_intro": {
-          "value": -1.57,
+          "value": -1.39159265358979,
           "formula": "-1.57",
           "useFormula": false
         },
         "particleColorSpeed_particles_intro": {
-          "value": 2,
+          "value": 100,
           "formula": "2",
           "useFormula": false
         },
@@ -6137,5 +6140,17 @@ window.AGOST_DEFAULT_SESSION = {
       }
     }
   ],
+  "midiMappings": {
+    "pads": {
+      "cc_22": {
+        "type": "action",
+        "key": "prevPreset"
+      },
+      "cc_23": {
+        "type": "action",
+        "key": "nextPreset"
+      }
+    }
+  },
   "imported": true
 };

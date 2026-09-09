@@ -741,8 +741,9 @@ button {
 }
 
 .learn-btn.learning {
-  border: 1px solid #ff4444;
-  color: #ff4444;
+  border: 1px solid #ff4444 !important;
+  color: #ff4444 !important;
+  background: rgba(255, 68, 68, 0.2) !important;
   animation: midiPulse 1s infinite alternate;
 }
 
