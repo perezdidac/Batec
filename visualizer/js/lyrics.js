@@ -320,21 +320,126 @@ function renderLyrics(engine, ctx, time, sessionProgress, layerId) {
     ctx.lineWidth = Math.max(2, Math.round(fontSize * 0.04));
     ctx.lineJoin = 'round';
 
-    lines.forEach((lineText, idx) => {
-        const yOffset = -totalHeight / 2 + idx * lineHeight;
-        const fullLine = lineText + ((idx === lines.length - 1) ? cursor : "");
-        
-        // Stroke outline runs first without shadow for crisp, high-speed drawing
-        ctx.strokeText(fullLine, 0, yOffset);
+    const dissolveStyle = layer.settings.textDissolveStyle || 'fade';
 
-        // Fill text with aura only if glow > 0
-        if (hasGlow) {
-            ctx.shadowColor = finalColor;
-            ctx.shadowBlur = Math.min(20, glow);
-        }
-        ctx.fillText(fullLine, 0, yOffset);
-        if (hasGlow) ctx.shadowBlur = 0;
-    });
+    // Kinetic Typography Special Effects
+    if (dissolveStyle === 'disperse') {
+        // Disperse / Sand / Ash disintegration on fade out or bass hit
+        const isFadingOut = elapsed > hold;
+        const progressOut = isFadingOut ? Math.min(1.0, (elapsed - hold) / fade) : 0;
+        const bassScatter = (engine.smoothed.bass / 255) * 12;
+
+        lines.forEach((lineText, idx) => {
+            const yOffset = -totalHeight / 2 + idx * lineHeight;
+            const fullLine = lineText + ((idx === lines.length - 1) ? cursor : "");
+            
+            // If dispersing, render characters with scattered positional offsets
+            if (progressOut > 0.05) {
+                const chars = fullLine.split('');
+                const lineW = ctx.measureText(fullLine).width;
+                let curX = -lineW / 2;
+
+                chars.forEach((ch, cIdx) => {
+                    const cW = ctx.measureText(ch).width;
+                    const seed = idx * 100 + cIdx;
+                    const scatterX = (Math.sin(seed * 12.3) * progressOut * 80) + (Math.sin(time / 200 + seed) * bassScatter);
+                    const scatterY = (-progressOut * 120 * (0.5 + Math.abs(Math.cos(seed * 45.1)))) + (Math.cos(time / 200 + seed) * bassScatter);
+                    const charRot = Math.sin(seed + time / 500) * progressOut * 0.8;
+
+                    ctx.save();
+                    ctx.translate(curX + cW / 2 + scatterX, yOffset + scatterY);
+                    ctx.rotate(charRot);
+                    ctx.globalAlpha = Math.max(0, opacity * (1 - progressOut));
+                    ctx.strokeText(ch, 0, 0);
+                    ctx.fillText(ch, 0, 0);
+                    ctx.restore();
+
+                    curX += cW;
+                });
+            } else {
+                ctx.strokeText(fullLine, 0, yOffset);
+                if (hasGlow) {
+                    ctx.shadowColor = finalColor;
+                    ctx.shadowBlur = Math.min(20, glow);
+                }
+                ctx.fillText(fullLine, 0, yOffset);
+                if (hasGlow) ctx.shadowBlur = 0;
+            }
+        });
+    } else if (dissolveStyle === 'rain_wash') {
+        // Rain wash down the glass: letters streak downwards vertically
+        const isFadingOut = elapsed > hold;
+        const progressOut = isFadingOut ? Math.min(1.0, (elapsed - hold) / fade) : 0;
+
+        lines.forEach((lineText, idx) => {
+            const yOffset = -totalHeight / 2 + idx * lineHeight;
+            const fullLine = lineText + ((idx === lines.length - 1) ? cursor : "");
+            
+            if (progressOut > 0.02) {
+                // Draw multiple dripping ghost passes
+                for (let d = 0; d < 3; d++) {
+                    const dripOffset = progressOut * (40 + d * 35);
+                    ctx.save();
+                    ctx.globalAlpha = opacity * (1 - progressOut) * (0.3 / (d + 1));
+                    ctx.strokeText(fullLine, 0, yOffset + dripOffset);
+                    ctx.fillText(fullLine, 0, yOffset + dripOffset);
+                    ctx.restore();
+                }
+            }
+            ctx.strokeText(fullLine, 0, yOffset);
+            if (hasGlow) {
+                ctx.shadowColor = finalColor;
+                ctx.shadowBlur = Math.min(20, glow);
+            }
+            ctx.fillText(fullLine, 0, yOffset);
+            if (hasGlow) ctx.shadowBlur = 0;
+        });
+    } else if (dissolveStyle === 'float_drift') {
+        // Subtle organic float: each word undulates gently on harmonic waves
+        lines.forEach((lineText, idx) => {
+            const yOffset = -totalHeight / 2 + idx * lineHeight;
+            const words = lineText.split(' ');
+            const fullLineWidth = ctx.measureText(lineText).width;
+            let curX = -fullLineWidth / 2;
+
+            words.forEach((wrd, wIdx) => {
+                const wrdW = ctx.measureText(wrd + ' ').width;
+                const waveW = Math.sin(time / 1200 + idx + wIdx * 0.8) * 6;
+                const waveRot = Math.cos(time / 1500 + idx + wIdx) * 0.03;
+
+                ctx.save();
+                ctx.translate(curX + wrdW / 2, yOffset + waveW);
+                ctx.rotate(waveRot);
+                ctx.strokeText(wrd, 0, 0);
+                if (hasGlow) {
+                    ctx.shadowColor = finalColor;
+                    ctx.shadowBlur = Math.min(20, glow);
+                }
+                ctx.fillText(wrd, 0, 0);
+                if (hasGlow) ctx.shadowBlur = 0;
+                ctx.restore();
+
+                curX += wrdW;
+            });
+        });
+    } else {
+        // Standard fade / typewriter / ink
+        lines.forEach((lineText, idx) => {
+            const yOffset = -totalHeight / 2 + idx * lineHeight;
+            const fullLine = lineText + ((idx === lines.length - 1) ? cursor : "");
+            
+            // Stroke outline runs first without shadow for crisp, high-speed drawing
+            ctx.strokeText(fullLine, 0, yOffset);
+
+            // Fill text with aura only if glow > 0
+            if (hasGlow) {
+                ctx.shadowColor = finalColor;
+                ctx.shadowBlur = Math.min(20, glow);
+            }
+            ctx.fillText(fullLine, 0, yOffset);
+            if (hasGlow) ctx.shadowBlur = 0;
+        });
+    }
     
     if (blurAmt > 0.5) ctx.filter = 'none';
     ctx.restore();

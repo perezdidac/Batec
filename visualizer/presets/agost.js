@@ -21,7 +21,7 @@ window.AGOST_DEFAULT_SESSION = {
             "imgBlendMode": "hard-light",
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -39,7 +39,7 @@ window.AGOST_DEFAULT_SESSION = {
               "#5a2d48",
               "#f3e5ab"
             ],
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -58,7 +58,19 @@ window.AGOST_DEFAULT_SESSION = {
               "#f3e5ab",
               "#ffffff"
             ],
-            "collapsed": false
+            "collapsed": true
+          }
+        },
+        {
+          "id": "super8_intro",
+          "type": "super8",
+          "name": "SUPER 8 FILM REEL",
+          "enabled": true,
+          "settings": {
+            "filmBorder": true,
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": true
           }
         }
       ],
@@ -75,9 +87,9 @@ window.AGOST_DEFAULT_SESSION = {
         "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
-        "shaderStyle": "panot",
+        "shaderStyle": "galaxy",
         "horizonEnabled": false,
-        "gpu_fxEnabled": false,
+        "gpu_fxEnabled": true,
         "isPaused": false,
         "bgColor": "#000000",
         "horizonStyle": "montserrat"
@@ -111,6 +123,21 @@ window.AGOST_DEFAULT_SESSION = {
         "analogNoise": {
           "value": 0.04,
           "formula": "0.04",
+          "useFormula": false
+        },
+        "filmJitter_super8_intro": {
+          "value": 0.9,
+          "formula": "0.3 + (time / 210000) * 0.3",
+          "useFormula": false
+        },
+        "filmLightLeak_super8_intro": {
+          "value": 1,
+          "formula": "0.35 + (time / 210000) * 0.4",
+          "useFormula": false
+        },
+        "filmBurnRate_super8_intro": {
+          "value": 0.45,
+          "formula": "0.25 + (time / 210000) * 0.3",
           "useFormula": false
         },
         "imgScale_photos_intro": {
@@ -274,14 +301,14 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "analogPaperGrain": {
-          "value": 0.15,
+          "value": 0.24,
           "formula": "0.15",
           "useFormula": false
         },
         "analogStainIntensity": {
-          "value": 0.2,
+          "value": 0,
           "formula": "0.2 + (trend * 0.3)",
-          "useFormula": true
+          "useFormula": false
         },
         "webglSpeed": {
           "value": 5,
@@ -432,12 +459,43 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "maskX_super8_intro": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_super8_intro": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_super8_intro": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_super8_intro": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
     {
       "name": "Rain",
       "layers": [
+        {
+          "id": "rain_glass_rain",
+          "type": "rain_glass",
+          "name": "WET GLASS REFRACTION",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
         {
           "id": "particles_rain",
           "type": "particles",
@@ -470,7 +528,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "rain_wash",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -538,6 +596,36 @@ window.AGOST_DEFAULT_SESSION = {
         "gpuKaleidoRot": {
           "value": 0,
           "formula": "0",
+          "useFormula": false
+        },
+        "rainDensity_rain_glass_rain": {
+          "value": 0.95,
+          "formula": "0.75 + (time / 210000) * 0.25",
+          "useFormula": true
+        },
+        "rainDropSize_rain_glass_rain": {
+          "value": 1.4,
+          "formula": "1.3 + (trend * 0.5) + (bass/255)*0.3",
+          "useFormula": true
+        },
+        "rainDripSpeed_rain_glass_rain": {
+          "value": 1.3,
+          "formula": "0.9 + (time / 210000) * 1.5 + (bass/255)*1.2",
+          "useFormula": true
+        },
+        "rainRefraction_rain_glass_rain": {
+          "value": 26,
+          "formula": "20 + (time / 210000) * 18 + (bass/255)*14",
+          "useFormula": true
+        },
+        "rainFog_rain_glass_rain": {
+          "value": 0.28,
+          "formula": "0.18 + (time / 210000) * 0.3",
+          "useFormula": true
+        },
+        "rainOpacity_rain_glass_rain": {
+          "value": 0.98,
+          "formula": "0.95",
           "useFormula": false
         },
         "particleCount_particles_rain": {
@@ -834,6 +922,26 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "maskX_rain_glass_rain": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_rain_glass_rain": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_rain_glass_rain": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_rain_glass_rain": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
@@ -841,20 +949,52 @@ window.AGOST_DEFAULT_SESSION = {
       "name": "Friday",
       "layers": [
         {
-          "id": "particles_friday",
-          "type": "particles",
-          "name": "PARTICLES LAYER",
+          "id": "cinematic_light_friday",
+          "type": "cinematic_light",
+          "name": "DUSK SUNBEAMS",
           "enabled": true,
           "settings": {
-            "particleShape": "pollen",
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
+        {
+          "id": "anamorphic_friday",
+          "type": "anamorphic",
+          "name": "HOMETOWN DUSK FLARES",
+          "enabled": true,
+          "settings": {
+            "useLayerColor": false,
+            "layerColor": "#f4a261",
+            "layerColors": [
+              "#e76f51",
+              "#f4a261",
+              "#e9c46a",
+              "#ffbe0b",
+              "#fff1e6",
+              "#f4a261"
+            ],
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
+        {
+          "id": "particles_friday",
+          "type": "particles",
+          "name": "HOMETOWN DUST MOTES",
+          "enabled": true,
+          "settings": {
+            "particleShape": "mote",
             "useLayerColor": false,
             "layerColors": [
+              "#fff1e6",
+              "#e9c46a",
+              "#f4a261",
+              "#ffbe0b",
               "#ffffff",
-              "#ffffff",
-              "#ffffff",
-              "#ffffff",
-              "#ffffff",
-              "#ffffff"
+              "#e9c46a"
             ],
             "collapsed": true
           }
@@ -873,7 +1013,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "float_drift",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -884,23 +1024,23 @@ window.AGOST_DEFAULT_SESSION = {
       ],
       "settings": {
         "palette": [
-          "#ff5722",
-          "#ffb300",
-          "#e65100",
-          "#2a1b4e",
-          "#5c3d99",
-          "#120924"
+          "#3a1708",
+          "#8a3814",
+          "#d9651e",
+          "#f79d5c",
+          "#f4c060",
+          "#fff3dc"
         ],
         "physicsEnabled": true,
-        "analogEnabled": false,
+        "analogEnabled": true,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
-        "horizonStyle": "montserrat",
+        "horizonStyle": "rooftops",
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#120924"
+        "bgColor": "#231109"
       },
       "params": {
         "sensitivity": {
@@ -918,6 +1058,56 @@ window.AGOST_DEFAULT_SESSION = {
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
+        "lightAngle_cinematic_light_friday": {
+          "value": -35,
+          "formula": "-45 + (time / 210000) * 25",
+          "useFormula": true
+        },
+        "lightIntensity_cinematic_light_friday": {
+          "value": 0.85,
+          "formula": "0.65 + (time / 210000) * 0.4 + (mid/255)*0.35",
+          "useFormula": true
+        },
+        "lightWarmth_cinematic_light_friday": {
+          "value": 0.95,
+          "formula": "0.8 + (time / 210000) * 0.2",
+          "useFormula": true
+        },
+        "blindCount_cinematic_light_friday": {
+          "value": 8,
+          "formula": "8",
+          "useFormula": false
+        },
+        "blindOpen_cinematic_light_friday": {
+          "value": 0.7,
+          "formula": "0.6 + (time / 210000) * 0.25",
+          "useFormula": true
+        },
+        "dustDensity_cinematic_light_friday": {
+          "value": 0.6,
+          "formula": "0.45 + (time / 210000) * 0.4",
+          "useFormula": true
+        },
+        "flareCount_anamorphic_friday": {
+          "value": 4,
+          "formula": "3 + (time/210000)*2",
+          "useFormula": true
+        },
+        "flareLength_anamorphic_friday": {
+          "value": 1.4,
+          "formula": "1.2 + (trend * 0.4)",
+          "useFormula": true
+        },
+        "flareSpeed_anamorphic_friday": {
+          "value": 0.45,
+          "formula": "0.35 + (trend * 0.2)",
+          "useFormula": true
+        },
+        "flareIntensity_anamorphic_friday": {
+          "value": 0.85,
+          "formula": "0.7 + (mid/255)*0.35 + (trend * 0.15)",
+          "useFormula": true
+        },
         "analogFlash": {
           "value": 0,
           "formula": "(bass/255 > 0.85) ? (bass/255)*0.6 : 0",
@@ -929,33 +1119,33 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "analogDrift": {
-          "value": 6,
-          "formula": "5 + (bass/255)*20 + (trend > 0.8 ? 30 : 0)",
+          "value": 4,
+          "formula": "3 + (bass/255)*12",
           "useFormula": true
         },
         "analogScanlines": {
-          "value": 0.11,
-          "formula": "0.1",
+          "value": 0.08,
+          "formula": "0.08",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.38,
-          "formula": "0.05 + trend * 0.1 + (treble/255)*0.08",
+          "value": 0.22,
+          "formula": "0.15 + (treble/255)*0.08",
           "useFormula": false
         },
         "analogWarmth": {
-          "value": 1,
-          "formula": "Math.max(0.2, 0.85 - (time/210000)*0.4 + (mid/255)*0.2)",
-          "useFormula": false
+          "value": 0.95,
+          "formula": "0.85 + (time/210000)*0.15",
+          "useFormula": true
         },
         "analogLightLeak": {
-          "value": 1,
-          "formula": "0.2 + (time/210000)*0.5 + (bass/255)*0.35 + Math.sin(time/2500)*0.1",
-          "useFormula": false
+          "value": 0.75,
+          "formula": "0.55 + (time/210000)*0.35 + Math.sin(time/3200)*0.1",
+          "useFormula": true
         },
         "analogVignette": {
-          "value": 0.4,
-          "formula": "0.4",
+          "value": 0.32,
+          "formula": "0.32",
           "useFormula": false
         },
         "opticsFocusPull": {
@@ -979,29 +1169,29 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "particleCount_particles_friday": {
-          "value": 120,
-          "formula": "350 + (trend*300)",
-          "useFormula": false
+          "value": 180,
+          "formula": "140 + (trend*120)",
+          "useFormula": true
         },
         "particleSize_particles_friday": {
-          "value": 68.8,
-          "formula": "2.5 + (bass/255)*4.0",
-          "useFormula": false
+          "value": 4.2,
+          "formula": "3.2 + (mid/255)*2.8",
+          "useFormula": true
         },
         "particleSpeed_particles_friday": {
-          "value": 1.5,
-          "formula": "1.5 + trend*1.5",
-          "useFormula": false
+          "value": 0.9,
+          "formula": "0.8 + trend*0.6",
+          "useFormula": true
         },
         "particleChaos_particles_friday": {
-          "value": 30,
-          "formula": "30 + (bass/255)*30",
-          "useFormula": false
+          "value": 18,
+          "formula": "15 + (bass/255)*15",
+          "useFormula": true
         },
         "particleOpacity_particles_friday": {
-          "value": 0.4,
-          "formula": "0.4 + (trend*0.4)",
-          "useFormula": false
+          "value": 0.55,
+          "formula": "0.45 + (trend*0.25)",
+          "useFormula": true
         },
         "particleDirection_particles_friday": {
           "value": -0.8,
@@ -1009,8 +1199,8 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "particleColorSpeed_particles_friday": {
-          "value": 13,
-          "formula": "10",
+          "value": 8,
+          "formula": "8",
           "useFormula": false
         },
         "particleRotation_particles_friday": {
@@ -1237,12 +1427,75 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "maskX_cinematic_light_friday": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_cinematic_light_friday": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_cinematic_light_friday": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_cinematic_light_friday": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
+        },
+        "maskX_anamorphic_friday": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_anamorphic_friday": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_anamorphic_friday": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_anamorphic_friday": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
     {
       "name": "Gravel",
       "layers": [
+        {
+          "id": "topography_gravel",
+          "type": "topography",
+          "name": "CATALAN CONTOURS",
+          "enabled": true,
+          "settings": {
+            "perspective": true,
+            "showSurveyNumbers": true,
+            "useLayerColor": false,
+            "layerColor": "#cda34f",
+            "layerColors": [
+              "#4a3b32",
+              "#8c6d53",
+              "#cda34f",
+              "#e8c547",
+              "#f4ebd9",
+              "#cda34f"
+            ],
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
         {
           "id": "particles_gravel",
           "type": "particles",
@@ -1276,7 +1529,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "disperse",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -1319,6 +1572,36 @@ window.AGOST_DEFAULT_SESSION = {
         "clearOpacity": {
           "value": 0.12,
           "formula": "0.12 + (1 - trend) * 0.1",
+          "useFormula": false
+        },
+        "topoScale_topography_gravel": {
+          "value": 3,
+          "formula": "2.5 + (time / 210000) * 2.0",
+          "useFormula": true
+        },
+        "topoLines_topography_gravel": {
+          "value": 24,
+          "formula": "18 + (time / 210000) * 16",
+          "useFormula": true
+        },
+        "topoSpeed_topography_gravel": {
+          "value": 0.4,
+          "formula": "0.3 + (time / 210000) * 0.5 + (trend * 0.4)",
+          "useFormula": true
+        },
+        "topoChaos_topography_gravel": {
+          "value": 0.5,
+          "formula": "0.4 + (time / 210000) * 0.6 + (bass/255)*0.6",
+          "useFormula": true
+        },
+        "topoLineWidth_topography_gravel": {
+          "value": 1.5,
+          "formula": "1.5",
+          "useFormula": false
+        },
+        "topoOpacity_topography_gravel": {
+          "value": 0.85,
+          "formula": "0.85",
           "useFormula": false
         },
         "analogScratches": {
@@ -1640,6 +1923,26 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "maskX_topography_gravel": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_topography_gravel": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_topography_gravel": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_topography_gravel": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
@@ -1680,7 +1983,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "disperse",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -1724,6 +2027,21 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0.12,
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
+        },
+        "polaroidDevelop_polaroid_pareces": {
+          "value": 0.3,
+          "formula": "Math.min(1.0, 0.15 + (time / 210000) * 0.85)",
+          "useFormula": true
+        },
+        "polaroidBleed_polaroid_pareces": {
+          "value": 0.4,
+          "formula": "0.3 + (time / 210000) * 0.3",
+          "useFormula": true
+        },
+        "polaroidSepia_polaroid_pareces": {
+          "value": 0.35,
+          "formula": "0.45 - (time / 210000) * 0.25",
+          "useFormula": true
         },
         "analogFlash": {
           "value": 0,
@@ -2406,6 +2724,27 @@ window.AGOST_DEFAULT_SESSION = {
       "name": "Beach",
       "layers": [
         {
+          "id": "caustics_beach",
+          "type": "caustics",
+          "name": "MEDITERRANEAN CAUSTICS",
+          "enabled": true,
+          "settings": {
+            "useLayerColor": false,
+            "layerColor": "#68d8d6",
+            "layerColors": [
+              "#031926",
+              "#468faf",
+              "#68d8d6",
+              "#a8dadc",
+              "#f1faee",
+              "#68d8d6"
+            ],
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
+        {
           "id": "particles_beach",
           "type": "particles",
           "name": "PARTICLES LAYER",
@@ -2438,7 +2777,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "float_drift",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -2482,6 +2821,31 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0.12,
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
+        },
+        "causticScale_caustics_beach": {
+          "value": 0.5,
+          "formula": "1.6 + (time / 210000) * 0.8",
+          "useFormula": false
+        },
+        "causticSpeed_caustics_beach": {
+          "value": 0.2,
+          "formula": "0.5 + (time / 210000) * 0.4 + (trend * 0.3)",
+          "useFormula": false
+        },
+        "causticIntensity_caustics_beach": {
+          "value": 0.85,
+          "formula": "0.65 + (time / 210000) * 0.45 + (treble/255)*0.5",
+          "useFormula": true
+        },
+        "causticDepth_caustics_beach": {
+          "value": 0.35,
+          "formula": "0.45 - (time / 210000) * 0.2",
+          "useFormula": true
+        },
+        "causticTurbulence_caustics_beach": {
+          "value": 0.5,
+          "formula": "0.4 + (mid/255)*0.4",
+          "useFormula": true
         },
         "particleCount_particles_beach": {
           "value": 350,
@@ -2799,6 +3163,26 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "maskFeather_text_beach": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
+        },
+        "maskX_caustics_beach": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_caustics_beach": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_caustics_beach": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_caustics_beach": {
           "value": 0,
           "formula": "0",
           "useFormula": false
@@ -5197,6 +5581,27 @@ window.AGOST_DEFAULT_SESSION = {
       "name": "Coming back home",
       "layers": [
         {
+          "id": "anamorphic_backhome",
+          "type": "anamorphic",
+          "name": "HIGHWAY SODIUM FLARES",
+          "enabled": true,
+          "settings": {
+            "useLayerColor": false,
+            "layerColor": "#ffaa33",
+            "layerColors": [
+              "#ff6600",
+              "#ffaa33",
+              "#ffffff",
+              "#ff3366",
+              "#ffcc00",
+              "#ffffff"
+            ],
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
+          }
+        },
+        {
           "id": "photos_backhome",
           "type": "photos",
           "name": "PHOTOS LAYER",
@@ -5244,7 +5649,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "textSequenceMode": "order",
             "textFontFamily": "Lora",
-            "textDissolveStyle": "fade",
+            "textDissolveStyle": "rain_wash",
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
@@ -5288,6 +5693,26 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0.12,
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
+        },
+        "flareCount_anamorphic_backhome": {
+          "value": 6,
+          "formula": "4 + (time / 210000) * 3",
+          "useFormula": true
+        },
+        "flareLength_anamorphic_backhome": {
+          "value": 1.2,
+          "formula": "1.0 + (time / 210000) * 0.6 + (trend * 0.4)",
+          "useFormula": true
+        },
+        "flareSpeed_anamorphic_backhome": {
+          "value": 0.8,
+          "formula": "0.6 + (time / 210000) * 0.8 + (trend * 0.5)",
+          "useFormula": true
+        },
+        "flareIntensity_anamorphic_backhome": {
+          "value": 0.75,
+          "formula": "0.55 + (time / 210000) * 0.45 + (mid/255)*0.4",
+          "useFormula": true
         },
         "analogWarmth": {
           "value": 0.85,
@@ -5663,6 +6088,26 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "maskX_anamorphic_backhome": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_anamorphic_backhome": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_anamorphic_backhome": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_anamorphic_backhome": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
@@ -5682,6 +6127,17 @@ window.AGOST_DEFAULT_SESSION = {
             "webcamIndices": [],
             "imgBlendMode": "source-over",
             "collapsed": true
+          }
+        },
+        {
+          "id": "cinematic_light_house",
+          "type": "cinematic_light",
+          "name": "VENETIAN SUNBEAMS",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "collapsed": false
           }
         },
         {
@@ -5770,6 +6226,36 @@ window.AGOST_DEFAULT_SESSION = {
         "analogLightLeak": {
           "value": 0.25,
           "formula": "Math.max(0, 0.3 - (time / 210000) * 0.3)",
+          "useFormula": true
+        },
+        "lightAngle_cinematic_light_house": {
+          "value": 40,
+          "formula": "30 + (time / 210000) * 20",
+          "useFormula": true
+        },
+        "lightIntensity_cinematic_light_house": {
+          "value": 0.65,
+          "formula": "0.45 + (time / 210000) * 0.4 + (mid/255)*0.3",
+          "useFormula": true
+        },
+        "lightWarmth_cinematic_light_house": {
+          "value": 0.75,
+          "formula": "0.6 + (time / 210000) * 0.35",
+          "useFormula": true
+        },
+        "blindCount_cinematic_light_house": {
+          "value": 14,
+          "formula": "14",
+          "useFormula": false
+        },
+        "blindOpen_cinematic_light_house": {
+          "value": 0.6,
+          "formula": "0.45 + (time / 210000) * 0.35",
+          "useFormula": true
+        },
+        "dustDensity_cinematic_light_house": {
+          "value": 0.65,
+          "formula": "0.5 + (time / 210000) * 0.35",
           "useFormula": true
         },
         "imgScale_photos_house": {
@@ -6133,6 +6619,26 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "maskFeather_text_house": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
+        },
+        "maskX_cinematic_light_house": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_cinematic_light_house": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_cinematic_light_house": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_cinematic_light_house": {
           "value": 0,
           "formula": "0",
           "useFormula": false

@@ -58,6 +58,46 @@ function getLayerParams(type, layerId) {
         params[`spectrumY_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Center Y', min: 0, max: 1.0, step: 0.01, value: 0.5, formula: '0.5', useFormula: false, desc: 'Vertical position of center.' };
         params[`spectrumOpacity_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Layer Weight', min: 0, max: 1, step: 0.05, value: 0.9, formula: '0.9', useFormula: false, desc: 'Transparency of the spectrum layer.' };
         params[`spectrumThickness_${layerId}`] = { cat: `spectrum_${layerId}`, name: 'Line Thickness', min: 1, max: 50, step: 1, value: 3, formula: '3', useFormula: false, desc: 'Line stroke width.' };
+    } else if (type === 'rain_glass') {
+        params[`rainDensity_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Water Bead Density', min: 0.05, max: 1.0, step: 0.05, value: 0.6, formula: '0.6', useFormula: false, desc: 'Number of active condensing raindrops on the glass.' };
+        params[`rainDropSize_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Droplet Diameter', min: 0.2, max: 3.0, step: 0.1, value: 1.0, formula: '1.0 + (trend * 0.5)', useFormula: false, desc: 'Scale factor for droplet size.' };
+        params[`rainDripSpeed_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Trickle Velocity', min: 0.1, max: 5.0, step: 0.1, value: 1.0, formula: '0.8 + (trend * 1.5)', useFormula: true, desc: 'Speed at which runner droplets run down the windowpane.' };
+        params[`rainRefraction_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Optical Lens Power', min: 0, max: 50, step: 1, value: 18, formula: '18 + (bass/255)*10', useFormula: false, desc: 'Intensity of optical distortion refracting layers behind droplets.' };
+        params[`rainFog_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Condensation Mist', min: 0, max: 1.0, step: 0.02, value: 0.25, formula: '0.25', useFormula: false, desc: 'Milky glass condensation fog across the window.' };
+        params[`rainOpacity_${layerId}`] = { cat: `rain_glass_${layerId}`, name: 'Optical Weight', min: 0, max: 1.0, step: 0.05, value: 0.9, formula: '0.9', useFormula: false, desc: 'Global alpha transparency of the rain on glass layer.' };
+    } else if (type === 'topography') {
+        params[`topoScale_${layerId}`] = { cat: `topography_${layerId}`, name: 'Terrain Scale', min: 0.5, max: 10.0, step: 0.1, value: 3.0, formula: '3.0', useFormula: false, desc: 'Zoom scale of the elevation noise landscape.' };
+        params[`topoLines_${layerId}`] = { cat: `topography_${layerId}`, name: 'Contour Isolines', min: 4, max: 60, step: 1, value: 24, formula: '24', useFormula: false, desc: 'Number of elevation contour lines.' };
+        params[`topoSpeed_${layerId}`] = { cat: `topography_${layerId}`, name: 'Drift Speed', min: -2.0, max: 2.0, step: 0.05, value: 0.4, formula: '0.4 + (trend * 0.4)', useFormula: true, desc: 'Speed at which the landscape scrolls toward the horizon.' };
+        params[`topoChaos_${layerId}`] = { cat: `topography_${layerId}`, name: 'Mountain Ruggedness', min: 0, max: 2.0, step: 0.05, value: 0.5, formula: '0.5 + (bass/255)*0.5', useFormula: true, desc: 'Fractal noise complexity of peaks and ravines.' };
+        params[`topoLineWidth_${layerId}`] = { cat: `topography_${layerId}`, name: 'Stroke Width', min: 0.5, max: 10.0, step: 0.5, value: 1.5, formula: '1.5', useFormula: false, desc: 'Width of contour pen lines.' };
+        params[`topoOpacity_${layerId}`] = { cat: `topography_${layerId}`, name: 'Layer Weight', min: 0, max: 1.0, step: 0.05, value: 0.85, formula: '0.85', useFormula: false, desc: 'Transparency of the topographic map.' };
+    } else if (type === 'caustics') {
+        params[`causticScale_${layerId}`] = { cat: `caustics_${layerId}`, name: 'Network Scale', min: 0.5, max: 5.0, step: 0.1, value: 1.8, formula: '1.8', useFormula: false, desc: 'Scale of the interwoven light ripple network.' };
+        params[`causticSpeed_${layerId}`] = { cat: `caustics_${layerId}`, name: 'Wave Shimmer Speed', min: 0.1, max: 3.0, step: 0.05, value: 0.6, formula: '0.6 + (trend * 0.5)', useFormula: true, desc: 'Speed of sunlight oscillation dancing through water.' };
+        params[`causticIntensity_${layerId}`] = { cat: `caustics_${layerId}`, name: 'Sunlight Glint', min: 0, max: 2.0, step: 0.05, value: 0.85, formula: '0.7 + (treble/255)*0.6', useFormula: true, desc: 'Brightness of the caustic highlights.' };
+        params[`causticDepth_${layerId}`] = { cat: `caustics_${layerId}`, name: 'Marine Depth Fog', min: 0, max: 1.0, step: 0.05, value: 0.35, formula: '0.35', useFormula: false, desc: 'Deep ocean atmosphere gradient fog.' };
+        params[`causticTurbulence_${layerId}`] = { cat: `caustics_${layerId}`, name: 'Surface Churn', min: 0, max: 2.0, step: 0.05, value: 0.5, formula: '0.5 + (mid/255)*0.5', useFormula: false, desc: 'Wave turbulence warping the caustic lines.' };
+    } else if (type === 'cinematic_light') {
+        params[`lightAngle_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Sunbeam Angle [deg]', min: -80, max: 80, step: 1, value: 40, formula: '40 + Math.sin(time/4000)*5', useFormula: false, desc: 'Angle of incoming light slanting into the room.' };
+        params[`lightIntensity_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Luminance Volume', min: 0, max: 1.5, step: 0.05, value: 0.65, formula: '0.6 + (mid/255)*0.4', useFormula: true, desc: 'Intensity and reach of the volumetric window light.' };
+        params[`lightWarmth_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Golden Hour Tint', min: 0, max: 1.0, step: 0.05, value: 0.75, formula: '0.75', useFormula: false, desc: '0 = Morning cool mist, 1 = Rich afternoon amber sunset.' };
+        params[`blindCount_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Venetian Slat Count', min: 2, max: 30, step: 1, value: 14, formula: '14', useFormula: false, desc: 'Number of horizontal window blind shadows.' };
+        params[`blindOpen_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Blind Aperture', min: 0.05, max: 0.95, step: 0.05, value: 0.6, formula: '0.6', useFormula: false, desc: 'Aperture gap between blind slats.' };
+        params[`dustDensity_${layerId}`] = { cat: `cinematic_light_${layerId}`, name: 'Sunlit Dust Motes', min: 0, max: 1.0, step: 0.05, value: 0.65, formula: '0.65', useFormula: false, desc: 'Density of floating illuminated air particulates.' };
+    } else if (type === 'super8') {
+        params[`filmJitter_${layerId}`] = { cat: `super8_${layerId}`, name: 'Gate Weave [px]', min: 0, max: 5.0, step: 0.1, value: 0.5, formula: '0.3 + (trend * 0.5)', useFormula: false, desc: 'Mechanical film projector frame jitter.' };
+        params[`filmLightLeak_${layerId}`] = { cat: `super8_${layerId}`, name: 'Warm Flare Leak', min: 0, max: 1.0, step: 0.05, value: 0.5, formula: '0.4 + (trend * 0.4)', useFormula: true, desc: 'Anamorphic amber/vermilion edge light leaks.' };
+        params[`filmBurnRate_${layerId}`] = { cat: `super8_${layerId}`, name: 'Emulsion Burn Peak', min: 0, max: 1.0, step: 0.05, value: 0.4, formula: '0.4', useFormula: false, desc: 'Likelihood of film frame burn flashes during loud musical drops.' };
+    } else if (type === 'anamorphic') {
+        params[`flareCount_${layerId}`] = { cat: `anamorphic_${layerId}`, name: 'Streetlight Beams', min: 1, max: 8, step: 1, value: 5, formula: '5', useFormula: false, desc: 'Number of horizontal anamorphic lens flares.' };
+        params[`flareLength_${layerId}`] = { cat: `anamorphic_${layerId}`, name: 'Beam Span [x]', min: 0.2, max: 3.0, step: 0.1, value: 1.2, formula: '1.0 + (trend * 0.5)', useFormula: false, desc: 'Horizontal stretch width of the optical flare.' };
+        params[`flareSpeed_${layerId}`] = { cat: `anamorphic_${layerId}`, name: 'Highway Travel Speed', min: 0.1, max: 3.0, step: 0.05, value: 0.8, formula: '0.7 + (trend * 0.6)', useFormula: true, desc: 'Speed at which flares streak horizontally across the screen.' };
+        params[`flareIntensity_${layerId}`] = { cat: `anamorphic_${layerId}`, name: 'Optical Brilliance', min: 0, max: 2.0, step: 0.05, value: 0.75, formula: '0.6 + (mid/255)*0.5', useFormula: true, desc: 'Luminance of the horizontal streak and core.' };
+    } else if (type === 'polaroid') {
+        params[`polaroidDevelop_${layerId}`] = { cat: `polaroid_${layerId}`, name: 'Chemical Development', min: 0, max: 1.0, step: 0.02, value: 0.85, formula: 'Math.min(1.0, 0.2 + (time / 210000) * 0.8)', useFormula: true, desc: 'Chemical resolution of the instant picture over time.' };
+        params[`polaroidBleed_${layerId}`] = { cat: `polaroid_${layerId}`, name: 'Paper Fiber Bleed', min: 0, max: 1.0, step: 0.05, value: 0.4, formula: '0.4', useFormula: false, desc: 'Subtle stain and paper texture aging on the frame.' };
+        params[`polaroidSepia_${layerId}`] = { cat: `polaroid_${layerId}`, name: 'Thermal Tint Shift', min: 0, max: 1.0, step: 0.05, value: 0.35, formula: '0.35', useFormula: false, desc: 'Warm sepia / cyan cross-processing chemical shift.' };
     }
 
     // Append Masking Parameters globally for all layers

@@ -70,6 +70,13 @@ class BatecEngine {
         this.shader = new BatecShader();
         this.glPost = new BatecGLPostFX();
         this.dmx = new BatecDMX(this);
+        this.rainGlass = new BatecRainGlass(this);
+        this.topography = new BatecTopography(this);
+        this.caustics = new BatecCaustics(this);
+        this.cinematicLight = new BatecCinematicLight(this);
+        this.super8 = new BatecSuper8(this);
+        this.anamorphic = new BatecAnamorphic(this);
+        this.polaroid = new BatecPolaroid(this);
 
         // Setup DMX Connection Button
         const dmxBtn = document.getElementById('btnDmxConnect');
@@ -567,15 +574,16 @@ class BatecEngine {
                 if (layer.type === 'rays') renderRays(this, ctx, localTime, layer.id);
                 if (layer.type === 'particles') this.renderParticles(ctx, localTime, layer.id);
                 if (layer.type === 'spectrum') this.renderSpectrum(ctx, localTime, layer.id);
+                if (layer.type === 'topography' && this.topography) this.topography.render(ctx, layer.id, localTime);
+                if (layer.type === 'caustics' && this.caustics) this.caustics.render(ctx, layer.id, localTime);
+                if (layer.type === 'cinematic_light' && this.cinematicLight) this.cinematicLight.render(ctx, layer.id, localTime);
+                if (layer.type === 'anamorphic' && this.anamorphic) this.anamorphic.render(ctx, layer.id, localTime);
 
                 if (hasMask) {
                     ctx.restore();
                 }
             });
         }
-
-        // Remove old static layer rendering block
-
 
         let finalSource = this.bufferCanvas;
 
@@ -604,7 +612,7 @@ class BatecEngine {
         // 2. CPU Analog Post-FX & Screen Transfer
         applyAnalogPostFX(this, finalSource);
 
-        // 3. Render Lyric / Text Layers on Top (Clear, Crisp & Legible for Stage)
+        // 3. Render Lyric / Text Layers (Clear, Crisp & Legible for Stage)
         if (this.active.layers) {
             this.active.layers.forEach(layer => {
                 if (!layer.enabled || layer.type !== 'text') return;
@@ -616,6 +624,22 @@ class BatecEngine {
                 renderLyrics(this, this.ctx, localTime, progress, layer.id);
                 if (hasMask) {
                     this.ctx.restore();
+                }
+            });
+        }
+
+        // 4. Optical Foreground Layers (Rain on Glass, Super 8, Polaroid Frames)
+        if (this.active.layers) {
+            this.active.layers.forEach(layer => {
+                if (!layer.enabled) return;
+                if (layer.type === 'rain_glass' && this.rainGlass) {
+                    this.rainGlass.render(this.ctx, layer.id, localTime, finalSource);
+                }
+                if (layer.type === 'super8' && this.super8) {
+                    this.super8.render(this.ctx, layer.id, localTime);
+                }
+                if (layer.type === 'polaroid' && this.polaroid) {
+                    this.polaroid.render(this.ctx, layer.id, localTime);
                 }
             });
         }

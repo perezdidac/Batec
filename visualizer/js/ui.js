@@ -608,7 +608,7 @@ const UI = {
                 };
 
                 // Add special UI controls for specific layer types
-                if (['particles', 'waves', 'rays', 'spectrum'].includes(layer.type)) {
+                if (['particles', 'waves', 'rays', 'spectrum', 'topography', 'caustics', 'anamorphic'].includes(layer.type)) {
                     const colorDiv = document.createElement('div');
                     colorDiv.style.marginBottom = '12px';
                     colorDiv.style.display = 'flex';
@@ -754,6 +754,9 @@ const UI = {
                             <option value="fade">Simple Fade</option>
                             <option value="typewriter">Typewriter</option>
                             <option value="ink">Ink Resolve</option>
+                            <option value="disperse">Disperse / Sand</option>
+                            <option value="rain_wash">Rain Wash</option>
+                            <option value="float_drift">Floating Breeze</option>
                             <option value="glitch">Glitch</option>
                         </select>
                     </div>`;
@@ -769,6 +772,27 @@ const UI = {
                             <option value="circular_spectrum">Circular Spectrum</option>
                             <option value="circular_waveform">Circular Waveform</option>
                         </select>
+                    </div>`;
+                    wrapper.appendChild(controlsDiv);
+                } else if (layer.type === 'topography') {
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.innerHTML = `
+                    <div class="control-group" style="margin-bottom: 12px; display:flex; gap:12px;">
+                        <label style="flex:1; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="topoPerspective_${layer.id}" style="width:auto;"> Isometric Perspective
+                        </label>
+                        <label style="flex:1; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="topoSurveyNumbers_${layer.id}" style="width:auto;"> Elevation Tags (m)
+                        </label>
+                    </div>`;
+                    wrapper.appendChild(controlsDiv);
+                } else if (layer.type === 'super8') {
+                    const controlsDiv = document.createElement('div');
+                    controlsDiv.innerHTML = `
+                    <div class="control-group" style="margin-bottom: 12px;">
+                        <label style="display:flex; align-items:center; gap:6px; cursor:pointer;">
+                            <input type="checkbox" id="filmBorder_${layer.id}" style="width:auto;"> Film Gate & Sprocket Border
+                        </label>
                     </div>`;
                     wrapper.appendChild(controlsDiv);
                 }
@@ -925,6 +949,23 @@ const UI = {
                 } else if (layer.type === 'spectrum') {
                     const sel = this.safeGet(`spectrumStyle_${layer.id}`);
                     if(sel) { sel.value = layer.settings.spectrumStyle || 'bars'; sel.onchange = e => layer.settings.spectrumStyle = e.target.value; }
+                } else if (layer.type === 'topography') {
+                    const chkPersp = this.safeGet(`topoPerspective_${layer.id}`);
+                    if (chkPersp) {
+                        chkPersp.checked = layer.settings.perspective !== false;
+                        chkPersp.onchange = e => layer.settings.perspective = e.target.checked;
+                    }
+                    const chkNums = this.safeGet(`topoSurveyNumbers_${layer.id}`);
+                    if (chkNums) {
+                        chkNums.checked = layer.settings.showSurveyNumbers !== false;
+                        chkNums.onchange = e => layer.settings.showSurveyNumbers = e.target.checked;
+                    }
+                } else if (layer.type === 'super8') {
+                    const chkBorder = this.safeGet(`filmBorder_${layer.id}`);
+                    if (chkBorder) {
+                        chkBorder.checked = layer.settings.filmBorder !== false;
+                        chkBorder.onchange = e => layer.settings.filmBorder = e.target.checked;
+                    }
                 }
 
                 // Bind Masking settings
@@ -1380,6 +1421,28 @@ const UI = {
                     settings.useLayerColor = false;
                     settings.layerColor = '#ffffff';
                     settings.layerColors = ['#ffffff','#ffffff','#ffffff','#ffffff','#ffffff','#ffffff'];
+                } else if (type === 'rain_glass') {
+                    // Rain on Glass defaults
+                } else if (type === 'topography') {
+                    settings.perspective = true;
+                    settings.showSurveyNumbers = true;
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#cda34f';
+                    settings.layerColors = ['#4a3b32', '#8c6d53', '#cda34f', '#e8c547', '#f4ebd9', '#cda34f'];
+                } else if (type === 'caustics') {
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#68d8d6';
+                    settings.layerColors = ['#031926', '#468faf', '#68d8d6', '#a8dadc', '#f1faee', '#68d8d6'];
+                } else if (type === 'cinematic_light') {
+                    // Volumetric window beams
+                } else if (type === 'super8') {
+                    settings.filmBorder = true;
+                } else if (type === 'anamorphic') {
+                    settings.useLayerColor = false;
+                    settings.layerColor = '#ffaa33';
+                    settings.layerColors = ['#ff6600', '#ffaa33', '#ffffff', '#ff3366', '#ffcc00', '#ffffff'];
+                } else if (type === 'polaroid') {
+                    settings.showFrame = true;
                 }
 
                 active.layers.push({ id: layerId, type: type, name: type.toUpperCase() + ' LAYER', enabled: true, settings: settings });
