@@ -1,7 +1,7 @@
 window.AGOST_DEFAULT_SESSION = {
   "activeIndex": 0,
   "targetIndex": null,
-  "transitionStart": 0,
+  "transitionStart": 325008.8000000119,
   "transitionDuration": 1000,
   "presets": [
     {
@@ -89,7 +89,7 @@ window.AGOST_DEFAULT_SESSION = {
         "webglProjection": "3d",
         "shaderStyle": "galaxy",
         "horizonEnabled": false,
-        "gpu_fxEnabled": true,
+        "gpu_fxEnabled": false,
         "isPaused": false,
         "bgColor": "#000000",
         "horizonStyle": "montserrat"
@@ -376,9 +376,9 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "gpuAberration": {
-          "value": 0.05,
+          "value": 0,
           "formula": "0.05 + (bass/255)*0.1",
-          "useFormula": true
+          "useFormula": false
         },
         "gpuSmearRatio": {
           "value": 0.7,
@@ -1059,34 +1059,34 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "lightAngle_cinematic_light_friday": {
-          "value": -35,
+          "value": -52,
           "formula": "-45 + (time / 210000) * 25",
           "useFormula": true
         },
         "lightIntensity_cinematic_light_friday": {
-          "value": 0.85,
+          "value": 0.9,
           "formula": "0.65 + (time / 210000) * 0.4 + (mid/255)*0.35",
-          "useFormula": true
+          "useFormula": false
         },
         "lightWarmth_cinematic_light_friday": {
-          "value": 0.95,
+          "value": 1,
           "formula": "0.8 + (time / 210000) * 0.2",
-          "useFormula": true
+          "useFormula": false
         },
         "blindCount_cinematic_light_friday": {
-          "value": 8,
+          "value": 9,
           "formula": "8",
           "useFormula": false
         },
         "blindOpen_cinematic_light_friday": {
           "value": 0.7,
           "formula": "0.6 + (time / 210000) * 0.25",
-          "useFormula": true
+          "useFormula": false
         },
         "dustDensity_cinematic_light_friday": {
-          "value": 0.6,
+          "value": 1,
           "formula": "0.45 + (time / 210000) * 0.4",
-          "useFormula": true
+          "useFormula": false
         },
         "flareCount_anamorphic_friday": {
           "value": 4,
@@ -1114,7 +1114,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "analogScratches": {
-          "value": 0,
+          "value": 0.69,
           "formula": "0",
           "useFormula": false
         },
@@ -1124,12 +1124,12 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "analogScanlines": {
-          "value": 0.08,
+          "value": 0,
           "formula": "0.08",
           "useFormula": false
         },
         "analogNoise": {
-          "value": 0.22,
+          "value": 0,
           "formula": "0.15 + (treble/255)*0.08",
           "useFormula": false
         },
@@ -1144,7 +1144,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "analogVignette": {
-          "value": 0.32,
+          "value": 0.3,
           "formula": "0.32",
           "useFormula": false
         },
@@ -1159,7 +1159,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": true
         },
         "analogPaperGrain": {
-          "value": 0.1,
+          "value": 0,
           "formula": "0.1",
           "useFormula": false
         },
@@ -3207,7 +3207,8 @@ window.AGOST_DEFAULT_SESSION = {
               "#ffffff",
               "#ffffff",
               "#ffffff"
-            ]
+            ],
+            "collapsed": true
           }
         },
         {
@@ -3228,7 +3229,28 @@ window.AGOST_DEFAULT_SESSION = {
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
-            "timedLyricsText": ""
+            "timedLyricsText": "",
+            "collapsed": true
+          }
+        },
+        {
+          "id": "3logjpdmq",
+          "type": "anamorphic",
+          "name": "ANAMORPHIC LAYER",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "useLayerColor": false,
+            "layerColor": "#ffaa33",
+            "layerColors": [
+              "#ff6600",
+              "#ffaa33",
+              "#ffffff",
+              "#ff3366",
+              "#ffcc00",
+              "#ffffff"
+            ]
           }
         }
       ],
@@ -3242,13 +3264,13 @@ window.AGOST_DEFAULT_SESSION = {
           "#ffd166"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
         "horizonEnabled": true,
         "horizonStyle": "montserrat",
-        "gpu_fxEnabled": false,
+        "gpu_fxEnabled": true,
         "isPaused": false,
         "bgColor": "#080613"
       },
@@ -3264,7 +3286,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "clearOpacity": {
-          "value": 0.12,
+          "value": 0.04,
           "formula": "0.12 + (1 - trend) * 0.1",
           "useFormula": false
         },
@@ -3524,9 +3546,9 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "gpuAberration": {
-          "value": 0.05,
+          "value": 0.17,
           "formula": "0.05 + (bass/255)*0.1",
-          "useFormula": true
+          "useFormula": false
         },
         "gpuSmearRatio": {
           "value": 0.7,
@@ -3539,7 +3561,7 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "gpuKaleidoSegments": {
-          "value": 0,
+          "value": 11,
           "formula": "6",
           "useFormula": false
         },
@@ -3584,6 +3606,46 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "maskFeather_text_you": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
+        },
+        "flareCount_3logjpdmq": {
+          "value": 8,
+          "formula": "5",
+          "useFormula": false
+        },
+        "flareLength_3logjpdmq": {
+          "value": 1.2,
+          "formula": "1.0 + (trend * 0.5)",
+          "useFormula": false
+        },
+        "flareSpeed_3logjpdmq": {
+          "value": 0.8,
+          "formula": "0.7 + (trend * 0.6)",
+          "useFormula": true
+        },
+        "flareIntensity_3logjpdmq": {
+          "value": 0.75,
+          "formula": "0.6 + (mid/255)*0.5",
+          "useFormula": true
+        },
+        "maskX_3logjpdmq": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_3logjpdmq": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_3logjpdmq": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_3logjpdmq": {
           "value": 0,
           "formula": "0",
           "useFormula": false
@@ -4772,7 +4834,7 @@ window.AGOST_DEFAULT_SESSION = {
           "#ffffff"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": true,
         "webglProjection": "2d",
         "shaderStyle": "galaxy",
@@ -5269,7 +5331,7 @@ window.AGOST_DEFAULT_SESSION = {
           "#ffffff"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": true,
         "webglProjection": "2d",
         "shaderStyle": "galaxy",
@@ -6192,7 +6254,7 @@ window.AGOST_DEFAULT_SESSION = {
           "#fff9e6"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "2d",
         "shaderStyle": "grid",
