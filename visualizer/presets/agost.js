@@ -1,8 +1,8 @@
 window.AGOST_DEFAULT_SESSION = {
   "activeIndex": 0,
   "targetIndex": null,
-  "transitionStart": 402729.19999999925,
-  "transitionDuration": 1500,
+  "transitionStart": 0,
+  "transitionDuration": 1000,
   "presets": [
     {
       "name": "Intro",
@@ -493,7 +493,7 @@ window.AGOST_DEFAULT_SESSION = {
           "settings": {
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": true
+            "collapsed": false
           }
         },
         {
@@ -552,7 +552,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "webcamIndices": [],
             "imgBlendMode": "screen",
-            "collapsed": false
+            "collapsed": true
           }
         }
       ],
@@ -618,8 +618,8 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "rainDensity_rain_glass_rain": {
-          "value": 0.95,
-          "formula": "0.75 + (time / 210000) * 0.25",
+          "value": 0.05,
+          "formula": "(time / 300000)",
           "useFormula": true
         },
         "rainDropSize_rain_glass_rain": {
@@ -648,9 +648,9 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "particleCount_particles_rain": {
-          "value": 500,
+          "value": 650,
           "formula": "400 + (time/210000)*600 + (avg/255)*300",
-          "useFormula": true
+          "useFormula": false
         },
         "particleSize_particles_rain": {
           "value": 2,
@@ -2251,13 +2251,13 @@ window.AGOST_DEFAULT_SESSION = {
         },
         "polaroidBleed_polaroid_pareces": {
           "value": 0.4,
-          "formula": "0.3 + (time / 210000) * 0.3",
+          "formula": "0.3 + (time / 210000) * 50",
           "useFormula": true
         },
         "polaroidSepia_polaroid_pareces": {
-          "value": 0.35,
-          "formula": "0.45 - (time / 210000) * 0.25",
-          "useFormula": true
+          "value": 13,
+          "formula": "0.45 - (time / 210000) ",
+          "useFormula": false
         },
         "analogFlash": {
           "value": 0,
@@ -2621,7 +2621,7 @@ window.AGOST_DEFAULT_SESSION = {
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#1a0808"
+        "bgColor": "#27260c"
       },
       "params": {
         "sensitivity": {
@@ -3488,7 +3488,7 @@ window.AGOST_DEFAULT_SESSION = {
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": true,
         "isPaused": false,
-        "bgColor": "#080613"
+        "bgColor": "#c1973e"
       },
       "params": {
         "sensitivity": {
@@ -4295,7 +4295,7 @@ window.AGOST_DEFAULT_SESSION = {
         "horizonStyle": "rooftops",
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#090814"
+        "bgColor": "#414045"
       },
       "params": {
         "sensitivity": {
@@ -4624,7 +4624,7 @@ window.AGOST_DEFAULT_SESSION = {
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#0c150e"
+        "bgColor": "#004d11"
       },
       "params": {
         "sensitivity": {
