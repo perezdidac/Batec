@@ -1,8 +1,8 @@
 window.AGOST_DEFAULT_SESSION = {
   "activeIndex": 0,
   "targetIndex": null,
-  "transitionStart": 325008.8000000119,
-  "transitionDuration": 1000,
+  "transitionStart": 402729.19999999925,
+  "transitionDuration": 1500,
   "presets": [
     {
       "name": "Intro",
@@ -493,7 +493,7 @@ window.AGOST_DEFAULT_SESSION = {
           "settings": {
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -511,7 +511,8 @@ window.AGOST_DEFAULT_SESSION = {
               "#ffffff",
               "#ffffff",
               "#ffffff"
-            ]
+            ],
+            "collapsed": true
           }
         },
         {
@@ -533,7 +534,25 @@ window.AGOST_DEFAULT_SESSION = {
             "textManualMode": false,
             "timedLyricsEnabled": false,
             "timedLyricsText": "",
-            "maskInvert": false
+            "maskInvert": false,
+            "collapsed": true
+          }
+        },
+        {
+          "id": "v6c6g72r4",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              1
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "screen",
+            "collapsed": false
           }
         }
       ],
@@ -942,6 +961,61 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "imgScale_v6c6g72r4": {
+          "value": 1.6,
+          "formula": "1.6 + trend*0.5",
+          "useFormula": false
+        },
+        "imgOpacity_v6c6g72r4": {
+          "value": 1,
+          "formula": "0.2 + (avg/255)*0.8",
+          "useFormula": false
+        },
+        "imgGlitch_v6c6g72r4": {
+          "value": 0,
+          "formula": "120 + bass",
+          "useFormula": false
+        },
+        "imgBlur_v6c6g72r4": {
+          "value": 5,
+          "formula": "20 + bass/10",
+          "useFormula": false
+        },
+        "imgSaturate_v6c6g72r4": {
+          "value": 150,
+          "formula": "100 + trend*200",
+          "useFormula": false
+        },
+        "photoRotation_v6c6g72r4": {
+          "value": 0,
+          "formula": "Math.sin(time/2000) * 0.2",
+          "useFormula": false
+        },
+        "photoContrast_v6c6g72r4": {
+          "value": 110,
+          "formula": "100 + bass",
+          "useFormula": false
+        },
+        "maskX_v6c6g72r4": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_v6c6g72r4": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_v6c6g72r4": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_v6c6g72r4": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
@@ -956,7 +1030,7 @@ window.AGOST_DEFAULT_SESSION = {
           "settings": {
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -977,7 +1051,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -1018,21 +1092,37 @@ window.AGOST_DEFAULT_SESSION = {
             "textManualMode": false,
             "timedLyricsEnabled": false,
             "timedLyricsText": "",
-            "collapsed": false
+            "collapsed": true
+          }
+        },
+        {
+          "id": "9jj5jx78n",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              3
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "hard-light"
           }
         }
       ],
       "settings": {
         "palette": [
           "#3a1708",
-          "#8a3814",
-          "#d9651e",
-          "#f79d5c",
-          "#f4c060",
+          "#8a1475",
+          "#d79d1d",
+          "#0e1bd8",
+          "#62f49a",
           "#fff3dc"
         ],
         "physicsEnabled": true,
-        "analogEnabled": true,
+        "analogEnabled": false,
         "webglEnabled": false,
         "webglProjection": "3d",
         "shaderStyle": "panot",
@@ -1467,6 +1557,61 @@ window.AGOST_DEFAULT_SESSION = {
           "value": 0,
           "formula": "0",
           "useFormula": false
+        },
+        "imgScale_9jj5jx78n": {
+          "value": 1.6,
+          "formula": "1.6 + trend*0.5",
+          "useFormula": false
+        },
+        "imgOpacity_9jj5jx78n": {
+          "value": 1,
+          "formula": "0.2 + (avg/255)*0.8",
+          "useFormula": false
+        },
+        "imgGlitch_9jj5jx78n": {
+          "value": 0,
+          "formula": "120 + bass",
+          "useFormula": false
+        },
+        "imgBlur_9jj5jx78n": {
+          "value": 80,
+          "formula": "20 + bass/10",
+          "useFormula": false
+        },
+        "imgSaturate_9jj5jx78n": {
+          "value": 150,
+          "formula": "100 + trend*200",
+          "useFormula": true
+        },
+        "photoRotation_9jj5jx78n": {
+          "value": 0,
+          "formula": "Math.sin(time/2000) * 0.2",
+          "useFormula": false
+        },
+        "photoContrast_9jj5jx78n": {
+          "value": 110,
+          "formula": "100 + bass",
+          "useFormula": false
+        },
+        "maskX_9jj5jx78n": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_9jj5jx78n": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_9jj5jx78n": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_9jj5jx78n": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
         }
       }
     },
@@ -1493,7 +1638,7 @@ window.AGOST_DEFAULT_SESSION = {
             ],
             "maskType": "none",
             "maskInvert": false,
-            "collapsed": false
+            "collapsed": true
           }
         },
         {
@@ -1534,7 +1679,23 @@ window.AGOST_DEFAULT_SESSION = {
             "textManualMode": false,
             "timedLyricsEnabled": false,
             "timedLyricsText": "",
-            "collapsed": false
+            "collapsed": true
+          }
+        },
+        {
+          "id": "t7xmnjjgn",
+          "type": "photos",
+          "name": "PHOTOS LAYER",
+          "enabled": true,
+          "settings": {
+            "maskType": "none",
+            "maskInvert": false,
+            "photoSourceMode": "photos",
+            "imgIndices": [
+              0
+            ],
+            "webcamIndices": [],
+            "imgBlendMode": "hard-light"
           }
         }
       ],
@@ -1940,6 +2101,61 @@ window.AGOST_DEFAULT_SESSION = {
           "useFormula": false
         },
         "maskFeather_topography_gravel": {
+          "value": 0,
+          "formula": "0",
+          "useFormula": false
+        },
+        "imgScale_t7xmnjjgn": {
+          "value": 1.6,
+          "formula": "1.6 + trend*0.5",
+          "useFormula": false
+        },
+        "imgOpacity_t7xmnjjgn": {
+          "value": 0.7,
+          "formula": "0.2 + (avg/255)*0.8",
+          "useFormula": false
+        },
+        "imgGlitch_t7xmnjjgn": {
+          "value": 0,
+          "formula": "120 + bass",
+          "useFormula": false
+        },
+        "imgBlur_t7xmnjjgn": {
+          "value": 0,
+          "formula": "20 + bass/10",
+          "useFormula": false
+        },
+        "imgSaturate_t7xmnjjgn": {
+          "value": 150,
+          "formula": "100 + trend*200",
+          "useFormula": true
+        },
+        "photoRotation_t7xmnjjgn": {
+          "value": 0,
+          "formula": "Math.sin(time/2000) * 0.2",
+          "useFormula": false
+        },
+        "photoContrast_t7xmnjjgn": {
+          "value": 110,
+          "formula": "100 + bass",
+          "useFormula": false
+        },
+        "maskX_t7xmnjjgn": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskY_t7xmnjjgn": {
+          "value": 0.5,
+          "formula": "0.5",
+          "useFormula": false
+        },
+        "maskSize_t7xmnjjgn": {
+          "value": 1,
+          "formula": "1.0",
+          "useFormula": false
+        },
+        "maskFeather_t7xmnjjgn": {
           "value": 0,
           "formula": "0",
           "useFormula": false
@@ -3692,7 +3908,8 @@ window.AGOST_DEFAULT_SESSION = {
             "textFreeze": false,
             "textManualMode": false,
             "timedLyricsEnabled": false,
-            "timedLyricsText": ""
+            "timedLyricsText": "",
+            "collapsed": false
           }
         }
       ],
@@ -3714,7 +3931,7 @@ window.AGOST_DEFAULT_SESSION = {
         "horizonStyle": "montserrat",
         "gpu_fxEnabled": false,
         "isPaused": false,
-        "bgColor": "#111122"
+        "bgColor": "#fed506"
       },
       "params": {
         "sensitivity": {
